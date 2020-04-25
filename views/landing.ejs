@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Hello world</title>
+        <script src = "/socket.io/socket.io.js"></script>
+    </head>
+    <style>
+        .login, .homepage, .game, .wait, .play, .logout, .game-ended{
+            display: none;
+        }
+         .ticket td{
+            width: 50px;
+            height: 40px;
+            cursor: pointer;
+            text-align: center;
+            border: 1px black solid;
+
+         }
+         .half{
+            width: 50%;
+         }
+         .tick{
+             float: left;
+         }
+         .shownNumber span{
+            width: 50px;
+            display: inline-block;
+            height: 30px;
+            border: 1px solid;
+            margin: 1px;
+         }
+         .shownNumber{
+            margin: 20px auto;
+            width: 70%;
+            text-align: center;
+         }
+         .clicked-cell {
+            background: #593C3C5C;
+            pointer-events: none;
+            border-radius: 10px;
+        }
+        .wrong-clicked-cell {
+            background: #F91111C9;
+            pointer-events: none;
+            border-radius: 10px;
+        }
+        .not-clickable{
+            pointer-events: none;
+        }
+        p{
+            margin-top: 80px;
+            font-size: 30px;
+            text-align: center;
+        }
+        .nextnumber{
+            display: inline-block;
+            margin-left: 50px;
+            font-size: 50px;
+            width: 100px;
+            border: 1px solid;
+            text-align: center;
+            height: 100px;
+        }
+    </style>
+    <body>
+        <h1>Bingo</h1>
+
+        <button class="logout" onClick="signOut()">Sign Out</button>
+    
+        <div class="login">
+            <p>Username</p>
+            <input type="text" name="username" id="username">
+            <br>
+            <p>Enter phone with ISD code</p>
+            <input type="text" name="phone" id="phone">
+            <br>
+            <button onClick="submitPhone()">Send Code</button>
+            <br>
+            <p>Enter you code here</p>
+            <input type="text" name="code" id="code">
+            <br>
+            <button onClick="submitCode()">Log In</button>
+            <br>
+        </div>
+
+        <div class="homepage">
+            
+
+            <p>Welcome to bingo</p>
+            <p>Game will commence everyday at 10PM.</p>
+            <button class="payBtn">Click to Pay </button>
+            <p>Charges are Rs. 50</p>
+
+            
+        </div>
+ 
+
+        <div class="game">
+            <div class="game-ended"><p>Today's game closed. Come back tommorow.</p></div>
+
+            <div class="wait">Wait time not started</div>
+            <div class="play">
+                <div class="nextnumber half"></div>
+    
+                <div class="half tick">
+                    <table class="ticket">
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button class="claim full-house">Full House</button>
+                <button class="claim top-row">Top Row</button>
+                <button class="claim middle-row">Middle Row</button>
+                <button class="claim bottom-row">Bottom Row</button>
+                <button class="claim first-five">First Five</button>
+            
+                <h1 class="timer"></h1>
+            
+                <p>Disclosed Number</p>
+                <div class="shownNumber"></div>
+            
+                <button onclick="setStorage()">Set storage</button>
+                <button onclick="getStorage()">get storage</button>
+            </div>
+        </div>
+ 
+
+
+        <div id="recaptcha-container"></div>
+    </body>
+
+    <script src="js/jquery.js"></script>
+    <script src="js/firebase-app.js"></script>
+    <script src="js/firebase-analytics.js"></script>
+    <script src="js/firebase-auth.js"></script>
+    <script src="js/firbase_login_script.js"></script>
+    <script src="js/socket.js"></script>
+    
+</html>     
