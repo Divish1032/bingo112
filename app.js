@@ -40,6 +40,7 @@ app.get('/end1', function(req, res) {
       else{
         res.status(200).send(result);
       }
+   });
 });
 
 app.get('/end2', function(req, res) {
@@ -51,6 +52,7 @@ app.get('/end2', function(req, res) {
       else{
         res.status(200).send(result);
       }
+   });
 });
 
 app.get('/end3', function(req, res) {
@@ -62,6 +64,7 @@ app.get('/end3', function(req, res) {
       else{
         res.status(200).send(result);
       }
+   });
 });
 
 app.post('/end3', function(req, res) {
@@ -75,6 +78,7 @@ app.post('/end3', function(req, res) {
       else{
         res.status(200).send(result);
       }
+   });
 });
 
 
