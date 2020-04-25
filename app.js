@@ -23,6 +23,8 @@ var game_end_time     = null;
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine","ejs");
+app.use(bodyParser.json());
+
 
 app.get('/', function(req, res) {
    res.render('landing');
@@ -54,6 +56,19 @@ app.get('/end2', function(req, res) {
 app.get('/end3', function(req, res) {
    let sql = "CREATE TABLE active_users( user_id VARCHAR(64), created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)"
     mysqlConnection.query(sql, (err, result) => {
+      if(err){
+        res.status(202).send({ error: err })
+      }
+      else{
+        res.status(200).send(result);
+      }
+});
+
+app.post('/end3', function(req, res) {
+   
+   var values = [[req.body.time1, req.body.time2]]
+   let sql = "INSERT INTO game (game_time, game_end_time) VALUES ?"
+    mysqlConnection.query(sql, [values], (err, result) => {
       if(err){
         res.status(202).send({ error: err })
       }
