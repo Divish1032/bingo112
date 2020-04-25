@@ -359,7 +359,7 @@ function newGameTimerStart() {
 
  var rule = new schedule.RecurrenceRule();
     rule.dayOfWeek = [0,1,2,3,4,5,6];
-    rule.hour = [20];
+    rule.hour = [22];
     rule.minute = [ 30, 40, 50];
 
 
