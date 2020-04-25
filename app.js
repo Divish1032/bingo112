@@ -29,12 +29,37 @@ app.get('/', function(req, res) {
 });
 
 
-app.get('/end', function(req, res) {
-   mysqlConnection.query("SELECT * FROM game WHERE played = 0 ORDER BY game_time LIMIT 1", (err, resd) =>{
-      console.log(err)
-      console.log(resd)
-   })
-   res.render('end');
+app.get('/end1', function(req, res) {
+   let sql = "CREATE TABLE game(game_id INT AUTO_INCREMENT PRIMARY KEY, played BOOLEAN DEFAULT FALSE, first_five VARCHAR(64), top_row VARCHAR(64), middle_row VARCHAR(64), bottom_row VARCHAR(64), full_house VARCHAR(64), game_time DATETIME, game_end_time DATETIME)"
+    mysqlConnection.query(sql, (err, result) => {
+      if(err){
+        res.status(202).send({ error: err })
+      }
+      else{
+        res.status(200).send(result);
+      }
+});
+
+app.get('/end2', function(req, res) {
+   let sql = "CREATE TABLE game_client(game_id INT, user_id VARCHAR(64), payment BOOLEAN DEFAULT FALSE, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)"
+    mysqlConnection.query(sql, (err, result) => {
+      if(err){
+        res.status(202).send({ error: err })
+      }
+      else{
+        res.status(200).send(result);
+      }
+});
+
+app.get('/end3', function(req, res) {
+   let sql = "CREATE TABLE active_users( user_id VARCHAR(64), created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)"
+    mysqlConnection.query(sql, (err, result) => {
+      if(err){
+        res.status(202).send({ error: err })
+      }
+      else{
+        res.status(200).send(result);
+      }
 });
 
 
