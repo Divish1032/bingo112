@@ -126,7 +126,11 @@ socket.on('payment-info', function(payment){
      $('.text-center').hide();
      $('.toast').toast('show');
      window.confirmationResult = confirmationResult;
-     }).catch(function (error) {  console.log(error); });
+     }).catch(function (error) {  
+        $('.main').removeClass('fadeb');
+        $('.text-center').hide(); 
+        console.log(error); 
+    });
  }
  
  
@@ -153,14 +157,18 @@ socket.on('payment-info', function(payment){
             $('.game-ended').show();
          }
          else{
-             console.log("payment-check");
+            console.log("payment-check");
             socket.emit('payment-check', user);
          }
      })
      
      user.updateProfile({displayName: username}).then(function() {
         }).catch(function(error) { console.log(error) });
-     }).catch(function (error) { console.log(error); });   
+     }).catch(function (error) { 
+        $('.main').removeClass('fadeb');
+        $('.text-center').hide(); 
+        console.log(error); 
+    });   
      //socket.emit('payment-check', user, game_time);
  }
  
