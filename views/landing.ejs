@@ -16,8 +16,17 @@
     
     </head>
     <style>
-        .login, .homepage, .wait, .play, .logout, .game-ended{
+        .fadeb{
+            opacity: 0.3;
+        }
+        .login, .homepage, .wait, .play, .logout, .game-ended, .text-center{
             display: none;
+        }
+        .text-center{
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            top: 50%;
         }
         .login h1{
             text-align: center;
@@ -82,7 +91,15 @@
             height: 100px;
         }
     </style>
+    
     <body>
+
+        <div class="text-center">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand" href="#">Bingo</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -100,128 +117,137 @@
             </div>
           </nav>
         
-  
-        <div class="login container">
-            <div class="row">
-                <div class=" col-md-5 col-12">
-                    <h1>Login</h1>
-                    <div class="toast" role="alert" style="margin:auto;" aria-live="assertive" aria-atomic="true" data-delay="1000000">
-                        <div class="toast-header">
-                            <strong class="mr-auto">OTP sent...</strong>
-                            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                            </button>
+        <div class="main">
+            <div class="login container">
+                <div class="row">
+                    <div class=" col-md-5 col-12" style="margin: auto;">
+                        <h1>Login</h1>
+                        <div class="toast" role="alert" style="margin:auto;" aria-live="assertive" aria-atomic="true" data-delay="1000000">
+                            <div class="toast-header">
+                                <strong class="mr-auto">OTP sent...</strong>
+                                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input class="form-control" name="username" id="username" type="text" placeholder="Enter username">    
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Mobile number</label>
-                        <input class="form-control" type="text" name="phone" id="phone" placeholder="Enter number with country code">
-                    </div>
-                    <div class="form-group">
-                        <button class="btn btn-outline-secondary" onClick="submitPhone()">Send Code</button>
-                    </div>
-                    <div class="form-group">
-                        <label for="code">OTP Code:</label>
-                        <input class="form-control" type="text" name="code" id="code" placeholder="Enter otp">
-                    </div>
-                    <div class="form-group">
-                        <button class="btn btn-outline-info" onClick="submitCode()">Log In</button>
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input class="form-control" name="username" id="username" type="text" placeholder="Enter username">    
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Mobile number</label>
+                            <input class="form-control" type="text" name="phone" id="phone" placeholder="Enter number with country code">
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-outline-secondary" onClick="submitPhone()">Send Code</button>
+                        </div>
+                        <div class="form-group">
+                            <label for="code">OTP Code:</label>
+                            <input class="form-control" type="text" name="code" id="code" placeholder="Enter otp">
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-outline-info" onClick="submitCode()">Log In</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-     
-        <div class="homepage container">
-                <div class="col-md-5 col-12" style="margin: auto;">
-
-                    <div class="card" style="margin: 20px auto; width: 80;">
-                        <img src="img/tambola.jpg" style="height: 300px;" class="card-img-top" alt="...">
-                        <div class="card-body">
-                          <h5 class="card-title">Bingo</h5>
-                          <p class="card-text">The game of numbers that does not require any mathematical computations – just quick fingers – and if not quick then we have a fix for that too!!</p>
-                        </div>
-                        <ul class="list-group list-group-flush">
-                          <li class="list-group-item">Game will commence everyday at 10PM.</li>
-                        </ul>
-                        <div class="card-body">
-                            <p class="card-text">Charges are Rs. 50</p>
-                            <button class="payBtn btn btn-outline-dark">Click to Pay </button>
-                        </div>
-                      </div>    
+         
+            <div class="homepage container">
+                    <div class="col-md-5 col-12" style="margin: auto;">
+    
+                        <div class="card" style="margin: 20px auto; width: 80;">
+                            <img src="img/tambola.jpg" style="height: 300px;" class="card-img-top" alt="...">
+                            <div class="card-body">
+                              <h5 class="card-title">Bingo</h5>
+                              <p class="card-text">The game of numbers that does not require any mathematical computations – just quick fingers – and if not quick then we have a fix for that too!!</p>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                              <li class="list-group-item">Game will commence everyday at 10PM.</li>
+                            </ul>
+                            <div class="card-body">
+                                <p class="card-text">Charges are Rs. 50</p>
+                                <button class="payBtn btn btn-outline-dark">Click to Pay </button>
+                            </div>
+                          </div>    
+                    </div>
+    
+            </div>
+    
+            <div class="game-ended jumbotron jumbotron-fluid">
+                <div class="container">
+                    <h1 class="display-4">OOP's!!!</h1>
+                    <p class="lead">Today's game has ended. Come back tommorow.</p>
                 </div>
-
-        </div>
-
-        <div class="game-ended jumbotron jumbotron-fluid">
-            <div class="container">
-                <h1 class="display-4">OOP's!!!</h1>
-                <p class="lead">Today's game has ended. Come back tommorow.</p>
             </div>
-        </div>
-
-        <div class="wait">Wait time not started</div>
-           
-        <div class="play">
-            <div class="nextnumber half"></div>
-
-            <div class="half tick">
-                <table class="ticket">
-                    <tbody>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
+    
+            <div class="wait jumbotron jumbotron-fluid">
+                <div class="container">
+                  <h1 class="display-4">Waiting!!!</h1>
+                  <p class="lead">Please wait as there is still some time for the game to begin.</p>
+                  <p id="timer"></p>
+                  <p>Game will automatically start.</p>
+                </div>
             </div>
+               
+            <div class="play">
+                <div class="nextnumber half"></div>
+    
+                <div class="half tick">
+                    <table class="ticket">
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button class="claim full-house">Full House</button>
+                <button class="claim top-row">Top Row</button>
+                <button class="claim middle-row">Middle Row</button>
+                <button class="claim bottom-row">Bottom Row</button>
+                <button class="claim first-five">First Five</button>
             
-            <button class="claim full-house">Full House</button>
-            <button class="claim top-row">Top Row</button>
-            <button class="claim middle-row">Middle Row</button>
-            <button class="claim bottom-row">Bottom Row</button>
-            <button class="claim first-five">First Five</button>
-        
-            <h1 class="timer"></h1>
-        
-            <p>Disclosed Number</p>
-            <div class="shownNumber"></div>
-        
-            <button onclick="setStorage()">Set storage</button>
-            <button onclick="getStorage()">get storage</button>
+                <h1 class="timer"></h1>
+            
+                <p>Disclosed Number</p>
+                <div class="shownNumber"></div>
+            
+                <button onclick="setStorage()">Set storage</button>
+                <button onclick="getStorage()">get storage</button>
+            </div>
         </div>
+        
  
  
 

@@ -72,8 +72,8 @@ io.on('connection', function(socket) {
    });
 
    socket.on('check-user-validity', function(user){
+      console.log(user.phoneNumber);
       Game.find({played : false}).sort({game_time : 1}).limit(1).then(game => {
-         console.log(game)
          current_game = game[0];
          game_time = new Date(current_game.game_time);
          game_end_time = new Date(current_game.game_end_time);
@@ -337,8 +337,8 @@ io.on('connection', function(socket) {
    });
 
 
-   socket.on('logout-user', function(){
-      var index = game_players.indexOf(current_user.uid);
+   socket.on('logout-user', function(user){
+      var index = game_players.indexOf(user.uid);
       if (index > -1) {
          game_players.splice(index, 1);
       }
@@ -364,6 +364,7 @@ io.on('connection', function(socket) {
          if (index > -1) {
             game_players.splice(index, 1);
          }
+         console.log(game_players)
       }
    });
 });
