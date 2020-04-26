@@ -4,20 +4,13 @@ var game_end_time  = null;
 var user = null;
 
 
-$(window).bind("beforeunload", function(){
-    socket.emit("delete-active-user");
-    socket.on('user-deleted', function(){
-        return true; 
-    });
-});
+
 
 
 socket.on('game-timing', function(game_time_, game_end_time_){
     game_time = game_time_;
     game_end_time = game_end_time_;
 });
-
-
 
 socket.on("invalid-user", function(){
     console.log("You have already logged in");
@@ -60,8 +53,7 @@ var firebaseConfig = {
      socket.on("user-validated", function(){
         socket.emit("assign-current-user", userDetail);
         $('.logout').show();
-        if(new Date > new Date(game_end_time)){
-            $('.game').show();
+        if(new Date() > new Date(game_end_time) || new Date().getDate() < new Date(game_time).getDate()){
             $('.game-ended').show();
         }
         else{
@@ -78,9 +70,7 @@ var firebaseConfig = {
 socket.on('payment-info', function(payment){
     if(payment){
         $('.homepage').hide();
-        $('.game').show();
         if(new Date() <= new Date(game_time)){
-            console.log("1")
             $('.wait').show();
             var eta_ms = new Date(game_time).getTime() - new Date().getTime();
             var timeout = setTimeout(function(){
@@ -92,9 +82,6 @@ socket.on('payment-info', function(payment){
         else if(new Date <= new Date(game_end_time)){
             socket.emit('game-start');
             $('.play').show();
-        }
-        else{
-            $('.game-ended').show();
         }
     }
     else{
@@ -133,13 +120,12 @@ socket.on('payment-info', function(payment){
      code = $('#code').val();
      confirmationResult.confirm(code).then(function (result) {
      user = result.user;
-     socket.emit("assign-current-user", user);
+     socket.emit('check-user-validity', user);
      $('.login').hide();
      $('.logout').show();
      socket.on("user-validated", function(){
         socket.emit("assign-current-user", user);
-        if(new Date > new Date(game_end_time)){
-            $('.game').show();
+        if(new Date > new Date(game_end_time) || new Date().getDate() < new Date(game_time).getDate()){
             $('.game-ended').show();
          }
          else{
@@ -155,14 +141,11 @@ socket.on('payment-info', function(payment){
  
  
  function signOut() {
-     socket.emit('logout-user');
-     socket.on('active-user-log-out', function(){
-        firebase.auth().signOut().then(function() {
-            $('.game, .wait, .play, .homepage, .game-ended').hide();          
-            console.log("Signed Out");
-        }).catch(function(error) { console.log(error); });
-     })
-     
+    socket.emit('logout-user');
+    firebase.auth().signOut().then(function() {
+        $('.game, .wait, .play, .homepage, .game-ended').hide();          
+        console.log("Signed Out");
+    }).catch(function(error) { console.log(error); });   
  }
 
  

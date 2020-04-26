@@ -3,10 +3,14 @@
     <head>
         <title>Hello world</title>
         <script src = "/socket.io/socket.io.js"></script>
-        <link rel="stylesheet" href="css/bootstrap.css">
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    
     </head>
     <style>
-        .login, .homepage, .game, .wait, .play, .logout, .game-ended{
+        .login, .homepage, .wait, .play, .logout, .game-ended{
             display: none;
         }
         .login h1{
@@ -73,138 +77,153 @@
         }
     </style>
     <body>
-        <nav class="navbar navbar-light bg-light">
-            <a class="navbar-brand" href="#">
-              Bingo
-            </a>
-            <button onClick="signOut()" class="logout btn btn-outline-danger my-2 my-sm-0" type="submit">Sign Out</button>
-        </nav>
-    
-        <div class="login container col-md-5 col-12">
-            <h1>Login</h1>
-            <div class="toast" role="alert" style="margin:auto;" aria-live="assertive" aria-atomic="true" data-delay="1000000">
-                <div class="toast-header">
-                  <strong class="mr-auto">OTP sent...</strong>
-                  <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Bingo</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <button onClick="signOut()" class="logout btn btn-outline-danger my-2 my-sm-0" type="submit">Sign Out</button>
+                </li>
+               
+              </ul>
+              
+            </div>
+          </nav>
+        
+  
+        <div class="login container">
+            <div class="row">
+                <div class=" col-md-5 col-12">
+                    <h1>Login</h1>
+                    <div class="toast" role="alert" style="margin:auto;" aria-live="assertive" aria-atomic="true" data-delay="1000000">
+                        <div class="toast-header">
+                            <strong class="mr-auto">OTP sent...</strong>
+                            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input class="form-control" name="username" id="username" type="text" placeholder="Enter username">    
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Mobile number</label>
+                        <input class="form-control" type="text" name="phone" id="phone" placeholder="Enter number with country code">
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-secondary" onClick="submitPhone()">Send Code</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="code">OTP Code:</label>
+                        <input class="form-control" type="text" name="code" id="code" placeholder="Enter otp">
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-outline-info" onClick="submitCode()">Log In</button>
+                    </div>
                 </div>
             </div>
+        </div>
+     
+        <div class="homepage container">
+                <div class="col-md-5 col-12" style="margin: auto;">
 
-            
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input class="form-control" name="username" id="username" type="text" placeholder="Enter username">    
-            </div>
+                    <div class="card" style="margin: 20px auto; width: 80;">
+                        <img src="img/tambola.jpg" style="height: 300px;" class="card-img-top" alt="...">
+                        <div class="card-body">
+                          <h5 class="card-title">Bingo</h5>
+                          <p class="card-text">The game of numbers that does not require any mathematical computations – just quick fingers – and if not quick then we have a fix for that too!!</p>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                          <li class="list-group-item">Game will commence everyday at 10PM.</li>
+                        </ul>
+                        <div class="card-body">
+                            <p class="card-text">Charges are Rs. 50</p>
+                            <button class="payBtn btn btn-outline-dark">Click to Pay </button>
+                        </div>
+                      </div>    
+                </div>
 
-            <div class="form-group">
-                <label for="phone">Mobile number</label>
-                <input class="form-control" type="text" name="phone" id="phone" placeholder="Enter number with country code">
-        
-            </div>
-            <div class="form-group">
-                <button class="btn btn-outline-secondary" onClick="submitPhone()">Send Code</button>
-            </div>
-            
+        </div>
 
-            <div class="form-group">
-                <label for="code">OTP Code:</label>
-                <input class="form-control" type="text" name="code" id="code" placeholder="Enter otp">
-            </div>
-            
-            
-            <div class="form-group">
-                <button class="btn btn-outline-info" onClick="submitCode()">Log In</button>
+        <div class="game-ended jumbotron jumbotron-fluid">
+            <div class="container">
+                <h1 class="display-4">OOP's!!!</h1>
+                <p class="lead">Today's game has ended. Come back tommorow.</p>
             </div>
         </div>
 
-        <div class="homepage">
-            
+        <div class="wait">Wait time not started</div>
+           
+        <div class="play">
+            <div class="nextnumber half"></div>
 
-            <p>Welcome to bingo</p>
-            <p>Game will commence everyday at 10PM.</p>
-            <button class="payBtn">Click to Pay </button>
-            <p>Charges are Rs. 50</p>
-
+            <div class="half tick">
+                <table class="ticket">
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             
+            <button class="claim full-house">Full House</button>
+            <button class="claim top-row">Top Row</button>
+            <button class="claim middle-row">Middle Row</button>
+            <button class="claim bottom-row">Bottom Row</button>
+            <button class="claim first-five">First Five</button>
+        
+            <h1 class="timer"></h1>
+        
+            <p>Disclosed Number</p>
+            <div class="shownNumber"></div>
+        
+            <button onclick="setStorage()">Set storage</button>
+            <button onclick="getStorage()">get storage</button>
         </div>
  
-
-        <div class="game">
-            <div class="game-ended jumbotron jumbotron-fluid">
-                <div class="container">
-                    <h1 class="display-4">OOP's!!!</h1>
-                    <p class="lead">Today's game has ended. Come back tommorow.</p>
-                </div>
-            </div>
-            <div class="wait">Wait time not started</div>
-            <div class="play">
-                <div class="nextnumber half"></div>
-    
-                <div class="half tick">
-                    <table class="ticket">
-                        <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <button class="claim full-house">Full House</button>
-                <button class="claim top-row">Top Row</button>
-                <button class="claim middle-row">Middle Row</button>
-                <button class="claim bottom-row">Bottom Row</button>
-                <button class="claim first-five">First Five</button>
-            
-                <h1 class="timer"></h1>
-            
-                <p>Disclosed Number</p>
-                <div class="shownNumber"></div>
-            
-                <button onclick="setStorage()">Set storage</button>
-                <button onclick="getStorage()">get storage</button>
-            </div>
-        </div>
  
 
 
         <div id="recaptcha-container"></div>
     </body>
 
-    <script src="js/jquery.js"></script>
-    <script src="js/popper.js"></script>
-    <script src="js/bootstrap.js"></script>
+
     <script src="js/firebase-app.js"></script>
     <script src="js/firebase-analytics.js"></script>
     <script src="js/firebase-auth.js"></script>

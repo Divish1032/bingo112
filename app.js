@@ -21,6 +21,8 @@ var players           = 0,
 var game_time         = null;
 var game_end_time     = null;
 
+var game_players = [];
+var dibarred_user = [];
 
 mongoose
   .connect("mongodb://Divish:genius007@ds263928.mlab.com:63928/intern_test", { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex : true }).then( response => {
@@ -52,7 +54,11 @@ app.post('/end3', function(req, res) {
 });
 
 
-
+/*  var j = schedule.scheduleJob(rule, function(){
+    console.log('The answer to life, the universe, and everything!');
+    newGameTimerStart();
+}); */
+newGameTimerStart();
 
 
 io.on('connection', function(socket) {
@@ -66,29 +72,31 @@ io.on('connection', function(socket) {
    });
 
    socket.on('check-user-validity', function(user){
-      Game.find({played : false}).sort().limit(1).then(game => {
+      Game.find({played : false}).sort({game_time : 1}).limit(1).then(game => {
          console.log(game)
          current_game = game[0];
          game_time = new Date(current_game.game_time);
          game_end_time = new Date(current_game.game_end_time);
          socket.emit('game-timing', game_time.toLocaleString(), game_end_time.toLocaleString());
-
-         ActiveUsers.findOne({user_id : user.uid}, (err, result) => {
-            if(!result){
-               DisbarredUsers.findOne({user_id : user.uid, game_id : current_game._id}, (err, red) => {
-                  if(red){
-                     socket.emit("disbarred-user");
-                  }
-                  else{
-                     ActiveUsers.create({user_id : user.uid});
-                     socket.emit("user-validated");
-                  }
-               })
-            }
-            else{
+         var flag = 0;
+         game_players.forEach(x => {
+            if(x == user.uid){
                socket.emit("invalid-user");
+               flag = 1;
             }
-         })
+         });
+         if(flag == 0){
+            dibarred_user.forEach(x => {
+               if(x == user.uid){
+                  socket.emit("disbarred-user");
+                  flag = 1;
+               }
+            });
+            if(flag == 0){
+               game_players.push(user.uid);
+               socket.emit("user-validated");
+            }
+         }
       }).catch(err => console.log(err));
    });
 
@@ -176,21 +184,19 @@ io.on('connection', function(socket) {
          Game.findOne({_id : current_game._id}, (err, game_data) =>{
             if(game_data && !game_data.full_house){
                Game.findOneAndUpdate({_id : current_game._id}, {$set : {full_house :  current_user.uid, played : true, game_end_time : new Date()}}, (err, result) => {
-               socket.broadcast.emit('full-house-winner', current_user.username+ ' has won full house', new Date());
+               socket.broadcast.emit('full-house-winner', current_user.phoneNumber+ ' has won full house', new Date());
                socket.emit('full-house-winner', 'Congrats you won full house', new Date()); 
                })
             }
             else{
-               DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
-                  socket.emit('wrong-claim', socket.id);
-               });
+               dibarred_user.push(current_user.uid);
+               socket.emit('wrong-claim', current_user.phoneNumber);
             }
          })
       }
       else{
-         DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
-            socket.emit('wrong-claim', socket.id);
-         });
+         dibarred_user.push(current_user.uid);
+         socket.emit('wrong-claim', current_user.phoneNumber);
       }
       
    });
@@ -216,16 +222,14 @@ io.on('connection', function(socket) {
                })
             }
             else{
-               DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
-                  socket.emit('wrong-claim', socket.id);
-               });
+               dibarred_user.push(current_user.uid);
+               socket.emit('wrong-claim', current_user.phoneNumber);
             }
          });
       }
       else{
-         DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
-            socket.emit('wrong-claim', socket.id);
-         });
+         dibarred_user.push(current_user.uid);
+         socket.emit('wrong-claim', current_user.phoneNumber);
       }
    });
 
@@ -250,16 +254,14 @@ io.on('connection', function(socket) {
                });
             }
             else{
-               DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
-                  socket.emit('wrong-claim', socket.id);
-               });
+               dibarred_user.push(current_user.uid);
+               socket.emit('wrong-claim', current_user.phoneNumber);
             }
          });
       }
       else{
-         DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
-            socket.emit('wrong-claim', socket.id);
-         });
+         dibarred_user.push(current_user.uid);
+         socket.emit('wrong-claim', current_user.phoneNumber);
       }
       
    });
@@ -285,16 +287,14 @@ io.on('connection', function(socket) {
                })
             }
             else{
-               DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
-                  socket.emit('wrong-claim', socket.id);
-               });
+               dibarred_user.push(current_user.uid);
+               socket.emit('wrong-claim', current_user.phoneNumber);
             }
          })
       }
       else{
-         DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
-            socket.emit('wrong-claim', socket.id);
-         });
+         dibarred_user.push(current_user.uid);
+         socket.emit('wrong-claim', current_user.phoneNumber);
       }
 
       
@@ -324,44 +324,23 @@ io.on('connection', function(socket) {
                });
             }
             else{
-               DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
-                  socket.emit('wrong-claim', socket.id);
-               });
+               dibarred_user.push(current_user.uid);
+               socket.emit('wrong-claim', current_user.phoneNumber);
             }
          });
       }
       else{
-         DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
-            socket.emit('wrong-claim', socket.id);
-         });
+         dibarred_user.push(current_user.uid);
+         socket.emit('wrong-claim', current_user.phoneNumber);
       }
       
    });
 
-  socket.on('delete-active-user', function(){
-     if(current_user){
-      ActiveUsers.findOneAndRemove({user_id : current_user.uid}, (err, resd) => {
-         socket.emit('user-deleted');
-      });
-     }
-     else{
-      socket.emit('user-deleted');
-     }
-  })
-
-  socket.on('delete-active-user-disbarr', function(){
-      if(current_user){
-      ActiveUsers.findOneAndRemove({user_id : current_user.uid}, (err, resd) => {
-         socket.emit('user-deleted-disbarr');
-      });
-      }
-   });
 
    socket.on('logout-user', function(){
-      if(current_user){
-         ActiveUsers.findOneAndRemove({user_id : current_user.uid}, (err, resd) => {
-            socket.emit('active-user-log-out');
-         });
+      var index = game_players.indexOf(current_user.uid);
+      if (index > -1) {
+         game_players.splice(index, 1);
       }
    });
 
@@ -379,7 +358,13 @@ io.on('connection', function(socket) {
    
 
    socket.on('disconnect', function () {
-      console.log("Disconnected");      
+      console.log("Disconnected");   
+      if(current_user){
+         var index = game_players.indexOf(current_user.uid);
+         if (index > -1) {
+            game_players.splice(index, 1);
+         }
+      }
    });
 });
 
@@ -394,7 +379,9 @@ function newGameTimerStart() {
     usedSequence      = [],
     time              = 15,
     refreshIntervalId = null,
-    timerID           = null;
+    timerID           = null,
+    game_players      = [],
+    dibarred_user     = [];
  
     refreshIntervalId = setInterval(doStuff, 1000);
     timerID = setInterval(setTimer, 1000);
@@ -421,11 +408,7 @@ function newGameTimerStart() {
     rule.minute = [0, 10, 15];
 
 
-/*  var j = schedule.scheduleJob(rule, function(){
-    console.log('The answer to life, the universe, and everything!');
-    newGameTimerStart();
-}); */
-newGameTimerStart();
+
 
 
 http.listen(process.env.PORT || 3000, function() {

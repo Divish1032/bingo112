@@ -81,12 +81,8 @@ $('.claim').click(function(){
 
 socket.on('wrong-claim', function(id){
     alert('Your id will be disconnected because of wrong claim');
-    socket.emit("delete-active-user-disbarr");
-    socket.on('user-deleted-disbarr', function(){
-        socket.disconnect();
-        window.location = "/end";
-    })
-    
+    socket.disconnect();
+    window.location = "/end";
 });
 
 // Claim Controls
