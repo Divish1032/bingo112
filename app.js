@@ -40,10 +40,10 @@ app.get('/', function(req, res) {
    res.render('landing');
 });
 
-app.get('/end', (req, res) => {
+/* app.get('/end', (req, res) => {
    res.render('end')
 })
-
+ */
 
 app.post('/end3', function(req, res) {
    
