@@ -78,7 +78,7 @@ io.on('connection', function(socket) {
          current_game = game[0];
          game_time = new Date(current_game.game_time);
          game_end_time = new Date(current_game.game_end_time);
-         socket.emit('game-timing', game_time.toLocaleString(), game_end_time.toLocaleString());
+         socket.emit('game-timing', game_time, game_end_time);
          var flag = 0;
          game_players.forEach(x => {
             if(x == user.uid){
