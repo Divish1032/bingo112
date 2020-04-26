@@ -140,13 +140,8 @@ socket.on('payment-info', function(payment){
      $('.text-center').show();
      confirmationResult.confirm(code).then(function (result) {
      user = result.user;
-     console.log("check-user-validity")
-     socket.emit('check-user-validity', user);
      $('.login').hide();
      $('.logout').show();
-        console.log( firebase.auth().currentUser)
-        console.log("99999999999999999")
-        console.log(username);
      user.updateProfile({displayName: username}).then(function() {
     }).catch(function(error) { console.log(error) });    
      
