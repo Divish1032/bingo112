@@ -16,13 +16,13 @@ socket.on('game-timing', function(game_time_, game_end_time_){
 socket.on("invalid-user", function(){
     console.log("You have already logged in");
     socket.close();
-    //window.location = "/end";
+    window.location = "/end";
 })
 
 socket.on('disbarred-user', function(){
     console.log("You are a disbarred user for current game, so you cannot join it again for today");
     socket.close();
-    //window.location = "/end";
+    window.location = "/end";
 })
 
 
@@ -54,9 +54,6 @@ var firebaseConfig = {
      socket.on("user-validated", function(){
         socket.emit("assign-current-user", userDetail);
         $('.logout').show();
-        console.log(game_end_time)
-        console.log(new Date() + " Current date ===============");
-        console.log(new Date(game_end_time) + " Game date ===============");
         if(new Date() > new Date(game_end_time) || new Date().getDate() < new Date(game_time).getDate()){
             $('.main').removeClass('fadeb');
             $('.text-center').hide();
@@ -159,8 +156,7 @@ socket.on('payment-info', function(payment){
     $('.text-center').show();
     socket.emit('logout-user', user);
     firebase.auth().signOut().then(function() {
-        $('.game, .wait, .play, .homepage, .game-ended').hide();          
-        console.log("Signed Out");
+        $('.game, .wait, .play, .homepage, .game-ended').hide();
         $('.main').removeClass('fadeb');
         $('.text-center').hide();
     }).catch(function(error) { console.log(error); });   
@@ -176,29 +172,27 @@ $(".payBtn").click(function(){
  
 
 function showTimer(time){
-    // Update the count down every 1 second
-    console.log("ss")
-var x = setInterval(function() {
+    var x = setInterval(function() {
 
-    var now = new Date().getTime();
+        var now = new Date().getTime();
 
-    var distance = time - now;
-      
-    // Time calculations for days, hours, minutes and seconds
-    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-      
-    // Output the result in an element with id="demo"
-    var d = hours + "h " + minutes + "m " + seconds + "s ";
-    $("#timer").html(d)  ;
-      
-    // If the count down is over, write some text 
-    if (distance < 0) {
-      clearInterval(x);
-      $("#timer").innerHTML = "EXPIRED";
-    }
-  }, 1000);
+        var distance = time - now;
+        
+        // Time calculations for days, hours, minutes and seconds
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        
+        // Output the result in an element with id="demo"
+        var d = hours + "h " + minutes + "m " + seconds + "s ";
+        $("#timer").html(d)  ;
+        
+        // If the count down is over, write some text 
+        if (distance < 0) {
+        clearInterval(x);
+        $("#timer").innerHTML = "EXPIRED";
+        }
+    }, 1000);
 }
 
 

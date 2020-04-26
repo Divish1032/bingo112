@@ -73,7 +73,6 @@ io.on('connection', function(socket) {
    });
 
    socket.on('check-user-validity', function(user){
-      console.log(user.phoneNumber);
       Game.find({played : false}).sort({game_time : 1}).limit(1).then(game => {
          current_game = game[0];
          game_time = new Date(current_game.game_time);
@@ -82,7 +81,6 @@ io.on('connection', function(socket) {
          var flag = 0;
          game_players.forEach(x => {
             if(x == user.uid){
-               console.log("invalid-user ==============")
                socket.emit("invalid-user");
                flag = 1;
             }
