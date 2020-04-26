@@ -1,51 +1,41 @@
-function Game(gameID){
-	this.id = gameID;
-	this.fullHouse = null;
-	this.topRow = null;
-	this.middleRow = null;
-	this.bottomRow = null;
-	this.firstFive = null;
-};
+var mongoose = require("mongoose");
+var passportLocalMongoose = require("passport-local-mongoose");
 
-Game.prototype.setFullHouse = function(id){
-	this.fullHouse = id;
-};
+var gameSchema = new mongoose.Schema({
 
-Game.prototype.getFullHouse = function(){
-	return this.fullHouse;
-};
-
-Game.prototype.setTopRow = function(id){
-	this.topRow = id;
-};
-
-Game.prototype.getTopRow= function(){
-	return this.topRow;
-};
-
-Game.prototype.setMiddleRow = function(id){
-	this.middleRow = id;
-};
-
-Game.prototype.getMiddleRow= function(){
-	return this.middleRow;
-};
-
-Game.prototype.setBottomRow = function(id){
-	this.bottomRow = id;
-};
-
-Game.prototype.getBottomRow= function(){
-	return this.bottomRow;
-};
-
-Game.prototype.setFirstFive = function(id){
-	this.firstFive = id;
-};
-
-Game.prototype.getFirstFive = function(){
-	return this.firstFive;
-};
+	played : {
+		type : Boolean,
+		default : false
+	},
+	first_five : {
+		type : String,
+		default : null
+	},
+	top_row : {
+		type : String,
+		default : null
+	},
+	middle_row : {
+		type : String,
+		default : null
+	},
+	bottom_row : {
+		type : String,
+		default : null
+	},
+	full_house : {
+		type : String,
+		default : null
+	},
+	game_time : {
+		type : Date
+	},
+	game_end_time : {
+		type : Date
+	}
+})
 
 
-module.exports = Game;
+gameSchema.plugin(passportLocalMongoose);
+
+module.exports = mongoose.model("Game", gameSchema);

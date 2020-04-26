@@ -2,6 +2,16 @@ var socket         = io();
 var game_time      = null;
 var game_end_time  = null;
 var user = null;
+
+
+$(window).bind("beforeunload", function(){
+    socket.emit("delete-active-user");
+    socket.on('user-deleted', function(){
+        return true; 
+    });
+});
+
+
 socket.on('game-timing', function(game_time_, game_end_time_){
     game_time = game_time_;
     game_end_time = game_end_time_;
@@ -12,7 +22,13 @@ socket.on('game-timing', function(game_time_, game_end_time_){
 socket.on("invalid-user", function(){
     console.log("You have already logged in");
     socket.close();
-    window.location = "/end";
+    //window.location = "/end";
+})
+
+socket.on('disbarred-user', function(){
+    console.log("You are a disbarred user for current game, so you cannot join it again for today");
+    socket.close();
+    //window.location = "/end";
 })
 
 
@@ -107,6 +123,7 @@ socket.on('payment-info', function(payment){
      firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier).then(function (confirmationResult) {
      // SMS sent. Prompt user to type the code from the message, then sign the
      // user in with confirmationResult.confirm(code).
+     $('.toast').toast('show');
      window.confirmationResult = confirmationResult;
      }).catch(function (error) {  console.log(error); });
  }
@@ -138,9 +155,14 @@ socket.on('payment-info', function(payment){
  
  
  function signOut() {
-     firebase.auth().signOut().then(function() {
-     console.log("Signed Out");
-     }).catch(function(error) { console.log(error); });
+     socket.emit('logout-user');
+     socket.on('active-user-log-out', function(){
+        firebase.auth().signOut().then(function() {
+            $('.game, .wait, .play, .homepage, .game-ended').hide();          
+            console.log("Signed Out");
+        }).catch(function(error) { console.log(error); });
+     })
+     
  }
 
  
@@ -149,6 +171,9 @@ $(".payBtn").click(function(){
 });
 
  
+
+
+
 
 
  

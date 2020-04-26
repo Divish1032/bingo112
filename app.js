@@ -4,8 +4,12 @@ var express    = require('express'),
     http       = require('http').Server(app),
     io         = require('socket.io')(http),
     tambola    = require('tambola-generator'),
-    schedule   = require('node-schedule'),
-    mysqlConnection = require('./connection');
+    schedule   = require('node-schedule');
+    const mongoose = require('mongoose');
+    var Game = require("./models/game");
+    var GameClient = require("./models/game_client");
+    var ActiveUsers = require("./models/active_users");
+    var DisbarredUsers = require("./models/disbarred_users");
 
 var players           = 0,
     sequence          = [],
@@ -18,6 +22,8 @@ var game_time         = null;
 var game_end_time     = null;
 
 
+mongoose
+  .connect("mongodb://Divish:genius007@ds263928.mlab.com:63928/intern_test");
 
 /* Set the Public folder to server*/
 app.use(express.static(__dirname + "/public"));
@@ -30,55 +36,17 @@ app.get('/', function(req, res) {
    res.render('landing');
 });
 
+app.get('/end', (req, res) => {
+   res.render('end')
+})
 
-app.get('/end1', function(req, res) {
-   let sql = "CREATE TABLE game(game_id INT AUTO_INCREMENT PRIMARY KEY, played BOOLEAN DEFAULT FALSE, first_five VARCHAR(64), top_row VARCHAR(64), middle_row VARCHAR(64), bottom_row VARCHAR(64), full_house VARCHAR(64), game_time DATETIME, game_end_time DATETIME)"
-    mysqlConnection.query(sql, (err, result) => {
-      if(err){
-        res.status(202).send({ error: err })
-      }
-      else{
-        res.status(200).send(result);
-      }
-   });
-});
-
-app.get('/end2', function(req, res) {
-   let sql = "CREATE TABLE game_client(game_id INT, user_id VARCHAR(64), payment BOOLEAN DEFAULT FALSE, created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)"
-    mysqlConnection.query(sql, (err, result) => {
-      if(err){
-        res.status(202).send({ error: err })
-      }
-      else{
-        res.status(200).send(result);
-      }
-   });
-});
-
-app.get('/end3', function(req, res) {
-   let sql = "CREATE TABLE active_users( user_id VARCHAR(64), created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP)"
-    mysqlConnection.query(sql, (err, result) => {
-      if(err){
-        res.status(202).send({ error: err })
-      }
-      else{
-        res.status(200).send(result);
-      }
-   });
-});
 
 app.post('/end3', function(req, res) {
    
-   var values = [[req.body.time1, req.body.time2]]
-   let sql = "INSERT INTO game (game_time, game_end_time) VALUES ?"
-    mysqlConnection.query(sql, [values], (err, result) => {
-      if(err){
-        res.status(202).send({ error: err })
-      }
-      else{
-        res.status(200).send(result);
-      }
-   });
+   Game.create({ game_time : (req.body.time1), game_end_time : (req.body.time2) }, (err, redd) =>{
+      console.log(err);
+      res.send("dd")
+   })
 });
 
 
@@ -91,72 +59,76 @@ io.on('connection', function(socket) {
     var payment = false;
     var current_game = null;
 
-    socket.on('assign-current-user', function(user){
-       current_user = user;
-    })
+   socket.on('assign-current-user', function(user){
+      current_user = user;
+   });
 
-    socket.on('check-user-validity', function(user){
-      mysqlConnection.query("SELECT * FROM active_users WHERE user_id = ?", [user.uid], (err, result) =>{
-         if(result.length == 0){
-            console.log("d")
-            mysqlConnection.query("INSERT INTO active_users (user_id) VALUES (?)", [user.uid]);
-            socket.emit("user-validated");
-         }
-         else{
-            socket.emit("invalid-user");
-         }
-      })
-    })
+   socket.on('check-user-validity', function(user){
+      Game.find({played : false}).sort().limit(1).then(game => {
+         console.log(game)
+         current_game = game[0];
+         game_time = new Date(current_game.game_time);
+         game_end_time = new Date(current_game.game_end_time);
+         socket.emit('game-timing', game_time.toLocaleString(), game_end_time.toLocaleString());
 
-    mysqlConnection.query("SELECT * FROM game WHERE played = 0 ORDER BY game_time LIMIT 1", (err, game) => {
-        current_game = JSON.parse(JSON.stringify(game))[0];
-        game_time = new Date(current_game.game_time);
-        game_end_time = new Date(current_game.game_end_time);
-        socket.emit('game-timing', game_time.toLocaleString(), game_end_time.toLocaleString());
-    });
+         ActiveUsers.findOne({user_id : user.uid}, (err, result) => {
+            if(!result){
+               DisbarredUsers.findOne({user_id : user.uid, game_id : current_game._id}, (err, red) => {
+                  if(red){
+                     socket.emit("disbarred-user");
+                  }
+                  else{
+                     ActiveUsers.create({user_id : user.uid});
+                     socket.emit("user-validated");
+                  }
+               })
+            }
+            else{
+               socket.emit("invalid-user");
+            }
+         })
+      }).catch(err => console.log(err));
+   });
 
     // Payment check of user
-    socket.on('payment-check', function(user){
-        let sql = "SELECT * FROM game_client WHERE user_id = ? AND game_id = ?"
-        mysqlConnection.query(sql, [user.uid, current_game.game_id], (err, result) => {
-            result = JSON.parse(JSON.stringify(result))[0];
-            payment = (result && result.length != 0)? true : false;
-            socket.emit('payment-info', payment);
-        });
-     });
+   socket.on('payment-check', function(user){
+      GameClient.find({user_id : user.uid, game_id : current_game._id}, (err, result) => {
+         result = result[0];
+         payment = (result && result.length != 0)? true : false;
+         socket.emit('payment-info', payment);
+      })
+   });
 
-     // Process a payment
-     socket.on('payment-process', function(user, username){
-        if(true){
-           payment = true;
-           let sql = "INSERT INTO game_client (game_id, user_id, payment) VALUES ?"
-           var values = [[current_game.game_id, current_user.uid, 1]];
-           mysqlConnection.query(sql, [values]);
-        }
-        else{
-            payment = false;
-        }
-        socket.emit('payment-info', payment);
-     });
-
+   // Process a payment
+   socket.on('payment-process', function(user, username){
+      if(true){
+         payment = true;
+         GameClient.create({game_id : current_game._id, user_id : user.uid, payment : true});
+      }
+      else{
+         payment = false;
+      }
+      socket.emit('payment-info', payment);
+   });
 
     // Send user game data
-    socket.on('game-start', function(){
-        ticket = (tambola.getTickets(1))[0];
-        if(current_game){
+   socket.on('game-start', function(){
+      ticket = (tambola.getTickets(1))[0];
+      if(current_game){
          socket.emit('onLoadGetGameData', current_game);
          socket.emit('send-ticket', ticket);
-        }
-        else{
-            mysqlConnection.query("SELECT * FROM game WHERE game_date = ?", [getCurrentDate()], (err, game) => {
-               current_game = JSON.parse(JSON.stringify(game))[0];
+      }
+      else{
+         Game.findOne({played : false}).sort().limit(1).then(game => {
+               current_game = game;
+               console.log(current_game);
                socket.emit('onLoadGetGameData', current_game);
                socket.emit('send-ticket', ticket);
-            });
-        }
-     }); 
+         });
+      }
+   }); 
 
-    socket.emit('showAllEmittedNumbers', usedSequence);
+   socket.emit('showAllEmittedNumbers', usedSequence);
 
 
     
@@ -198,22 +170,30 @@ io.on('connection', function(socket) {
       if(!flag){
          result = true;
       }
-      mysqlConnection.query("SELECT * FROM game WHERE game_id = ?", [current_game.game_id], (err, game_data) =>{
-         console.log(game_data)
-         if(game_data && !game_data.full_house){
-            mysqlConnection.query("UPDATE  game SET full_house = ?, played = 1, game_end_time = ? WHERE game_id = ?", [current_user.uid, new Date(), current_game.game_id]);
-            socket.broadcast.emit('full-house-winner', current_user.username+ ' has won full house', new Date());
-            socket.emit('full-house-winner', 'Congrats you won full house', new Date());
-            
-         }
-         else{
+      if(result){
+         Game.findOne({_id : current_game._id}, (err, game_data) =>{
+            if(game_data && !game_data.full_house){
+               Game.findOneAndUpdate({_id : current_game._id}, {$set : {full_house :  current_user.uid, played : true, game_end_time : new Date()}}, (err, result) => {
+               socket.broadcast.emit('full-house-winner', current_user.username+ ' has won full house', new Date());
+               socket.emit('full-house-winner', 'Congrats you won full house', new Date()); 
+               })
+            }
+            else{
+               DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
+                  socket.emit('wrong-claim', socket.id);
+               });
+            }
+         })
+      }
+      else{
+         DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
             socket.emit('wrong-claim', socket.id);
-         }
-      });
+         });
+      }
+      
    });
 
    socket.on('top-row', function(emit){
-      console.log(ticket);
       var flag = false;
       for (let j = 0; j < 9; j++) {
          var value = ticket[0][j];
@@ -225,16 +205,26 @@ io.on('connection', function(socket) {
       if(!flag){
          result = true;
       }
-      mysqlConnection.query("SELECT * FROM game WHERE game_id = ?", [current_game.game_id], (err, game_data) =>{
-         if(game_data && !game_data.top_row){
-            mysqlConnection.query("UPDATE game SET top_row = ? WHERE game_id = ?", [current_user.uid, current_game.game_id]);
-            socket.broadcast.emit('top-row-winner', socket.id+ ' has won top row');
-            socket.emit('top-row-winner', 'Congrats you won top row');
-         }
-         else{
+      if(result){
+         Game.findOne({_id : current_game._id}, (err, game_data) =>{
+            if(game_data && !game_data.top_row){
+               Game.findOneAndUpdate({_id : current_game._id}, {$set : { top_row : current_user.uid }}, (err, result) => {
+               socket.broadcast.emit('top-row-winner', socket.id+ ' has won top row');
+               socket.emit('top-row-winner', 'Congrats you won top row');
+               })
+            }
+            else{
+               DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
+                  socket.emit('wrong-claim', socket.id);
+               });
+            }
+         });
+      }
+      else{
+         DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
             socket.emit('wrong-claim', socket.id);
-         }
-      });
+         });
+      }
    });
 
    socket.on('middle-row', function(emit){
@@ -249,20 +239,30 @@ io.on('connection', function(socket) {
       if(!flag){
          result = true;
       }
-      mysqlConnection.query("SELECT * FROM game WHERE game_id = ?", [current_game.game_id], (err, game_data) =>{
-         if(game_data && !game_data.middle_row){
-            mysqlConnection.query("UPDATE game SET middle_row = ? WHERE game_id = ?", [current_user.uid, current_game.game_id]);
-            socket.broadcast.emit('middle-row-winner', socket.id+ ' has won middle row');
-            socket.emit('middle-row-winner', 'Congrats you won middle row');
-         }
-         else{
+      if(result){
+         Game.findOne({_id : current_game._id}, (err, game_data) =>{
+            if(game_data && !game_data.middle_row){
+               Game.findOneAndUpdate({_id : current_game._id}, {$set : { middle_row : current_user.uid }}, (err, result) => {
+               socket.broadcast.emit('middle-row-winner', socket.id+ ' has won middle row');
+               socket.emit('middle-row-winner', 'Congrats you won middle row');
+               });
+            }
+            else{
+               DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
+                  socket.emit('wrong-claim', socket.id);
+               });
+            }
+         });
+      }
+      else{
+         DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
             socket.emit('wrong-claim', socket.id);
-         }
-      });
+         });
+      }
+      
    });
 
    socket.on('bottom-row', function(emit){
-      console.log(ticket);
       var flag = false;
       for (let j = 0; j < 9; j++) {
          var value = ticket[2][j];
@@ -274,16 +274,26 @@ io.on('connection', function(socket) {
       if(!flag){
          result = true;
       }
-      mysqlConnection.query("SELECT * FROM game WHERE game_id = ?", [current_game.game_id], (err, game_data) =>{
-         if(game_data && !game_data.bottom_row){
-            mysqlConnection.query("UPDATE game SET bottom_row = ? WHERE game_id = ?", [current_user.uid, current_game.game_id]);
-            socket.broadcast.emit('bottom-row-winner', socket.id+ ' has won bottom row');
-            socket.emit('bottom-row-winner', 'Congrats you won bottom row');
-         }
-         else{
+      if(result){
+         Game.findOne({_id : current_game._id}, (err, game_data) =>{
+            if(game_data && !game_data.bottom_row){
+               Game.findOneAndUpdate({_id : current_game._id}, {$set : { bottom_row : current_user.uid }}, (err, result) => {
+               socket.broadcast.emit('bottom-row-winner', socket.id+ ' has won bottom row');
+               socket.emit('bottom-row-winner', 'Congrats you won bottom row');
+               })
+            }
+            else{
+               DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
+                  socket.emit('wrong-claim', socket.id);
+               });
+            }
+         })
+      }
+      else{
+         DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
             socket.emit('wrong-claim', socket.id);
-         }
-      })
+         });
+      }
 
       
    });
@@ -303,32 +313,78 @@ io.on('connection', function(socket) {
       if(count == 5){
          result = true;
       }
-      mysqlConnection.query("SELECT * FROM game WHERE game_id = ?", [current_game.game_id], (err, game_data) =>{
-         console.log(game_data);
-         if(game_data && !game_data.first_five){
-            mysqlConnection.query("UPDATE game SET first_five = ? WHERE game_id = ?", [current_user.uid, current_game.game_id]);
-            socket.emit('first-five-winner', 'Congrats you won first-five');
-            socket.broadcast.emit('first-five-winner', socket.id+ ' has won first-five');
-         }
-         else{
+      if(result){
+         Game.findOne({_id : current_game._id}, (err, game_data) =>{
+            if(game_data && !game_data.first_five){
+               Game.findOneAndUpdate({_id : current_game._id}, {$set : { first_five : current_user.uid }}, (err, result) => {
+                  socket.emit('first-five-winner', 'Congrats you won first-five');
+                  socket.broadcast.emit('first-five-winner', socket.id+ ' has won first-five');
+               });
+            }
+            else{
+               DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
+                  socket.emit('wrong-claim', socket.id);
+               });
+            }
+         });
+      }
+      else{
+         DisbarredUsers.create({user_id : current_user.uid, game_id : current_game._id}, (err, resd)=>{
             socket.emit('wrong-claim', socket.id);
-         }
-      });
+         });
+      }
+      
    });
 
-  
+  socket.on('delete-active-user', function(){
+     if(current_user){
+      ActiveUsers.findOneAndRemove({user_id : current_user.uid}, (err, resd) => {
+         socket.emit('user-deleted');
+      });
+     }
+     else{
+      socket.emit('user-deleted');
+     }
+  })
+
+  socket.on('delete-active-user-disbarr', function(){
+      if(current_user){
+      ActiveUsers.findOneAndRemove({user_id : current_user.uid}, (err, resd) => {
+         socket.emit('user-deleted-disbarr');
+      });
+      }
+   });
+
+   socket.on('logout-user', function(){
+      if(current_user){
+         ActiveUsers.findOneAndRemove({user_id : current_user.uid}, (err, resd) => {
+            socket.emit('active-user-log-out');
+         });
+      }
+   });
+
+  /*  socket.on('error', function(){
+      if(current_user){
+         ActiveUsers.findOneAndRemove({user_id : current_user.uid}, (err, resd) => {
+            socket.emit('active-user-log-out');
+         });
+      }
+   })
+
+   socket.on('reconnect') */
+
+   
+   
 
    socket.on('disconnect', function () {
-      console.log("Disconnected");
-      if(current_user)
-      mysqlConnection.query("DELETE FROM active_users WHERE user_id = ?", [current_user.uid]);
+      console.log("Disconnected");      
    });
 });
 
- function getCurrentDate(){
+/*  function getCurrentDate(){
      
     return new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate() ;
-}
+} */
 
 function newGameTimerStart() {
     sequence          = tambola.getDrawSequence(),
@@ -359,15 +415,15 @@ function newGameTimerStart() {
 
  var rule = new schedule.RecurrenceRule();
     rule.dayOfWeek = [0,1,2,3,4,5,6];
-    rule.hour = [22];
-    rule.minute = [ 30, 40, 50];
+    rule.hour = [17];
+    rule.minute = [0, 10, 15];
 
 
- var j = schedule.scheduleJob(rule, function(){
+/*  var j = schedule.scheduleJob(rule, function(){
     console.log('The answer to life, the universe, and everything!');
     newGameTimerStart();
-});
-//newGameTimerStart();
+}); */
+newGameTimerStart();
 
 
 http.listen(3000, function() {

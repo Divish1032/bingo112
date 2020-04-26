@@ -3,10 +3,20 @@
     <head>
         <title>Hello world</title>
         <script src = "/socket.io/socket.io.js"></script>
+        <link rel="stylesheet" href="css/bootstrap.css">
     </head>
     <style>
         .login, .homepage, .game, .wait, .play, .logout, .game-ended{
             display: none;
+        }
+        .login h1{
+            text-align: center;
+        }
+        .login{
+            margin-top: 50px;
+        }
+        .game{
+            margin-top: 80px;
         }
          .ticket td{
             width: 50px;
@@ -47,7 +57,7 @@
         .not-clickable{
             pointer-events: none;
         }
-        p{
+        .play p{
             margin-top: 80px;
             font-size: 30px;
             text-align: center;
@@ -63,24 +73,49 @@
         }
     </style>
     <body>
-        <h1>Bingo</h1>
-
-        <button class="logout" onClick="signOut()">Sign Out</button>
+        <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" href="#">
+              Bingo
+            </a>
+            <button onClick="signOut()" class="logout btn btn-outline-danger my-2 my-sm-0" type="submit">Sign Out</button>
+        </nav>
     
-        <div class="login">
-            <p>Username</p>
-            <input type="text" name="username" id="username">
-            <br>
-            <p>Enter phone with ISD code</p>
-            <input type="text" name="phone" id="phone">
-            <br>
-            <button onClick="submitPhone()">Send Code</button>
-            <br>
-            <p>Enter you code here</p>
-            <input type="text" name="code" id="code">
-            <br>
-            <button onClick="submitCode()">Log In</button>
-            <br>
+        <div class="login container col-sm-5">
+            <h1>Login</h1>
+            <div class="toast" role="alert" style="margin:auto;" aria-live="assertive" aria-atomic="true" data-delay="1000000">
+                <div class="toast-header">
+                  <strong class="mr-auto">OTP sent...</strong>
+                  <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+            </div>
+
+            
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input class="form-control" name="username" id="username" type="text" placeholder="Enter username">    
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Mobile number</label>
+                <input class="form-control" type="text" name="phone" id="phone" placeholder="Enter number with country code">
+        
+            </div>
+            <div class="form-group">
+                <button class="btn btn-outline-secondary" onClick="submitPhone()">Send Code</button>
+            </div>
+            
+
+            <div class="form-group">
+                <label for="code">OTP Code:</label>
+                <input class="form-control" type="text" name="code" id="code" placeholder="Enter otp">
+            </div>
+            
+            
+            <div class="form-group">
+                <button class="btn btn-outline-info" onClick="submitCode()">Log In</button>
+            </div>
         </div>
 
         <div class="homepage">
@@ -96,8 +131,12 @@
  
 
         <div class="game">
-            <div class="game-ended"><p>Today's game closed. Come back tommorow.</p></div>
-
+            <div class="game-ended jumbotron jumbotron-fluid">
+                <div class="container">
+                    <h1 class="display-4">OOP's!!!</h1>
+                    <p class="lead">Today's game has ended. Come back tommorow.</p>
+                </div>
+            </div>
             <div class="wait">Wait time not started</div>
             <div class="play">
                 <div class="nextnumber half"></div>
@@ -164,6 +203,8 @@
     </body>
 
     <script src="js/jquery.js"></script>
+    <script src="js/popper.js"></script>
+    <script src="js/bootstrap.js"></script>
     <script src="js/firebase-app.js"></script>
     <script src="js/firebase-analytics.js"></script>
     <script src="js/firebase-auth.js"></script>

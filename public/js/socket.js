@@ -3,11 +3,11 @@ var ticket           = null,
 
 socket.on('onLoadGetGameData', function(game){
     console.log(game);
-    if(game.topRow)$('.top-row').attr('disabled', true);
-    if(game.middleRow)$('.middle-row').attr('disabled', true);
-    if(game.bottomRow)$('.bottom-row').attr('disabled', true);
-    if(game.fullHouse)$('.full-house').attr('disabled', true);
-    if(game.firstFive)$('.first-five').attr('disabled', true);
+    if(game.top_row)$('.top-row').attr('disabled', true);
+    if(game.middle_row)$('.middle-row').attr('disabled', true);
+    if(game.bottom_row)$('.bottom-row').attr('disabled', true);
+    if(game.full_house)$('.full-house').attr('disabled', true);
+    if(game.first_five)$('.first-five').attr('disabled', true);
 });
 
 socket.on('send-ticket', function(data){
@@ -81,8 +81,12 @@ $('.claim').click(function(){
 
 socket.on('wrong-claim', function(id){
     alert('Your id will be disconnected because of wrong claim');
-    socket.disconnect();
-    window.location = "/end";
+    socket.emit("delete-active-user-disbarr");
+    socket.on('user-deleted-disbarr', function(){
+        socket.disconnect();
+        window.location = "/end";
+    })
+    
 });
 
 // Claim Controls
