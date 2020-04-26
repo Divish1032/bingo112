@@ -55,8 +55,8 @@ var firebaseConfig = {
         socket.emit("assign-current-user", userDetail);
         $('.logout').show();
         console.log(game_end_time)
-        console.log(new Date() > new Date(game_end_time));
-        console.log(new Date().getDate() < new Date(game_time).getDate());
+        console.log(new Date() + " Current date ===============");
+        console.log(new Date(game_end_time) + " Game date ===============");
         if(new Date() > new Date(game_end_time) || new Date().getDate() < new Date(game_time).getDate()){
             $('.main').removeClass('fadeb');
             $('.text-center').hide();
@@ -136,18 +136,24 @@ socket.on('payment-info', function(payment){
      $('.text-center').show();
      confirmationResult.confirm(code).then(function (result) {
      user = result.user;
+     console.log("check-user-validity")
      socket.emit('check-user-validity', user);
      $('.login').hide();
      $('.logout').show();
      
      socket.on("user-validated", function(){
+        console.log("user-validated")
         socket.emit("assign-current-user", user);
-        if(new Date > new Date(game_end_time) || new Date().getDate() < new Date(game_time).getDate()){
+        console.log(new Date() + " Current date ===============");
+        console.log(new Date(game_end_time) + " Game date ===============");
+        if(new Date > new Date(game_end_time) || (new Date()).getDate() < (new Date(game_time)).getDate()){
+            console.log("user-validated")
             $('.main').removeClass('fadeb');
             $('.text-center').hide();
             $('.game-ended').show();
          }
          else{
+             console.log("payment-check");
             socket.emit('payment-check', user);
          }
      })

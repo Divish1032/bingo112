@@ -63,6 +63,7 @@ newGameTimerStart();
 
 io.on('connection', function(socket) {
     players++;
+    console.log(players + " connected. This one is " + socket.id);
     var current_user = null;
     var payment = false;
     var current_game = null;
@@ -81,6 +82,7 @@ io.on('connection', function(socket) {
          var flag = 0;
          game_players.forEach(x => {
             if(x == user.uid){
+               console.log("invalid-user ==============")
                socket.emit("invalid-user");
                flag = 1;
             }
