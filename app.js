@@ -23,7 +23,9 @@ var game_end_time     = null;
 
 
 mongoose
-  .connect("mongodb://Divish:genius007@ds263928.mlab.com:63928/intern_test");
+  .connect("mongodb://Divish:genius007@ds263928.mlab.com:63928/intern_test", { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex : true }).then( response => {
+     console.log("MongoDB Connected")
+  });
 
 /* Set the Public folder to server*/
 app.use(express.static(__dirname + "/public"));
