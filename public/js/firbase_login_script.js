@@ -16,13 +16,13 @@ socket.on('game-timing', function(game_time_, game_end_time_){
 socket.on("invalid-user", function(){
     console.log("You have already logged in");
     socket.close();
-    window.location = "/end";
+    //window.location = "/end";
 })
 
 socket.on('disbarred-user', function(){
     console.log("You are a disbarred user for current game, so you cannot join it again for today");
     socket.close();
-    window.location = "/end";
+    //window.location = "/end";
 })
 
 
