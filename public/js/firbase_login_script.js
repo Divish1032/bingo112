@@ -148,26 +148,7 @@ socket.on('payment-info', function(payment){
         console.log("99999999999999999")
         console.log(username);
      user.updateProfile({displayName: username}).then(function() {
-    }).catch(function(error) { console.log(error) });
-
-
-     socket.on("user-validated", function(){
-        console.log("user-validated")
-        socket.emit("assign-current-user", user);
-        console.log(new Date() + " Current date ===============");
-        console.log(new Date(game_end_time) + " Game date ===============");
-        if(new Date > new Date(game_end_time) || (new Date()).getDate() < (new Date(game_time)).getDate()){
-            console.log("user-validated")
-            $('.main').removeClass('fadeb');
-            $('.text-center').hide();
-            $('.game-ended').show();
-         }
-         else{
-            console.log("payment-check");
-            socket.emit('payment-check', user);
-         }
-     })
-     
+    }).catch(function(error) { console.log(error) });    
      
      }).catch(function (error) { 
         $('.main').removeClass('fadeb');
