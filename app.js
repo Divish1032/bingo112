@@ -53,6 +53,11 @@ app.post('/end3', function(req, res) {
    })
 });
 
+var rule = new schedule.RecurrenceRule();
+rule.dayOfWeek = [0,1,2,3,4,5,6];
+rule.hour = [22];
+rule.minute = [10, 15, 20];
+
 
  var j = schedule.scheduleJob(rule, function(){
     console.log('The answer to life, the universe, and everything!');
@@ -385,7 +390,7 @@ function newGameTimerStart() {
     game_players      = [],
     dibarred_user     = [];
  
-    refreshIntervalId = setInterval(doStuff, 1000);
+    refreshIntervalId = setInterval(doStuff, 16000);
     timerID = setInterval(setTimer, 1000);
  
     function doStuff() {
@@ -403,11 +408,6 @@ function newGameTimerStart() {
        io.sockets.emit('timer', time--);
     }
  }
-
- var rule = new schedule.RecurrenceRule();
-    rule.dayOfWeek = [0,1,2,3,4,5,6];
-    rule.hour = [22];
-    rule.minute = [0, 10, 15, 20];
 
 
 

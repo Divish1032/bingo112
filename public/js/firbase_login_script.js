@@ -55,6 +55,7 @@ var firebaseConfig = {
         socket.emit("assign-current-user", userDetail);
         $('.logout').show();
         console.log(game_end_time)
+        console.log(new Date(game_end_time))
         if(new Date() > new Date(game_end_time) || new Date().getDate() < new Date(game_time).getDate()){
             $('.main').removeClass('fadeb');
             $('.text-center').hide();
