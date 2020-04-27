@@ -34,34 +34,64 @@
         .login{
             margin-top: 50px;
         }
-        .game{
-            margin-top: 80px;
+        .ticket{
+            background: linear-gradient(0deg, rgb(34, 193, 195) 0%, rgb(22, 130, 161) 100%);
         }
          .ticket td{
-            width: 50px;
+            width: 10%;
             height: 40px;
             cursor: pointer;
             text-align: center;
             border: 1px black solid;
 
          }
-         .half{
-            width: 50%;
+         .shownNumber{
+            width: 93%;
+            margin: 0 auto;
+            border: 1px solid black;
+            border-radius: 13px;
+            padding: 8px 10px;
          }
-         .tick{
-             float: left;
+
+         @media screen and (min-width: 600px){
+             .shownNumber span{
+                 width: 5%!important;
+                 margin: 0.6%!important;
+             }
          }
+
+         @media screen and (min-width: 1100px) {
+             .shownNumber span{
+                width: 3% !important;
+                margin: 0.5% !important;
+             }
+         }
+
          .shownNumber span{
-            width: 50px;
+            width: 10%;
             display: inline-block;
             height: 30px;
-            border: 1px solid;
-            margin: 1px;
-         }
-         .shownNumber{
-            margin: 20px auto;
-            width: 70%;
+            margin: 1.2%;
             text-align: center;
+            font-size: 15px;
+            border-radius: 50%;
+            background: linear-gradient(27deg, rgb(34, 193, 195) 0%, rgba(161,22,111,0.767927153771665) 100%);
+            color: white;
+            padding-top: 2px;
+         }
+         .nextnumber{
+            width: 110px;
+            height: 110px;
+            margin: 25px auto;
+            text-align: center;
+            font-size: 55px;
+            /* border: 7px #331717a8 double; */
+            color: white;
+            background: radial-gradient(circle, rgba(238,174,202,1) 7%, rgba(213,76,22,1) 82%);;
+         }
+
+         .btn-sm{
+            margin: 6px 3px;
          }
          .clicked-cell {
             background: #593C3C5C;
@@ -77,18 +107,8 @@
             pointer-events: none;
         }
         .play p{
-            margin-top: 80px;
-            font-size: 30px;
+            font-size: 25px;
             text-align: center;
-        }
-        .nextnumber{
-            display: inline-block;
-            margin-left: 50px;
-            font-size: 50px;
-            width: 100px;
-            border: 1px solid;
-            text-align: center;
-            height: 100px;
         }
     </style>
     
@@ -190,61 +210,66 @@
             </div>
                
             <div class="play">
-                <div class="nextnumber half"></div>
-    
-                <div class="half tick">
-                    <table class="ticket">
-                        <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="nextnumber">
+                    <p></p>
                 </div>
                 
-                <button class="claim full-house">Full House</button>
-                <button class="claim top-row">Top Row</button>
-                <button class="claim middle-row">Middle Row</button>
-                <button class="claim bottom-row">Bottom Row</button>
-                <button class="claim first-five">First Five</button>
-            
-                <h1 class="timer"></h1>
-            
                 <p>Disclosed Number</p>
                 <div class="shownNumber"></div>
+
+
+                <table class="ticket" style="margin: 25px auto;width: 95%;">
+                    <tbody>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="container" style="margin: 10px auto;text-align: center;">
+                    <button class=" btn-sm btn btn-outline-secondary claim full-house">Full House</button>
+                    <button class=" btn-sm btn btn-outline-secondary claim top-row">Top Row</button>
+                    <button class="btn-sm btn btn-outline-secondary claim middle-row">Middle Row</button>
+                    <button class="btn-sm btn btn-outline-secondary claim bottom-row">Bottom Row</button>
+                    <button class="btn-sm btn btn-outline-secondary claim first-five">First Five</button>    
+                </div>
+                
+                <h1 class="timer"></h1>
             
-                <button onclick="setStorage()">Set storage</button>
-                <button onclick="getStorage()">get storage</button>
+                
+            
+                <!-- <button onclick="setStorage()">Set storage</button>
+                <button onclick="getStorage()">get storage</button> -->
             </div>
         </div>
         
