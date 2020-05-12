@@ -103,7 +103,8 @@ socket.on('payment-info', function(payment){
 
  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
      'size': 'invisible',
-     'callback': function(response) { onSignInSubmit(); }
+     'callback': function(response) { onSignInSubmit(); 
+    console.log(response)}
  });
  
 
@@ -114,23 +115,41 @@ socket.on('payment-info', function(payment){
      .catch(function(error) { console.log(error); }); 
  
  function submitPhone() {
-    $('.main').addClass('fadeb');
-    $('.text-center').show();
-     phoneNumber = $('#phone').val();
-     username    = $('#username').val();
-     firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier).then(function (confirmationResult) {
-     // SMS sent. Prompt user to type the code from the message, then sign the
-     // user in with confirmationResult.confirm(code).
-     $('.main').removeClass('fadeb');
-     $('.text-center').hide();
-     $('.toast').toast('show');
-     window.confirmationResult = confirmationResult;
-     }).catch(function (error) {  
+    phoneNumber = "+91" + $('#phone').val();
+    username    = $('#username').val();
+    if(phoneNumber.length != 13){
+        $('.toast-message').text("Invalid Phone Number")
+        $('.toast').toast('show');
+    }
+    else if(username == ""){
+        $('.toast-message').text("Username cannot be empty")
+        $('.toast').toast('show');
+    }
+    else{
+        $('.main').addClass('fadeb');
+        $('.text-center').show();
+         
+        firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier).then(function (confirmationResult) {
+
+        $('.main').removeClass('fadeb');
+        $('.text-center, .login-dialog').hide();
+        $('.toast-message').text("OTP Sent...")
+        $('.toast').toast('show');
+        $('#otpModal').modal('show');
+        window.confirmationResult = confirmationResult;
+        }).catch(function (error) {  
         $('.main').removeClass('fadeb');
         $('.text-center').hide(); 
-        console.log(error); 
-    });
+        $('.toast-message').text(error.message);
+        $('.toast').toast('show');
+        });
+    }
+    
  }
+
+ $('#otpModal').on('hidden.bs.modal', function (e) {
+    $('.login-dialog').show();
+  })
  
  
  function submitCode() {
@@ -141,13 +160,18 @@ socket.on('payment-info', function(payment){
      user = result.user;
      $('.login').hide();
      $('.logout').show();
+     $('#otpModal').modal('hide');
+     $('.toast-message').text("Logged In Successfully");
+     $('.toast').toast('show');
      user.updateProfile({displayName: username}).then(function() {
     }).catch(function(error) { console.log(error) });    
      
      }).catch(function (error) { 
         $('.main').removeClass('fadeb');
         $('.text-center').hide(); 
-        console.log(error); 
+        $('#otpModal').modal('hide');
+        $('.toast-message').text(error.message);
+        $('.toast').toast('show');
     });   
      //socket.emit('payment-check', user, game_time);
  }

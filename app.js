@@ -40,10 +40,10 @@ app.get('/', function(req, res) {
    res.render('landing');
 });
 
-/* app.get('/end', (req, res) => {
+app.get('/end', (req, res) => {
    res.render('end')
 })
- */
+
 
 app.post('/end3', function(req, res) {
    
@@ -384,18 +384,18 @@ function newGameTimerStart() {
     sequence          = tambola.getDrawSequence(),
     i                 = 0,
     usedSequence      = [],
-    time              = 15,
+    time              = 10,
     refreshIntervalId = null,
     timerID           = null,
     game_players      = [],
     dibarred_user     = [];
  
-    refreshIntervalId = setInterval(doStuff, 1000);
+    refreshIntervalId = setInterval(doStuff, 11000);
     timerID = setInterval(setTimer, 1000);
  
     function doStuff() {
        usedSequence.push(sequence[i]);
-       time = 15;
+       time = 10;
        io.sockets.emit('nextNumber', 'Your next number is '+ sequence[i], sequence[i]);
        i++;
        if(i==90){

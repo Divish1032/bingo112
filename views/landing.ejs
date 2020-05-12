@@ -13,6 +13,7 @@
         <script src="js/popper.js"></script>
         <link rel="stylesheet" href="css/bootstrap.css">
         <script src="js/bootstrap.js"></script>
+        <link rel="stylesheet" href="css/style.css">
     
     </head>
     <style>
@@ -115,8 +116,31 @@
     <body>
 
         <div class="text-center">
-            <div class="spinner-border" role="status">
+            <div class="spinner-border" style="color: #03e9f4;" role="status">
               <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="otpModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="login-box otp">
+                    <h2>Verify OTP</h2>
+                    <div class="user-box">
+                    <input type="text"  name="code" id="code" required />
+                    <label>OTP</label>
+                    </div>
+            
+                    <button onClick="submitCode()"><span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        Verify OTP</button>
+
+                    <button type="button" data-dismiss="modal">Close</button>
+                </div>
+            </div>
             </div>
         </div>
 
@@ -138,38 +162,33 @@
           </nav>
         
         <div class="main">
-            <div class="login container">
-                <div class="row">
-                    <div class=" col-md-5 col-12" style="margin: auto;">
-                        <h1>Login</h1>
-                        <div class="toast" role="alert" style="margin:auto;" aria-live="assertive" aria-atomic="true" data-delay="1000000">
-                            <div class="toast-header">
-                                <strong class="mr-auto">OTP sent...</strong>
-                                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <label for="username">Username</label>
-                        <input class="form-control" name="username" id="username" type="text" placeholder="Enter username">    
-                        
-                        <div class="form-group">
-                            <label for="phone">Mobile number</label>
-                            <input class="form-control" type="text" name="phone" id="phone" placeholder="Enter number with country code">
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-outline-secondary" onClick="submitPhone()">Send Code</button>
-                        </div>
-                        <div class="form-group">
-                            <label for="code">OTP Code:</label>
-                            <input class="form-control" type="text" name="code" id="code" placeholder="Enter otp">
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-outline-info" onClick="submitCode()">Log In</button>
-                        </div>
-                    </div>
+            <div class="toast" role="alert" style="margin:auto;position: relative;z-index: 1;" aria-live="assertive" aria-atomic="true" data-delay="8000">
+                <div class="toast-header">
+                    <strong class="mr-auto toast-message"></strong>
+                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
+            </div>
+            <div class="login container">
+                <div class="login-box login-dialog">
+                    <h2>Login</h2>
+                    <div class="user-box">
+                    <input name="username" id="username" type="text" required />
+                    <label>Username</label>
+                    </div>
+                    <div class="user-box">
+                    <input type="text" name="phone" id="phone" required />
+                    <label>Mobile Number (10 digits)</label>
+                    </div>
+                    <button onClick="submitPhone()"><span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    Send OTP</button>
+                </div>
+                <div id="recaptcha-container"></div>
+                
             </div>
          
             <div class="homepage container">
@@ -214,7 +233,9 @@
                     <p></p>
                 </div>
                 
-                <p>Disclosed Number</p>
+                <p style="color: white;">Disclosed Number</p>
+                <h1 class="timer" style="color: white;"></h1>
+
                 <div class="shownNumber"></div>
 
 
@@ -264,7 +285,7 @@
                     <button class="btn-sm btn btn-outline-secondary claim first-five">First Five</button>    
                 </div>
                 
-                <h1 class="timer"></h1>
+                
             
                 
             
@@ -277,7 +298,7 @@
  
 
 
-        <div id="recaptcha-container"></div>
+        
     </body>
 
 
