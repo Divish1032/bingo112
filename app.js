@@ -59,11 +59,11 @@ rule.hour = [22];
 rule.minute = [10, 15, 20];
 
 
- var j = schedule.scheduleJob(rule, function(){
+/*  var j = schedule.scheduleJob(rule, function(){
     console.log('The answer to life, the universe, and everything!');
     newGameTimerStart();
-});
-//newGameTimerStart();
+}); */
+newGameTimerStart();
 
 
 io.on('connection', function(socket) {
@@ -390,7 +390,7 @@ function newGameTimerStart() {
     game_players      = [],
     dibarred_user     = [];
  
-    refreshIntervalId = setInterval(doStuff, 16000);
+    refreshIntervalId = setInterval(doStuff, 1000);
     timerID = setInterval(setTimer, 1000);
  
     function doStuff() {
