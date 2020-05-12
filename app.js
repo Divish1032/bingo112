@@ -8,8 +8,6 @@ var express    = require('express'),
     const mongoose = require('mongoose');
     var Game = require("./models/game");
     var GameClient = require("./models/game_client");
-    var ActiveUsers = require("./models/active_users");
-    var DisbarredUsers = require("./models/disbarred_users");
 
 var players           = 0,
     sequence          = [],
@@ -55,15 +53,15 @@ app.post('/end3', function(req, res) {
 
 var rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = [0,1,2,3,4,5,6];
-rule.hour = [22];
-rule.minute = [10, 15, 20];
+rule.hour = [new schedule.Range(0,23)];
+rule.minute = [10];
 
 
-/*  var j = schedule.scheduleJob(rule, function(){
+ var j = schedule.scheduleJob(rule, function(){
     console.log('The answer to life, the universe, and everything!');
     newGameTimerStart();
-}); */
-newGameTimerStart();
+});
+//newGameTimerStart();
 
 
 io.on('connection', function(socket) {
