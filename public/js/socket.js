@@ -46,6 +46,7 @@ function showEmittedNumbers(data){
     data.forEach(x => {
         $('.shownNumber').append("<span>"+x+"</span>")
     });
+    $('.timer').text(data[data.length - 1]);
 }
 
 socket.on('timer', function(data){
