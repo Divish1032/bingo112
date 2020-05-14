@@ -202,15 +202,10 @@ body {
   opacity: 0.3;
 }
 .login,
-.homepage,
-.wait,
-.play,
-.logout,
-.game-ended,
-.text-center {
+.homepage {
   display: none;
 }
-.text-center {
+.loader {
   position: fixed;
   z-index: 1;
   left: 50%;

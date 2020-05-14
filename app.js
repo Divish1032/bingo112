@@ -35,7 +35,7 @@ app.use(bodyParser.json());
 
 
 app.get('/', function(req, res) {
-   res.render('landing');
+   res.render('login');
 });
 
 app.get('/test-landing', function(req, res) {
@@ -45,6 +45,11 @@ app.get('/test-landing', function(req, res) {
 app.get('/end', (req, res) => {
    res.render('end')
 });
+
+app.get('/mygame-list', (req, res) => {
+   console.log(req.body);
+   res.render('gamelist');
+})
 
 
 
