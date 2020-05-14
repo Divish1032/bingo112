@@ -34,11 +34,8 @@ app.set("view engine","ejs");
 app.use(bodyParser.json());
 
 
-app.get('/', function(req, res) {
-   res.render('login');
-});
 
-app.get('/test-landing', function(req, res) {
+app.get('/', function(req, res) {
    res.render('test');
 });
 
