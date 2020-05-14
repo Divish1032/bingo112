@@ -1,306 +1,269 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Bingo</title>
-        <meta content="width=device-width, initial-scale=1.0" name="viewport">
-        <meta content="" name="keywords">
-        <meta content="" name="description">
+  <head>
+    <meta charset="utf-8" />
+    <title>Bingo</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="keywords" />
+    <meta content="" name="description" />
 
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/popper.js"></script>
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <script src="js/bootstrap.js"></script>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="text-center">
+      <div class="spinner-border" style="color: #03e9f4;" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
 
-        <script src = "/socket.io/socket.io.js"></script>
-        <script src="js/jquery.js"></script>
-        <script src="js/popper.js"></script>
-        <link rel="stylesheet" href="css/bootstrap.css">
-        <script src="js/bootstrap.js"></script>
-        <link rel="stylesheet" href="css/style.css">
-    
-    </head>
-    <style>
-        .fadeb{
-            opacity: 0.3;
-        }
-        .login, .homepage, .wait, .play, .logout, .game-ended, .text-center{
-            display: none;
-        }
-        .text-center{
-            position: fixed;
-            z-index: 1;
-            left: 50%;
-            top: 50%;
-        }
-        .login h1{
-            text-align: center;
-        }
-        .login{
-            margin-top: 50px;
-        }
-        .ticket{
-            background: linear-gradient(0deg, rgb(34, 193, 195) 0%, rgb(22, 130, 161) 100%);
-        }
-         .ticket td{
-            width: 10%;
-            height: 40px;
-            cursor: pointer;
-            text-align: center;
-            border: 1px black solid;
-
-         }
-         .shownNumber{
-            width: 93%;
-            margin: 0 auto;
-            border: 1px solid black;
-            border-radius: 13px;
-            padding: 8px 10px;
-         }
-
-         @media screen and (min-width: 600px){
-             .shownNumber span{
-                 width: 5%!important;
-                 margin: 0.6%!important;
-             }
-         }
-
-         @media screen and (min-width: 1100px) {
-             .shownNumber span{
-                width: 3% !important;
-                margin: 0.5% !important;
-             }
-         }
-
-         .shownNumber span{
-            width: 10%;
-            display: inline-block;
-            height: 30px;
-            margin: 1.2%;
-            text-align: center;
-            font-size: 15px;
-            border-radius: 50%;
-            background: linear-gradient(27deg, rgb(34, 193, 195) 0%, rgba(161,22,111,0.767927153771665) 100%);
-            color: white;
-            padding-top: 2px;
-         }
-         .nextnumber{
-            width: 110px;
-            height: 110px;
-            margin: 25px auto;
-            text-align: center;
-            font-size: 55px;
-            /* border: 7px #331717a8 double; */
-            color: white;
-            background: radial-gradient(circle, rgba(238,174,202,1) 7%, rgba(213,76,22,1) 82%);;
-         }
-
-         .btn-sm{
-            margin: 6px 3px;
-         }
-         .clicked-cell {
-            background: #593C3C5C;
-            pointer-events: none;
-            border-radius: 10px;
-        }
-        .wrong-clicked-cell {
-            background: #F91111C9;
-            pointer-events: none;
-            border-radius: 10px;
-        }
-        .not-clickable{
-            pointer-events: none;
-        }
-        .play p{
-            font-size: 25px;
-            text-align: center;
-        }
-    </style>
-    
-    <body>
-
-        <div class="text-center">
-            <div class="spinner-border" style="color: #03e9f4;" role="status">
-              <span class="sr-only">Loading...</span>
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="otpModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="login-box otp">
+            <h2>Verify OTP</h2>
+            <div class="user-box">
+              <input type="text" name="code" id="code" required />
+              <label>OTP</label>
             </div>
-        </div>
 
-        <!-- Modal -->
-        <div class="modal fade" id="otpModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="login-box otp">
-                    <h2>Verify OTP</h2>
-                    <div class="user-box">
-                    <input type="text"  name="code" id="code" required />
-                    <label>OTP</label>
-                    </div>
-            
-                    <button onClick="submitCode()"><span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        Verify OTP</button>
-
-                    <button type="button" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-            </div>
-        </div>
-
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#">Bingo</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
+            <button onClick="submitCode()">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              Verify OTP
             </button>
-          
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <button onClick="signOut()" class="logout btn btn-outline-danger my-2 my-sm-0" type="submit">Sign Out</button>
-                </li>
-               
-              </ul>
-              
-            </div>
-          </nav>
-        
-        <div class="main">
-            <div class="toast" role="alert" style="margin:auto;position: relative;z-index: 1;" aria-live="assertive" aria-atomic="true" data-delay="8000">
-                <div class="toast-header">
-                    <strong class="mr-auto toast-message"></strong>
-                    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            </div>
-            <div class="login container">
-                <div class="login-box login-dialog">
-                    <h2>Login</h2>
-                    <div class="user-box">
-                    <input name="username" id="username" type="text" required />
-                    <label>Username</label>
-                    </div>
-                    <div class="user-box">
-                    <input type="text" name="phone" id="phone" required />
-                    <label>Mobile Number (10 digits)</label>
-                    </div>
-                    <button onClick="submitPhone()"><span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    Send OTP</button>
-                </div>
-                <div id="recaptcha-container"></div>
-                
-            </div>
-         
-            <div class="homepage container">
-                    <div class="col-md-5 col-12" style="margin: auto;">
-    
-                        <div class="card" style="margin: 20px auto; width: 80;">
-                            <img src="img/tambola.jpg" style="height: 300px;" class="card-img-top" alt="...">
-                            <div class="card-body">
-                              <h5 class="card-title">Bingo</h5>
-                              <p class="card-text">The game of numbers that does not require any mathematical computations – just quick fingers – and if not quick then we have a fix for that too!!</p>
-                            </div>
-                            <ul class="list-group list-group-flush">
-                              <li class="list-group-item">Game will commence everyday at 10PM.</li>
-                            </ul>
-                            <div class="card-body">
-                                <p class="card-text">Charges are Rs. 50</p>
-                                <button class="payBtn btn btn-outline-dark">Click to Pay </button>
-                            </div>
-                          </div>    
-                    </div>
-    
-            </div>
-    
-            <div class="game-ended jumbotron jumbotron-fluid">
-                <div class="container">
-                    <h1 class="display-4">OOP's!!!</h1>
-                    <p class="lead">Today's game has ended. Come back tommorow.</p>
-                </div>
-            </div>
-    
-            <div class="wait jumbotron jumbotron-fluid">
-                <div class="container">
-                  <h1 class="display-4">Waiting!!!</h1>
-                  <p class="lead">Please wait as there is still some time for the game to begin.</p>
-                  <p id="timer"></p>
-                  <p>Game will automatically start.</p>
-                </div>
-            </div>
-               
-            <div class="play">
-                <div class="nextnumber">
-                    <p></p>
-                </div>
-                
-                <p style="color: white;">Disclosed Number</p>
-                <h1 class="timer" style="color: white;"></h1>
 
-                <div class="shownNumber"></div>
-
-
-                <table class="ticket" style="margin: 25px auto;width: 95%;">
-                    <tbody>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <div class="container" style="margin: 10px auto;text-align: center;">
-                    <button class=" btn-sm btn btn-outline-secondary claim full-house">Full House</button>
-                    <button class=" btn-sm btn btn-outline-secondary claim top-row">Top Row</button>
-                    <button class="btn-sm btn btn-outline-secondary claim middle-row">Middle Row</button>
-                    <button class="btn-sm btn btn-outline-secondary claim bottom-row">Bottom Row</button>
-                    <button class="btn-sm btn btn-outline-secondary claim first-five">First Five</button>    
-                </div>
-                <!-- <button onclick="setStorage()">Set storage</button>
-                <button onclick="getStorage()">get storage</button> -->
-            </div>
+            <button type="button" data-dismiss="modal">Close</button>
+          </div>
         </div>
-        
- 
- 
+      </div>
+    </div>
 
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">Bingo</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-        
-    </body>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <button
+              onClick="signOut()"
+              class="logout btn btn-outline-danger my-2 my-sm-0"
+              type="submit"
+            >
+              Sign Out
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
 
+    <div class="main">
+      <div
+        class="toast"
+        role="alert"
+        style="margin: auto; position: relative; z-index: 1;"
+        aria-live="assertive"
+        aria-atomic="true"
+        data-delay="8000"
+      >
+        <div class="toast-header">
+          <strong class="mr-auto toast-message"></strong>
+          <button
+            type="button"
+            class="ml-2 mb-1 close"
+            data-dismiss="toast"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </div>
+      <div class="login container">
+        <div class="login-box login-dialog">
+          <h2>Login</h2>
+          <div class="user-box">
+            <input name="username" id="username" type="text" required />
+            <label>Username</label>
+          </div>
+          <div class="user-box">
+            <input type="text" name="phone" id="phone" required />
+            <label>Mobile Number (10 digits)</label>
+          </div>
+          <button onClick="submitPhone()">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            Send OTP
+          </button>
+        </div>
+        <div id="recaptcha-container"></div>
+      </div>
 
-    <script src="js/firebase-app.js"></script>
-    <script src="js/firebase-analytics.js"></script>
-    <script src="js/firebase-auth.js"></script>
-    <script src="js/firbase_login_script.js"></script>
-    <script src="js/socket.js"></script>
-    
-</html>     
+      <div class="homepage container">
+        <div class="col-md-5 col-12" style="margin: auto;">
+          <div class="card" style="margin: 20px auto; width: 80;">
+            <img
+              src="img/tambola.jpg"
+              style="height: 300px;"
+              class="card-img-top"
+              alt="..."
+            />
+            <div class="card-body">
+              <h5 class="card-title">Bingo</h5>
+              <p class="card-text">
+                The game of numbers that does not require any mathematical
+                computations – just quick fingers – and if not quick then we
+                have a fix for that too!!
+              </p>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                Game will commence everyday at 10PM.
+              </li>
+            </ul>
+            <div class="card-body">
+              <p class="card-text">Charges are Rs. 50</p>
+              <button class="payBtn btn btn-outline-dark">Click to Pay</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="game-ended jumbotron jumbotron-fluid">
+        <div class="container">
+          <h1 class="display-4">OOP's!!!</h1>
+          <p class="lead">Today's game has ended. Come back tommorow.</p>
+        </div>
+      </div>
+
+      <div class="wait jumbotron jumbotron-fluid">
+        <div class="container">
+          <h1 class="display-4">Waiting!!!</h1>
+          <p class="lead">
+            Please wait as there is still some time for the game to begin.
+          </p>
+          <p id="timer"></p>
+          <p>Game will automatically start.</p>
+        </div>
+      </div>
+
+      <div class="play">
+        <!-- <div class="nextnumber">
+          <p></p>
+        </div> -->
+        <div class="marquee">
+          <p>Disclosed Words</p>
+        </div>
+        <h1 class="timer" style="color: white;"></h1>
+
+        <!-- <div class="shownNumber"></div> -->
+
+        <table class="ticket">
+          <tbody>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="container" style="margin: 10px auto; text-align: center;">
+          <button
+            class="btn-sm btn btn-outline-secondary claim full-house"
+            id="claim-ticket"
+          >
+            Full House
+          </button>
+          <button
+            class="btn-sm btn btn-outline-secondary claim top-row"
+            id="claim-ticket"
+          >
+            Top Row
+          </button>
+          <button
+            class="btn-sm btn btn-outline-secondary claim middle-row"
+            id="claim-ticket"
+          >
+            Middle Row
+          </button>
+          <button
+            class="btn-sm btn btn-outline-secondary claim bottom-row"
+            id="claim-ticket"
+          >
+            Bottom Row
+          </button>
+          <button
+            class="btn-sm btn btn-outline-secondary claim first-five"
+            id="claim-ticket"
+          >
+            First Five
+          </button>
+        </div>
+
+        <!-- <button onclick="setStorage()">Set storage</button>
+                <button onclick="getStorage()">get storage</button> -->
+      </div>
+    </div>
+  </body>
+
+  <script src="js/firebase-app.js"></script>
+  <script src="js/firebase-analytics.js"></script>
+  <script src="js/firebase-auth.js"></script>
+  <script src="js/firbase_login_script.js"></script>
+  <script src="js/socket.js"></script>
+</html>
