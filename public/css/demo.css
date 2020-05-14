@@ -15,16 +15,16 @@
 
 body {
 	--text-color: #fff;
-	--background-color: #363dc2;
-	--background-color-2: #282faf;
-	--background-color-3: #202692;
-	--link-color: #03b9f1;
-	--link-hover-color: #fff;
+	--background-color: #ffa500;
+	--background-color-2: #ffa600bb;
+	--background-color-3: #910bec;
+	--link-color: #FFFF;
+	--link-hover-color: #282faf;
 	font-family: 'Roboto Mono', monospace;
 	font-weight: 500;
 	color: #fff;
 	color: var(--text-color);
-	background-color: #363dc2;
+	background-color: #816f4d;
 	background-color: var(--background-color);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -124,7 +124,7 @@ a:focus {
 .morph {
 	position: relative;
 	height: 100%;
-	fill: var(--background-color-2);
+	fill: #f00d82e3;
 	flex: none;
 }
 
@@ -204,9 +204,15 @@ a:focus {
 }
 
 @media screen and (min-width: 32em) {
-	.content__img{
-		width: 350px;
-	height: 350px;
+	.ml1{
+		font-size: 1.5em!important;
+		top: 320px!important;
+	}
+	.treat-button{
+		font-size: 1.2em!important;
+	}
+	.treat-wrapper{
+		top: 400px!important;
 	}
 }
 
@@ -539,7 +545,7 @@ a:focus {
 .game {
 	background: #1a0f0f96;
 	padding: 20px 0;
-	z-index: 9999;
+	z-index: 999;
 	position: relative;
 }
 

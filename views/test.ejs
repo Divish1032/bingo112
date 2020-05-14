@@ -56,9 +56,9 @@
 						<svg class="decoshape" viewBox="0 0 200 100" width="100%" height="100%" preserveAspectRatio="none">
 							<path d="M 10.45,74.41 C 39.4,110.8 72.59,67.27 95.98,68.68 122.3,70.35 131.5,101.4 154.7,99.69 177.9,98.03 200.5,79.26 198.1,47.17 195.9,15.27 174.6,-0.3279 151.8,0.9941 128.6,2.581 126,16.86 107,22.76 88.26,28.67 88.87,12.36 60.37,1.787 31.79,-8.877 -18.61,37.92 10.45,74.41 Z" />
 						</svg>
-						<span class="codrops-icon codrops-icon--prev" style="font-size: 10px;color: #03b9f1;" title="Previous Demo">Logout</span>
-						<a class="codrops-icon codrops-icon--drop" href="#" title="Log Out"><svg class="icon icon--drop"><use xlink:href="#icon-drop"></use></svg></a>
-					</div>
+						<a class="codrops-icon codrops-icon--drop" href="#" style="font-size: 14px;color: white;" title="Log Out"> <span style="position: relative;top: -5px;">Logout</span>  <svg class="icon icon--drop" style="display: inline-block;"><use xlink:href="#icon-drop"></use></svg></a>
+<!-- 						<a class="codrops-icon codrops-icon--drop" href="#" title="Log Out"></a>
+ -->					</div>
 					<h1 class="codrops-header__title">BingoWords</h1>
 				</header>
 				
@@ -66,18 +66,32 @@
 					<svg class="pater__deco" width="300" height="240" viewBox="0 0 1000 800">
 						<path d="M27.4,171.8C73,42.9,128.6,1,128.6,1s0,0,0,0c58.5,0,368.3,0.3,873.2,0.8c38.5,211,42.1,373.5,38.9,476.7c-2.5,80.3-10.6,174.9-76.7,247.8c-15.1,16.6-37.4,41.2-72.8,53.9c-92.4,33.1-173-50.8-283.9-99.4c-224.3-98.4-334.9,51.4-472.2-45.6C-6.3,535.2-14.5,290.6,27.4,171.8z"/>
 					</svg>
-					<h4 class="pater__title">My Game</h4>
+					<h4 class="pater__title">My Games</h4>
 					<p class="pater__desc">Discsover the upcoming games and participatein it.</p>
 				</a>
 				
 			</div>
 			<div class="content-wrap">
-				<div class="content content--layout content--layout-1">
-					<img class="content__img" src="img/Tambola2-01.jpg" alt="Some image" />
-					<h3 class="content__title" style="margin-left: 40px;">Bingo</h3><!-- 
-					<p class="content__author">Gregory Mourisha</p> -->
-					<p class="content__desc" style="margin-left: 15px;font-size: 25px;margin-top: 15px;">Its just not about the numbers.</p>
-					<a href="#" class="content__link" style="margin-left: 85px;">Discover</a>
+				<div class="content content--layout content--layout-1" style="top: -25px;">
+					<h1 class="ml8">
+                        <span class="letters-container">
+                          <span class="letters letters-left">Bingo</span>
+                          <span class="letters bang">!</span>
+                        </span>
+                        <span class="circle circle-white"></span>
+                        <span class="circle circle-dark"></span>
+                        <span class="circle circle-container"><span class="circle circle-dark-dashed"></span></span>
+					  </h1>
+					<h1 class="ml1">
+						<span class="text-wrapper">
+						<span class="line line1"></span>
+						<span class="letters">Play &amp; win cash prizes daily.</span>
+						<span class="line line2"></span>
+						</span>
+					</h1>	
+					<div class="treat-wrapper" style="position: absolute;top: 550px;width: 100%;text-align: center;">
+						<button class="treat-button">Play!</button>
+					  </div>
 				</div>
 			</div>
 
@@ -203,6 +217,7 @@
 		<script src="js/anime.min.js"></script>
 		<script src="js/scrollMonitor.js"></script>
 		<script src="js/demo1.js"></script>
-		<script src="js/accordian.js"></script>
+        <script src="js/accordian.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
 	</body>
 </html>
