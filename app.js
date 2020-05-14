@@ -38,9 +38,15 @@ app.get('/', function(req, res) {
    res.render('landing');
 });
 
+app.get('/test-landing', function(req, res) {
+   res.render('test');
+});
+
 app.get('/end', (req, res) => {
    res.render('end')
-})
+});
+
+
 
 
 app.post('/end3', function(req, res) {
