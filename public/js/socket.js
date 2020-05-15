@@ -133,13 +133,9 @@ $('.ticket td').click(function(){
     socket.on('statusClick', function(data){
         console.log(data)
         if(data){
-            $('.toast-message').text("Clicked accepted")
-            $('.toast').toast('show');
             $(td).addClass('clicked-cell');
         }
         else{
-            $('.toast-message').text("Wrong word clicked")
-            $('.toast').toast('show');
             $(td).addClass('wrong-clicked-cell');
         }
         td=null;
