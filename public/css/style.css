@@ -208,15 +208,10 @@ body {
   opacity: 0.3;
 }
 .login,
-.homepage,
-.wait,
-.play,
-.logout,
-.game-ended,
-.text-center {
+.homepage {
   display: none;
 }
-.text-center {
+.loader {
   position: fixed;
   z-index: 1;
   left: 50%;
@@ -227,6 +222,7 @@ body {
 }
 .login {
   margin-top: 50px;
+<<<<<<< HEAD
 }
 .ticket {
   background: #ffa500;
@@ -384,3 +380,6 @@ body {
     transform: translateX(-100%);
   }
 }
+=======
+}
+>>>>>>> 9920ea589757f45938d4c4ed73874a1d2b52e3be

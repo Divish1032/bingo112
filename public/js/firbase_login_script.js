@@ -1,32 +1,4 @@
-var socket         = io();
-var game_time      = null;
-var game_end_time  = null;
 var user = null;
-
-$('.text-center').show();
-$('.main').addClass('fadeb');
-
-
-
-socket.on('game-timing', function(game_time_, game_end_time_){
-    game_time = game_time_;
-    game_end_time = game_end_time_;
-});
-
-socket.on("invalid-user", function(){
-    console.log("You have already logged in");
-    socket.close();
-    window.location = "/end";
-})
-
-socket.on('disbarred-user', function(){
-    console.log("You are a disbarred user for current game, so you cannot join it again for today");
-    socket.close();
-    window.location = "/end";
-})
-
-
-// TODO: Replace the following with your app's Firebase project configuration
 var firebaseConfig = {
     // ...
     apiKey: "AIzaSyBMtJWyBxZ4kVlqbAAHCFuBspdxbRW0dOM",
@@ -48,57 +20,18 @@ var firebaseConfig = {
 
 
  firebase.auth().onAuthStateChanged(function(userDetail) {
-     if (userDetail) {
-     user = userDetail;
-     socket.emit('check-user-validity', user);
-     socket.on("user-validated", function(){
-        socket.emit("assign-current-user", userDetail);
-        $('.logout').show();
-        console.log(game_end_time)
-        console.log(new Date(game_end_time))
-        if(new Date() > new Date(game_end_time) || new Date().getDate() < new Date(game_time).getDate()){
-            $('.main').removeClass('fadeb');
-            $('.text-center').hide();
-            $('.game-ended').show();
-        }
-        else{
-            socket.emit('payment-check', user);
-        }
-     });
-     }
-     else{
-        $('.main').removeClass('fadeb');
-        $('.text-center').hide();
-        $('.login').show();
-        $('.logout').hide();
-     }
- });
-
-socket.on('payment-info', function(payment){
-    $('.main').removeClass('fadeb');
-    if(payment){
-        $('.homepage, .text-center').hide();
-        if(new Date() <= new Date(game_time)){
-            var eta_ms = new Date(game_time).getTime() - new Date().getTime();
-            showTimer(new Date(game_time).getTime());
-            $('.wait').show();
-            var timeout = setTimeout(function(){
-                socket.emit('game-start');
-                $('.wait').hide();
-                $('.play').show();
-            }, eta_ms);
-        }
-        else if(new Date <= new Date(game_end_time)){
-            socket.emit('game-start');
-            $('.play').show();
-        }
+    if (userDetail) {
+        $('.loader, .login').hide();
+        $('.homepage').show();
+        user = userDetail;
+        console.log(user.uid)
     }
     else{
-        $('.text-center, .login').hide();
-        $('.homepage').show();
-        console.log("Payment is not completed")
+        $('.loader, .homepage').hide();
+        $('.login').show();
     }
-})
+ });
+
 
 
  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
@@ -126,20 +59,15 @@ socket.on('payment-info', function(payment){
         $('.toast').toast('show');
     }
     else{
-        $('.main').addClass('fadeb');
-        $('.text-center').show();
-         
+        $('.loader').show();
         firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier).then(function (confirmationResult) {
-
-        $('.main').removeClass('fadeb');
-        $('.text-center, .login-dialog').hide();
+        $('.loader, .login-dialog').hide();
         $('.toast-message').text("OTP Sent...")
         $('.toast').toast('show');
         $('#otpModal').modal('show');
         window.confirmationResult = confirmationResult;
         }).catch(function (error) {  
-        $('.main').removeClass('fadeb');
-        $('.text-center').hide(); 
+        $('.loader').hide(); 
         $('.toast-message').text(error.message);
         $('.toast').toast('show');
         });
@@ -154,8 +82,8 @@ socket.on('payment-info', function(payment){
  
  function submitCode() {
      code = $('#code').val();
-     $('.main').addClass('fadeb');
-     $('.text-center').show();
+     
+     $('.loader').show();
      confirmationResult.confirm(code).then(function (result) {
      user = result.user;
      $('.login').hide();
@@ -167,63 +95,44 @@ socket.on('payment-info', function(payment){
     }).catch(function(error) { console.log(error) });    
      
      }).catch(function (error) { 
-        $('.main').removeClass('fadeb');
-        $('.text-center').hide(); 
+        
+        $('.loader').hide(); 
         $('#otpModal').modal('hide');
         $('.toast-message').text(error.message);
         $('.toast').toast('show');
     });   
-     //socket.emit('payment-check', user, game_time);
  }
  
  
  function signOut() {
-    $('.main').addClass('fadeb');
-    $('.text-center').show();
-    socket.emit('logout-user', user);
+    $('.loader').show();
     firebase.auth().signOut().then(function() {
-        $('.game, .wait, .play, .homepage, .game-ended').hide();
-        $('.main').removeClass('fadeb');
-        $('.text-center').hide();
+        $('.loader').hide();
     }).catch(function(error) { console.log(error); });   
  }
 
- 
-$(".payBtn").click(function(){
-    $('.main').addClass('fadeb');
-    $('.text-center').show();
-    socket.emit('payment-process', user, username);
-});
+function gamelist(){
+    /* $.redirect('', {'arg1': 'value1', 'arg2': 'value2'}); */
+    //$('window').redirect('/mygame-list', {'arg1': 'value1', 'arg2': 'value2'});
+    window.location.href = "/mygame-list/" + user.uid; 
 
- 
-
-function showTimer(time){
-    var x = setInterval(function() {
-
-        var now = new Date().getTime();
-
-        var distance = time - now;
-        
-        // Time calculations for days, hours, minutes and seconds
-        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-        
-        // Output the result in an element with id="demo"
-        var d = hours + "h " + minutes + "m " + seconds + "s ";
-        $("#timer").html(d)  ;
-        
-        // If the count down is over, write some text 
-        if (distance < 0) {
-        clearInterval(x);
-        $("#timer").innerHTML = "EXPIRED";
+/*     var xhr = new XMLHttpRequest();
+    var url = "/mygame-list";
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText);
+            console.log(json);
         }
-    }, 1000);
+    };
+    var data = JSON.stringify({"uid": user.uid});
+    xhr.send(data); */
 }
 
 
-
  
+
 
 
 
