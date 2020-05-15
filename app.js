@@ -33,9 +33,6 @@ var players           = 0,
     time              = null,
     refreshIntervalId = null,
     timerID           = null;
-var game_time         = null;
-var game_end_time     = null;
-
 var game_players = [];
 var dibarred_user = [];
 
@@ -112,20 +109,15 @@ app.get('/mygame-list/:uid', (req, res) => {
 app.get('/game-start/:uid/:game_id', (req, res) => {
    admin.auth().getUser(req.params.uid)
   .then(function(userRecord) {
-    // See the UserRecord reference doc for the contents of userRecord.
-    Game.findById(req.params.game_id).then( nextGame => {
-      res.render('landing', {game : nextGame, uid : req.params.uid});
-    });
-    
+      Game.find({played : false}).sort({game_time : 1}).limit(1).then(game => {
+         res.render('landing', {game : game, uid : req.params.uid});
+      });
   })
   .catch(function(error) {
     console.log('Error fetching user data:', error);
     res.render('invalid');
   });
 })
-
-
-
 
 app.post('/end3', function(req, res) {
    
@@ -135,28 +127,15 @@ app.post('/end3', function(req, res) {
    })
 });
 
-/* var rule = new schedule.RecurrenceRule();
-rule.dayOfWeek = [0,1,2,3,4,5,6];
-rule.hour = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
-rule.minute = [24,25,26,27,28];
- */
-
-/*  var j = schedule.scheduleJob(rule, function(){
-    console.log('The answer to life, the universe, and everything!');
-    newGameTimerStart();
-}); */
-newGameTimerStart();
-
 
 io.on('connection', function(socket) {
-    players++;
-    console.log(players + " connected. This one is " + socket.id);
-    var current_user = null;
-    var payment = false;
-    var current_game = null;
-    var game_end_time = null;
-    var game_time = null;
-   
+   players++;
+   console.log(players + " connected. This one is " + socket.id);
+   var current_user = null; 
+   var current_game = null;
+   var game_end_time = null;
+   var game_time = null;
+   var ticket = null;
 
    socket.on('initialize-data', function(user){
       Game.find({played : false}).sort({game_time : 1}).limit(1).then(game => {
@@ -166,6 +145,7 @@ io.on('connection', function(socket) {
          var flag = 0;
          game_players.forEach(x => {
             if(x == user.uid){
+               console.log("3333")
                socket.emit("unauthorized-usage", "User has already playing in another device/tab");
                flag = 1;
             }
@@ -173,6 +153,7 @@ io.on('connection', function(socket) {
          if(flag == 0){
             dibarred_user.forEach(x => {
                if(x == user.uid){
+                  console.log("2222")
                   socket.emit("unauthorized-usage", "User has been debbared from the current game");
                   flag = 1;
                }
@@ -180,35 +161,22 @@ io.on('connection', function(socket) {
             if(flag == 0){
                game_players.push(user.uid);
                current_user = user;
-               socket.emit("data-initialized", game_time, game_end_time);
+               socket.emit("game-initialized", game_time, game_end_time, current_game);
             }
          }
       });
    });
 
-
-
-
     // Send user game data
    socket.on('game-start', function(){
       ticket = (tambola.getTickets(1))[0];
       if(current_game){
-         socket.emit('onLoadGetGameData', current_game);
-         socket.emit('send-ticket', ticket);
+         socket.emit('loadGameData', ticket, usedSequence);
       }
       else{
-         Game.findOne({played : false}).sort().limit(1).then(game => {
-               current_game = game;
-               console.log(current_game);
-               socket.emit('onLoadGetGameData', current_game);
-               socket.emit('send-ticket', ticket);
-         });
+         socket.emit("unauthorized-usage", "An unauthorised access");
       }
-   }); 
-
-   socket.emit('showAllEmittedNumbers', usedSequence);
-
-
+   });
     
    socket.on('sendClickData', function(id, data){      
       var status = false;
@@ -234,7 +202,6 @@ io.on('connection', function(socket) {
    });
 
    socket.on('full-house', function(emit){
-
       var flag = false;
       for (let i = 0; i < 3; i++) {
          for (let j = 0; j < 9; j++) {
@@ -404,26 +371,12 @@ io.on('connection', function(socket) {
       
    });
 
-
    socket.on('logout-user', function(user){
       var index = game_players.indexOf(user.uid);
       if (index > -1) {
          game_players.splice(index, 1);
       }
    });
-
-  /*  socket.on('error', function(){
-      if(current_user){
-         ActiveUsers.findOneAndRemove({user_id : current_user.uid}, (err, resd) => {
-            socket.emit('active-user-log-out');
-         });
-      }
-   })
-
-   socket.on('reconnect') */
-
-   
-   
 
    socket.on('disconnect', function () {
       players--;
@@ -438,42 +391,45 @@ io.on('connection', function(socket) {
    });
 });
 
-/*  function getCurrentDate(){
-     
-    return new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate() ;
-} */
+/* var rule = new schedule.RecurrenceRule();
+rule.dayOfWeek = [0,1,2,3,4,5,6];
+rule.hour = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
+rule.minute = [24,25,26,27,28];
+ */
+
+/*  var j = schedule.scheduleJob(rule, function(){
+    console.log('The answer to life, the universe, and everything!');
+    newGameTimerStart();
+}); */
+newGameTimerStart();
 
 function newGameTimerStart() {
-    sequence          = tambola.getDrawSequence(),
-    i                 = 0,
-    usedSequence      = [],
-    time              = 10,
-    refreshIntervalId = null,
-    timerID           = null,
-    game_players      = [],
-    dibarred_user     = [];
- 
-    refreshIntervalId = setInterval(doStuff, 11000);
-    timerID = setInterval(setTimer, 1000);
- 
-    function doStuff() {
-       usedSequence.push(sequence[i]);
-       time = 10;
-       io.sockets.emit('nextNumber', 'Your next number is '+ sequence[i], sequence[i]);
-       i++;
-       if(i==90){
-          clearInterval(refreshIntervalId);
-          clearInterval(timerID);
-       }
-    }
- 
-    function setTimer(){
-       io.sockets.emit('timer', time--);
-    }
- }
+   sequence          = tambola.getDrawSequence(),
+   i                 = 0,
+   usedSequence      = [],/* 
+   time              = 10, */
+   refreshIntervalId = null,
+   timerID           = null,
+   game_players      = [],
+   dibarred_user     = [];
+   refreshIntervalId = setInterval(doStuff, 1000);
+   /* timerID = setInterval(setTimer, 1000); */
 
+   function doStuff() {
+      usedSequence.push(sequence[i]);
+      time = 10;
+      io.sockets.emit('nextNumber', 'Your next number is '+ sequence[i], sequence[i]);
+      i++;
+      if(i==90){
+         clearInterval(refreshIntervalId);
+         /* clearInterval(timerID); */
+      }
+   }
 
-
+/*    function setTimer(){
+      io.sockets.emit('timer', time--);
+   } */
+}
 
 
 http.listen(process.env.PORT || 3000, function() {

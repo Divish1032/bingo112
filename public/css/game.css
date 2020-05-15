@@ -9,7 +9,7 @@ html {
     background: #1d093a;
   }
   
-  .timer {
+  .nextnumber {
     color: antiquewhite;
     background-color: #141e30;
     text-align: center;
@@ -87,28 +87,14 @@ html {
     color: black;
     padding-top: 2px;
   }
-  .nextnumber {
-    width: 100px;
-    height: 85px;
-    margin: 20px auto;
-    text-align: center;
-    border-radius: 20%;
-    font-size: 55px;
-    box-shadow: black;
-    /* border: 7px #331717a8 double; */
-    color: black;
-    background: white;
-  }
   
   .clicked-cell {
-    background: #593c3c5c;
-    pointer-events: none;
-    border-radius: 10px;
+    background: #593c3c5c!important;
+    pointer-events: none!important;
   }
   .wrong-clicked-cell {
-    background: #f91111c9;
-    pointer-events: none;
-    border-radius: 10px;
+    background: #f91111c9!important;
+    pointer-events: none!important;
   }
   .not-clickable {
     pointer-events: none;

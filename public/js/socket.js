@@ -1,7 +1,13 @@
 var user = null;
 var socket = io();
+var original_ticket = null;
 var ticket           = null,
     disclosedNumbers = null;
+var game_time      = null;
+var game_end_time  = null;
+var game           = null;
+
+
 
 var firebaseConfig = {
     // ...
@@ -34,26 +40,56 @@ function initiate(user) {
 
 socket.on('unauthorized-usage', (message) => {
     console.log(message);
+    window.location = "/end";
 })
 
-socket.on('unauthorized-usage', (message) => {
-    console.log(message);
-})
 
-socket.on('onLoadGetGameData', function(game){
-    console.log(game);
+socket.on('game-initialized', (t1, t2, current_game) => {
+    game_time = t1;
+    game_end_time = t2;
+    game = current_game;
+    if(new Date() > new Date(game_end_time)){
+        $('.game-ended').show();
+    }
+    else if(new Date() < new Date(game_time)){
+        showTimer(new Date(game_time).getTime());
+        var eta_ms = new Date(game_time).getTime() - new Date().getTime();
+        var timeout = setTimeout(function(){
+            $('.wait').hide();
+            gamestart();
+        }, eta_ms);
+        $('.wait').show();
+    }
+    else if(new Date() > new Date(game_time) && new Date() < new Date(game_end_time)){
+        gamestart();
+    }
+    else{
+        console.log("Unknown error");
+    }
+});
+
+function gamestart() {
+    socket.emit('game-start');
+    $('.play').show();
+}
+
+socket.on('loadGameData', function(ticket, usedSequence){
+    setClaimButtonState();
+    createTicket(ticket);
+    showEmittedNumbers(usedSequence);
+});
+
+function setClaimButtonState(){
     if(game.top_row)$('.top-row').attr('disabled', true);
     if(game.middle_row)$('.middle-row').attr('disabled', true);
     if(game.bottom_row)$('.bottom-row').attr('disabled', true);
     if(game.full_house)$('.full-house').attr('disabled', true);
     if(game.first_five)$('.first-five').attr('disabled', true);
-});
+}
 
-socket.on('send-ticket', function(data){
-    createTicket(data);
-});
 
 function createTicket(data) {
+    original_ticket = data;
     var c = 0;
     var r = 0;
     $("td").each(function() {
@@ -73,30 +109,29 @@ function createTicket(data) {
 socket.on('nextNumber', function( data, number){
     disclosedNumbers.push(number);
     $('.nextnumber').text(number);
-    $('.shownNumber').append("<span>"+number+"</span>")
+    $('.marquee p').html($('.marquee p').html() + ", " + number);
 });
 
-socket.on('showAllEmittedNumbers', function(data){
-    showEmittedNumbers(data);
-});
 
 function showEmittedNumbers(data){
     disclosedNumbers = data;
     data.forEach(x => {
-        $('.shownNumber').append("<span>"+x+"</span>")
+        $('.marquee p').html($('.marquee p').html() + ", " + x);
     });
-    $('.timer').text(data[data.length - 1]);
+    //$('.timer').text(data[data.length - 1]);
 }
 
 socket.on('timer', function(data){
     $('.timer').text(data);
-})  
+});  
 
 
 $('.ticket td').click(function(){
     var td = this;
+    console.log("RR")
     socket.emit('sendClickData', socket.id, $(this).text());
     socket.on('statusClick', function(data){
+        console.log(data)
         if(data){
             $(td).addClass('clicked-cell');
         }
@@ -104,7 +139,7 @@ $('.ticket td').click(function(){
             $(td).addClass('wrong-clicked-cell');
         }
         td=null;
-    })
+    });
 });
 
 $('.claim').click(function(){
@@ -118,12 +153,12 @@ $('.claim').click(function(){
 
 
 // Game Control 
-
 socket.on('wrong-claim', function(id){
     alert('Your id will be disconnected because of wrong claim');
     socket.disconnect();
     window.location = "/end";
 });
+
 
 // Claim Controls
 socket.on('first-five-winner', function(message){
@@ -153,3 +188,38 @@ socket.on('full-house-winner', function(message, game_end_time_){
     socket.close();
     window.location = "/end";
 });
+
+
+function showTimer(time){
+    var x = setInterval(function() {
+        console.log(time)
+        var now = new Date().getTime();
+
+        var distance = time - now;
+        
+        // Time calculations for days, hours, minutes and seconds
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        var day = Math.floor(distance/(1000*60*60*24));
+        // Output the result in an element with id="demo"
+        var d = day + "D " + hours + "H " + minutes + "M " + seconds + "S ";
+        $("#timer").html(d);
+
+        console.log(d);
+        
+        // If the count down is over, write some text 
+        if (distance < 0) {
+        clearInterval(x);
+        $("#timer").innerHTML = "EXPIRED";
+        }
+    }, 1000);
+}
+
+socket.on('error', (error) => {
+    console.log("error")
+  });
+
+socket.on('reconnect', (attemptNumber) => {
+    console.log("reconnected" + attemptNumber);
+  });

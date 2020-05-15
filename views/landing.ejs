@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Bingo</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="manifest" href="/js/pwa.webmanifest">
     <meta content="" name="keywords" />
     <meta content="" name="description" />
 
@@ -15,6 +16,7 @@
     <link rel="stylesheet" href="/css/game.css" />
   </head>
   <body>
+
     <div class="loader">
       <div class="spinner-border" style="color: #03e9f4;" role="status">
         <span class="sr-only">Loading...</span>
@@ -63,9 +65,9 @@
         <p></p>
       </div> -->
       <div class="marquee">
-        <p>Disclosed Words</p>
+        <p>Disclosed Words : </p>
       </div>
-      <h1 class="timer" style="color: white;"></h1>
+      <h1 class="nextnumber" style="color: white;"></h1>
 
       <!-- <div class="shownNumber"></div> -->
 
@@ -148,4 +150,6 @@
   <script src="/js/firebase-app.js"></script>
   <script src="/js/firebase-auth.js"></script>
   <script src="/js/socket.js"></script>
+
+  <script src="/js/pwa.js"></script>
 </html>
