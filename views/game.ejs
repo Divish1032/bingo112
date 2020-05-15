@@ -9,9 +9,19 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script> function requestFullScreen() {
+      screen.orientation.lock('landscape-primary');
 
+      screen.lockOrientationUniversal = screen.lockOrientation || screen.mozLockOrientation || screen.msLockOrientation;
+
+      if (screen.lockOrientationUniversal("landscape-primary")) {
+        // Orientation was locked
+        console.log("true")
+      } else {
+        // Orientation lock failed
+        console.log("false")
+      }
       var el = document.body;
-    
+      
       // Supports most browsers and their versions.
       var requestMethod = el.requestFullScreen || el.webkitRequestFullScreen 
       || el.mozRequestFullScreen || el.msRequestFullScreen;
