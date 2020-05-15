@@ -7,6 +7,12 @@ body {
   padding: 0;
   font-family: "Montserrat", sans-serif;
   background: #1d093a;
+  /*
+  color scheme 
+  #1d093a purple
+  #141e30 blue
+  #ffa500 yellow/orange
+  */
 }
 
 .login-box {
@@ -223,7 +229,7 @@ body {
   margin-top: 50px;
 }
 .ticket {
-  background: orange;
+  background: #ffa500;
   border-radius: 10px;
   border: 1px solid #141e30;
   border-collapse: separate;
