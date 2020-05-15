@@ -168,10 +168,21 @@ io.on('connection', function(socket) {
    });
 
     // Send user game data
-   socket.on('game-start', function(){
-      ticket = (tambola.getTickets(1))[0];
+   socket.on('game-start', function(user){
       if(current_game){
-         socket.emit('loadGameData', ticket, usedSequence);
+         GameClient.find({user_id : user.uid, game_id : current_game._id}, (err, client) => {
+            console.log(client[0].ticket);
+            if(client[0].ticket != null){
+               ticket = client[0].ticket;
+               socket.emit('loadGameData', ticket, usedSequence);
+            }
+            else{
+               ticket = (tambola.getTickets(1))[0];
+               GameClient.findOneAndUpdate({user_id : user.uid, game_id : current_game._id}, {$set : { ticket : ticket}}, (err, result) => {
+                  socket.emit('loadGameData', ticket, usedSequence);
+               });
+            }
+         })
       }
       else{
          socket.emit("unauthorized-usage", "An unauthorised access");

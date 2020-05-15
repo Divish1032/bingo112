@@ -69,7 +69,7 @@ socket.on('game-initialized', (t1, t2, current_game) => {
 });
 
 function gamestart() {
-    socket.emit('game-start');
+    socket.emit('game-start', user);
     $('.play').show();
 }
 

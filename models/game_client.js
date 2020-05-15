@@ -12,6 +12,9 @@ var gameClientSchema = new mongoose.Schema({
             type : Boolean,
             default : false
         },
+        ticket : [[{
+            type : Number
+        }]],
         created_at : {
             type : Date,
             default : new Date()
