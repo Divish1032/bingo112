@@ -6,6 +6,7 @@ var ticket           = null,
 var game_time      = null;
 var game_end_time  = null;
 var game           = null;
+document.body.requestFullscreen();
 
 
 
