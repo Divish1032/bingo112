@@ -120,7 +120,6 @@ app.get('/game-start/:uid/:game_id', (req, res) => {
 })
 
 app.post('/end3', function(req, res) {
-   
    Game.create({ game_time : (req.body.time1), game_end_time : (req.body.time2) }, (err, redd) =>{
       console.log(err);
       res.send("dd")
@@ -171,13 +170,12 @@ io.on('connection', function(socket) {
    socket.on('game-start', function(user){
       if(current_game){
          GameClient.find({user_id : user.uid, game_id : current_game._id}, (err, client) => {
-            console.log(client[0].ticket);
-            if(client[0].ticket != null){
+            if(client[0].ticket != null && client[0].ticket.length!=0){
                ticket = client[0].ticket;
                socket.emit('loadGameData', ticket, usedSequence);
             }
             else{
-               ticket = (tambola.getTickets(1))[0];
+               ticket = tambola.getTickets(1)[0];
                GameClient.findOneAndUpdate({user_id : user.uid, game_id : current_game._id}, {$set : { ticket : ticket}}, (err, result) => {
                   socket.emit('loadGameData', ticket, usedSequence);
                });
