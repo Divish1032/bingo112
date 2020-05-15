@@ -8,8 +8,7 @@
     <meta content="" name="description" />
 
     <script src="/socket.io/socket.io.js"></script>
-    <script> 
-
+    <script> function requestFullScreen() {
 
       var el = document.body;
     
@@ -30,7 +29,9 @@
         if (wscript !== null) {
           wscript.SendKeys("{F11}");
         }
-      }   
+      }
+    }
+    
     
     </script>
     <script src="/js/jquery.js"></script>
@@ -165,6 +166,9 @@
           First Five
         </button>
       </div>
+
+      <a href="#" onClick="requestFullScreen();"> click </a>
+
 
       <!-- <button onclick="setStorage()">Set storage</button>
               <button onclick="getStorage()">get storage</button> -->
