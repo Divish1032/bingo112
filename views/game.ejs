@@ -8,32 +8,48 @@
     <meta content="" name="description" />
 
     <script src="/socket.io/socket.io.js"></script>
-    <script> function requestFullScreen() {
-
-      var el = document.body;
-      
-      // Supports most browsers and their versions.
-      var requestMethod = el.requestFullScreen || el.webkitRequestFullScreen 
-      || el.mozRequestFullScreen || el.msRequestFullScreen;
-    
-      if (requestMethod) {
-    
-        // Native full screen.
-        requestMethod.call(el);
-    
-      } else if (typeof window.ActiveXObject !== "undefined") {
-    
-        // Older IE.
-        var wscript = new ActiveXObject("WScript.Shell");
-    
-        if (wscript !== null) {
-          wscript.SendKeys("{F11}");
-        }
+    <script>
+      function fullScreenCheck() {
+        if (document.fullscreenElement) return;
+        return document.documentElement.requestFullscreen();
       }
-    }
-    
-    
-    </script>
+      
+      function updateDetails(lockButton) {
+        const buttonOrientation = getOppositeOrientation();
+        lockButton.textContent = `Lock to ${buttonOrientation}`;
+      }
+      
+      function getOppositeOrientation() {
+        const { type } = screen.orientation;
+        return type.startsWith("portrait") ? "landscape" : "portrait";
+      }
+      
+      async function rotate(lockButton) {
+        try {
+          await fullScreenCheck();
+        } catch (err) {
+          console.error(err);
+        }
+        const newOrientation = getOppositeOrientation();
+        await screen.orientation.lock(newOrientation);
+        updateDetails(lockButton);
+      }
+      
+      function show() {
+        const { type, angle } = screen.orientation;
+        console.log(`Orientation type is ${type} & angle is ${angle}.`);
+      }
+      
+      screen.orientation.addEventListener("change", () => {
+        show();
+        updateDetails(document.getElementById("button"));
+      });
+      
+      window.addEventListener("load", () => {
+        show();
+        updateDetails(document.getElementById("button"));
+      });
+      </script>
     <script src="/js/jquery.js"></script>
     <script src="/js/popper.js"></script>
     <link rel="stylesheet" href="/css/bootstrap.css" />
@@ -167,8 +183,9 @@
         </button>
       </div>
 
-      <a href="#" onClick="requestFullScreen();"> click </a>
+      
 
+      <img src="/img/exapnd.png" class="mobile-device" onclick="rotate(this)" alt="">
 
       <!-- <button onclick="setStorage()">Set storage</button>
               <button onclick="getStorage()">get storage</button> -->

@@ -190,3 +190,20 @@ html {
     left: 0;
   }
 } */
+
+.mobile-device {
+  display: none;
+  cursor: pointer;
+  width: 40px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+@media screen and (max-width: 500px){
+  .mobile-device {
+    display: block!important;
+  }
+}
