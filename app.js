@@ -50,7 +50,7 @@ app.use(bodyParser.json());
 
 
 app.get('/', function(req, res) {
-   res.render('test');
+   res.render('landing');
 });
 
 app.get('/end', (req, res) => {
@@ -110,7 +110,7 @@ app.get('/game-start/:uid/:game_id', (req, res) => {
    admin.auth().getUser(req.params.uid)
   .then(function(userRecord) {
       Game.find({played : false}).sort({game_time : 1}).limit(1).then(game => {
-         res.render('landing', {game : game, uid : req.params.uid});
+         res.render('game', {game : game, uid : req.params.uid});
       });
   })
   .catch(function(error) {

@@ -10,47 +10,40 @@ var game           = null;
 
 
 var firebaseConfig = {
-    // ...
     apiKey: "AIzaSyBMtJWyBxZ4kVlqbAAHCFuBspdxbRW0dOM",
-     authDomain: "bingo-35ce9.firebaseapp.com",
-     databaseURL: "https://bingo-35ce9.firebaseio.com",
-     projectId: "bingo-35ce9",
-     storageBucket: "bingo-35ce9.appspot.com",
-     messagingSenderId: "564607526074",
-     appId: "1:564607526074:web:8753262a2aac9036ad8e83",
-     measurementId: "G-YDYDGBBZ9L"
- 
-  };
+    authDomain: "bingo-35ce9.firebaseapp.com",
+    databaseURL: "https://bingo-35ce9.firebaseio.com",
+    projectId: "bingo-35ce9",
+    storageBucket: "bingo-35ce9.appspot.com",
+    messagingSenderId: "564607526074",
+    appId: "1:564607526074:web:8753262a2aac9036ad8e83",
+    measurementId: "G-YDYDGBBZ9L"
+};
   // Initialize Firebase
- firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 
- firebase.auth().onAuthStateChanged(function(userDetail) {
+firebase.auth().onAuthStateChanged(function(userDetail) {
     if (userDetail) {
         user = userDetail;
         initiate(user);
     }
     else{
-        $('.toast-message').text("Aunthorized Access")
-        $('.toast').toast('show');
         window.location = "/end";
     }
- });
-
-function initiate(user) {
-    socket.emit('initialize-data', user);
-}
+});
 
 socket.on('unauthorized-usage', (message) => {
-    console.log(message);
+    alert(message);
     window.location = "/end";
-})
-
+});
 
 socket.on('game-initialized', (t1, t2, current_game) => {
     game_time = t1;
     game_end_time = t2;
     game = current_game;
     if(new Date() > new Date(game_end_time)){
+        $('.toast-message').text("Todays game has ended")
+        $('.toast').toast('show');
         $('.game-ended').show();
     }
     else if(new Date() < new Date(game_time)){
@@ -60,9 +53,13 @@ socket.on('game-initialized', (t1, t2, current_game) => {
             $('.wait').hide();
             gamestart();
         }, eta_ms);
+        $('.toast-message').text("Game has not started yet.")
+        $('.toast').toast('show');
         $('.wait').show();
     }
     else if(new Date() > new Date(game_time) && new Date() < new Date(game_end_time)){
+        $('.toast-message').text("Game Started")
+        $('.toast').toast('show');
         gamestart();
     }
     else{
@@ -70,16 +67,102 @@ socket.on('game-initialized', (t1, t2, current_game) => {
     }
 });
 
-function gamestart() {
-    socket.emit('game-start', user);
-    $('.play').show();
-}
-
 socket.on('loadGameData', function(ticket, usedSequence){
     setClaimButtonState();
     createTicket(ticket);
     showEmittedNumbers(usedSequence);
 });
+
+socket.on('nextNumber', function( data, number){
+    disclosedNumbers.push(number);
+    $('.nextnumber').text(number);
+    $('.marquee p').html($('.marquee p').html() + ", " + number);
+});
+
+socket.on('timer', function(data){
+    $('.timer').text(data);
+});  
+
+// Game Control 
+socket.on('wrong-claim', function(id){
+    alert('Your id will be disconnected because of wrong claim, you wont be able to continue this game anymore');
+    socket.disconnect();
+    window.location = "/end";
+});
+
+// Claim Controls
+socket.on('first-five-winner', function(message){
+    $('.toast-message').text(message)
+    $('.toast').toast('show');
+    $('.first-five').attr('disabled', true);
+});
+
+socket.on('top-row-winner', function(message){
+    $('.toast-message').text(message)
+    $('.toast').toast('show');
+    $('.top-row').attr('disabled', true);
+});
+
+socket.on('middle-row-winner', function(message){
+    $('.toast-message').text(message)
+    $('.toast').toast('show');
+    $('.middle-row').attr('disabled', true);
+});
+
+socket.on('bottom-row-winner', function(message){
+    $('.toast-message').text(message)
+    $('.toast').toast('show');
+    $('.bottom-row').attr('disabled', true);
+});
+
+socket.on('full-house-winner', function(message, game_end_time_){
+    game_end_time = game_end_time_;
+    $('.full-house').attr('disabled', true);
+    alert(message);
+    socket.close();
+    window.location = "/end";
+});
+
+
+
+
+$('.ticket td').click(function(){
+    var td = this;
+    console.log("RR")
+    socket.emit('sendClickData', socket.id, $(this).text());
+    socket.on('statusClick', function(data){
+        console.log(data)
+        if(data){
+            $('.toast-message').text("Clicked accepted")
+            $('.toast').toast('show');
+            $(td).addClass('clicked-cell');
+        }
+        else{
+            $('.toast-message').text("Wrong word clicked")
+            $('.toast').toast('show');
+            $(td).addClass('wrong-clicked-cell');
+        }
+        td=null;
+    });
+});
+
+$('.claim').click(function(){
+    if($(this).hasClass('full-house'))emit = 'full-house';
+    if($(this).hasClass('top-row'))emit = 'top-row';
+    if($(this).hasClass('middle-row'))emit = 'middle-row';
+    if($(this).hasClass('bottom-row'))emit = 'bottom-row';
+    if($(this).hasClass('first-five'))emit = 'first-five';
+    socket.emit(emit, emit);
+});
+
+function showEmittedNumbers(data){
+    disclosedNumbers = data;
+    data.forEach(x => {
+        $('.marquee p').html($('.marquee p').html() + ", " + x);
+    });
+    $('.nextnumber').text(data[data.length - 1]);
+    //$('.timer').text(data[data.length - 1]);
+}
 
 function setClaimButtonState(){
     if(game.top_row)$('.top-row').attr('disabled', true);
@@ -88,7 +171,6 @@ function setClaimButtonState(){
     if(game.full_house)$('.full-house').attr('disabled', true);
     if(game.first_five)$('.first-five').attr('disabled', true);
 }
-
 
 function createTicket(data) {
     original_ticket = data;
@@ -108,89 +190,14 @@ function createTicket(data) {
     });
 }
 
-socket.on('nextNumber', function( data, number){
-    disclosedNumbers.push(number);
-    $('.nextnumber').text(number);
-    $('.marquee p').html($('.marquee p').html() + ", " + number);
-});
-
-
-function showEmittedNumbers(data){
-    disclosedNumbers = data;
-    data.forEach(x => {
-        $('.marquee p').html($('.marquee p').html() + ", " + x);
-    });
-    //$('.timer').text(data[data.length - 1]);
+function gamestart() {
+    socket.emit('game-start', user);
+    $('.play').show();
 }
 
-socket.on('timer', function(data){
-    $('.timer').text(data);
-});  
-
-
-$('.ticket td').click(function(){
-    var td = this;
-    console.log("RR")
-    socket.emit('sendClickData', socket.id, $(this).text());
-    socket.on('statusClick', function(data){
-        console.log(data)
-        if(data){
-            $(td).addClass('clicked-cell');
-        }
-        else{
-            $(td).addClass('wrong-clicked-cell');
-        }
-        td=null;
-    });
-});
-
-$('.claim').click(function(){
-    if($(this).hasClass('full-house'))emit = 'full-house';
-    if($(this).hasClass('top-row'))emit = 'top-row';
-    if($(this).hasClass('middle-row'))emit = 'middle-row';
-    if($(this).hasClass('bottom-row'))emit = 'bottom-row';
-    if($(this).hasClass('first-five'))emit = 'first-five';
-    socket.emit(emit, emit);
-});
-
-
-// Game Control 
-socket.on('wrong-claim', function(id){
-    alert('Your id will be disconnected because of wrong claim');
-    socket.disconnect();
-    window.location = "/end";
-});
-
-
-// Claim Controls
-socket.on('first-five-winner', function(message){
-    console.log(message);
-    $('.first-five').attr('disabled', true);
-});
-
-socket.on('top-row-winner', function(message){
-    console.log(message);
-    $('.top-row').attr('disabled', true);
-});
-
-socket.on('middle-row-winner', function(message){
-    console.log(message);
-    $('.middle-row').attr('disabled', true);
-});
-
-socket.on('bottom-row-winner', function(message){
-    console.log(message);
-    $('.bottom-row').attr('disabled', true);
-});
-
-socket.on('full-house-winner', function(message, game_end_time_){
-    console.log(message);
-    game_end_time = game_end_time_;
-    $('.full-house').attr('disabled', true);
-    socket.close();
-    window.location = "/end";
-});
-
+function initiate(user) {
+    socket.emit('initialize-data', user);
+}
 
 function showTimer(time){
     var x = setInterval(function() {
@@ -217,6 +224,8 @@ function showTimer(time){
         }
     }, 1000);
 }
+
+
 
 socket.on('error', (error) => {
     console.log("error")
