@@ -30,7 +30,9 @@ var firebaseConfig = {
         initiate(user);
     }
     else{
-        console.log("no")
+        $('.toast-message').text("Aunthorized Access")
+        $('.toast').toast('show');
+        window.location = "/end";
     }
  });
 
