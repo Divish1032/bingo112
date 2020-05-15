@@ -24,6 +24,7 @@ var firebaseConfig = {
         $('.loader, .login').hide();
         $('.homepage').show();
         user = userDetail;
+        console.log(user.uid)
     }
     else{
         $('.loader, .homepage').hide();
@@ -113,11 +114,20 @@ var firebaseConfig = {
 function gamelist(){
     /* $.redirect('', {'arg1': 'value1', 'arg2': 'value2'}); */
     //$('window').redirect('/mygame-list', {'arg1': 'value1', 'arg2': 'value2'});
-     window.location.href = "/mygame-list"; 
+    window.location.href = "/mygame-list/" + user.uid; 
 
- /*    let xhr = new XMLHttpRequest();
-    xhr.open('GET', "/mygame-list", true);
-    xhr.send() */
+/*     var xhr = new XMLHttpRequest();
+    var url = "/mygame-list";
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText);
+            console.log(json);
+        }
+    };
+    var data = JSON.stringify({"uid": user.uid});
+    xhr.send(data); */
 }
 
 

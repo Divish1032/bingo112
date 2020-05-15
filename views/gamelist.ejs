@@ -1,1 +1,15 @@
 <p>Game list</p>
+
+<div>
+    <p>Next game</p>
+    <% if(!nextGame.payment){ %>
+        <button>Pay</button>
+    <% } %>
+
+    <a href="/game-start/<%= uid %>/<%= nextGame.data._id %>" >Play game</a>
+
+</div>
+
+
+
+

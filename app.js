@@ -8,6 +8,23 @@ var express    = require('express'),
     const mongoose = require('mongoose');
     var Game = require("./models/game");
     var GameClient = require("./models/game_client");
+    var admin = require('firebase-admin');
+    admin.initializeApp(
+       {
+         credential: admin.credential.cert({
+         type: "service_account",
+         project_id: "bingo-35ce9",
+         private_key_id: "aca67a037a79caaac437dcfacbe5dc5f96c624d9",
+         private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDM+UG1ajpUjPLY\nEkU/bhDHX/tRsnSqRm7VR/a2i9F1R9y+YW97h4h+aukzTW1BmabSydwGqifigNxC\npt3nqkaX9BQcs8BQZ/+JfVBEIy2R2hLnhpvsZfE5c1HoDa70miDhD6ySxZ5tuuGv\nlKiMDsl3Au9kQKuqxn+tvFIjSj458jARZ9nrPuN+ZoAmsXkD5ZPFPACfih/ZUwpv\nBYrFssIFCnwawYoqKsZa04yuz8GUvy6BI+kVw4J8Fw4zcQRFk4j3qaHaNietBuBG\nFRTW870E9nrbLifdduv5Yv49HCO/+y/12ytC8HlqAp4+Hheduv8OU6LuNrPDPN6S\nnhnSYOSlAgMBAAECggEAB0RZB4kGG2RJ4c44BUkuMBtfiiR1DWpk2IvuG8e2O925\n3kgPD0adWLoKnYaDtp0vdG6yrcvPkTC3XmeTG3kGerGtGt1mlpMxVJsMQvYqUe70\n15+GnKl6lWpYv4zopIRoYQJQwH1gIgzLnpF7LkgB7YW9ngTK8UmLUkoIcXba4Ov8\nZmboQfhGTjv9ILbeto4l4gTSINE0S1Exnya0Uh5lIY+dYHeJEo/SsOh4ZoWBRYok\njrMI6iz5w5070mW1Nvzq0LbANkfltlMMBB3Xe2afrVd4SuMyHvNdHd0aGIZi2/58\ni5sGckqId+hFn/1JbeoF3JVOFNmjQGM3ed2CKjs4YQKBgQD73N0R8u0/55qKQ44b\noK6W6w4t7J3XJhIkudq2nHIr/ZxYCA1QO1FfyQEkhFy8P42SaEuEso1dMGlNu8Ah\naZsXCh3B+W9HdWdEr68Q2Q7HjsBeEzoCcquyuyBLOZEfSUoe4vajf6VqzyooSySO\nySOywlCMH2FdX0ua1oXKqyZTEQKBgQDQVzbq6QAhr/7EnXNOr9v8qypWElsqnnx0\noFzaWcMew/lNqA+PXaU0Bvqkp59j+Kc2+HFOttlhxhZfmypKZ9PjLVUfuRm7HiTG\ntFPhXnRK6LnQ8FXfqHDCchNTsgNKRmU0UiCghKiuJmpVaun0Axd14K4DWCWXZJtl\nOFKzVZJQVQKBgQDrRLZRRO5wKoXGsDI4BpHwMiQtrAEJb+u02NPAj0VraF06MlNV\nZgOuiRIDLY1+35L8d2ZLz4qTyVwkm8RusbqI/A8uGjXjt3y+wam0AD55FRUHC8i9\nbqaKr5gMDPtOEWUmkva3Zc58hoYn24GLy8IIAtHBArMtyI3UVp3l4phLMQKBgQCG\nctIA9M5d7wq1bXp9HCYWP4t5sizdKxvb06U4T9cIYqXfBIbOGTvEgIB9g6LrzAp1\nAg11I7DTVRcZKbQ4AhsOLzIQ384IICLRjIvZE7BuqxNHD+ILDNN/2Eg6qdVPuHAV\nPK7Lh/CnOilC6FUEYH5iVtVVWSwhMA7MWnWcP6vFZQKBgGeVWA8KxFIyEPuyhBuF\n3Ffp6modzBRHYg6F+CUWSonjWnBuZyli6WfB5y2KM1ycreOnUmg7VEfmA5BzZ+T3\nlKXoUhONUsYpEvRMVfnvXSBS96RreVqHo3DE1+Tp6pLtq11ZBVCb9uqB0OhSg69s\nioLUQeKqZH16cepfvaHEeI1b\n-----END PRIVATE KEY-----\n",
+         client_email: "firebase-adminsdk-guq4p@bingo-35ce9.iam.gserviceaccount.com",
+         client_id: "111255438836065627129",
+         auth_uri: "https://accounts.google.com/o/oauth2/auth",
+         token_uri: "https://oauth2.googleapis.com/token",
+         auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+         client_x509_cert_url: "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-guq4p%40bingo-35ce9.iam.gserviceaccount.com"
+  })
+});
+
 
 var players           = 0,
     sequence          = [],
@@ -44,8 +61,67 @@ app.get('/end', (req, res) => {
 });
 
 app.get('/mygame-list', (req, res) => {
-   console.log(req.body);
-   res.render('gamelist');
+   res.render('invalid');
+})
+
+app.get('/mygame-list/:uid', (req, res) => {
+   var nextGame = [];
+   var upcommingGames = [];
+   var pastUserGames = [];
+   var flag = 0;
+   admin.auth().getUser(req.params.uid)
+  .then(function(userRecord) {
+    // See the UserRecord reference doc for the contents of userRecord.
+    Game.find({played : true}).then( pastgames => {
+      Game.find({played : false}).sort({game_time : 1}).then(futuregames => {
+         GameClient.find({user_id : req.params.uid}, (err, game_client) => {
+            game_client.forEach(x => {
+               if(x.game_id == futuregames[0]._id){
+                  nextGame = { payment : true, data : futuregames[0] };
+                  flag = 1;
+               }
+            });
+            if(flag == 0){
+               nextGame = { payment : false, data : futuregames[0] };
+            }
+   
+            for (let i = 1; i < futuregames.length; i++) {
+               upcommingGames.push(futuregames[i]);
+            }
+
+            game_client.forEach(x => {
+               pastgames.forEach(y => {
+                  if(x.game_id == y._id){
+                     pastUserGames.push(y);
+                  }
+               });
+            });
+            res.render('gamelist', { nextGame, upcommingGames, pastUserGames, uid : req.params.uid });
+         })
+       });
+    });
+    
+  })
+  .catch(function(error) {
+    console.log('Error fetching user data:', error);
+    res.render('invalid');
+  });
+
+})
+
+app.get('/game-start/:uid/:game_id', (req, res) => {
+   admin.auth().getUser(req.params.uid)
+  .then(function(userRecord) {
+    // See the UserRecord reference doc for the contents of userRecord.
+    Game.findById(req.params.game_id).then( nextGame => {
+      res.render('landing', {game : nextGame, uid : req.params.uid});
+    });
+    
+  })
+  .catch(function(error) {
+    console.log('Error fetching user data:', error);
+    res.render('invalid');
+  });
 })
 
 
@@ -78,59 +154,40 @@ io.on('connection', function(socket) {
     var current_user = null;
     var payment = false;
     var current_game = null;
+    var game_end_time = null;
+    var game_time = null;
+   
 
-   socket.on('assign-current-user', function(user){
-      current_user = user;
-   });
-
-   socket.on('check-user-validity', function(user){
+   socket.on('initialize-data', function(user){
       Game.find({played : false}).sort({game_time : 1}).limit(1).then(game => {
          current_game = game[0];
          game_time = new Date(current_game.game_time);
          game_end_time = new Date(current_game.game_end_time);
-         socket.emit('game-timing', game_time, game_end_time);
          var flag = 0;
          game_players.forEach(x => {
             if(x == user.uid){
-               socket.emit("invalid-user");
+               socket.emit("unauthorized-usage", "User has already playing in another device/tab");
                flag = 1;
             }
          });
          if(flag == 0){
             dibarred_user.forEach(x => {
                if(x == user.uid){
-                  socket.emit("disbarred-user");
+                  socket.emit("unauthorized-usage", "User has been debbared from the current game");
                   flag = 1;
                }
             });
             if(flag == 0){
                game_players.push(user.uid);
-               socket.emit("user-validated");
+               current_user = user;
+               socket.emit("data-initialized", game_time, game_end_time);
             }
          }
-      }).catch(err => console.log(err));
+      });
    });
 
-    // Payment check of user
-   socket.on('payment-check', function(user){
-      GameClient.find({user_id : user.uid, game_id : current_game._id}, (err, result) => {
-         result = result[0];
-         payment = (result && result.length != 0)? true : false;
-         socket.emit('payment-info', payment);
-      })
-   });
 
-   // Process a payment
-   socket.on('payment-process', function(user, username){
-      if(true){
-         payment = true;
-         GameClient.create({game_id : current_game._id, user_id : user.uid, payment : true});
-      }
-      else{
-         payment = false;
-      }
-      socket.emit('payment-info', payment);
-   });
+
 
     // Send user game data
    socket.on('game-start', function(){

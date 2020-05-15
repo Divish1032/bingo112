@@ -1,0 +1,193 @@
+html {
+    height: 100%;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Montserrat", sans-serif;
+    background: #1d093a;
+  }
+  
+  .timer {
+    color: antiquewhite;
+    background-color: #141e30;
+    text-align: center;
+    border-radius: 10px;
+  
+    margin-left: 40%;
+    margin-right: 40%;
+  }
+  
+  .fadeb {
+    opacity: 0.3;
+  }
+
+  .loader {
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    top: 50%;
+  }
+
+  .ticket {
+    background: orange;
+    border-radius: 10px;
+    border: 1px solid #141e30;
+    border-collapse: separate;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    margin: 25px auto;
+    width: 90%;
+    padding: 20px;
+  }
+  .ticket td {
+    width: 10%;
+    height: 40px;
+    cursor: pointer;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    color: #141e30;
+    background-color: #ffffff;
+    margin: 20px;
+  }
+  .shownNumber {
+    width: 93%;
+    margin: 0 auto;
+    border: none;
+    background-color: orange;
+    border-radius: 13px;
+    padding: 8px 10px;
+  }
+  
+  @media screen and (min-width: 600px) {
+    .shownNumber span {
+      width: 30px !important;
+      margin: 0.6% !important;
+    }
+  }
+  
+  @media screen and (min-width: 1100px) {
+    .shownNumber span {
+      width: 3% !important;
+      margin: 0.5% !important;
+    }
+  }
+  
+  .shownNumber span {
+    width: 30px;
+    display: inline-block;
+    height: 30px;
+    margin: 1.2%;
+    text-align: center;
+    font-size: 15px;
+    border-radius: 150px;
+    background: white;
+    color: black;
+    padding-top: 2px;
+  }
+  .nextnumber {
+    width: 100px;
+    height: 85px;
+    margin: 20px auto;
+    text-align: center;
+    border-radius: 20%;
+    font-size: 55px;
+    box-shadow: black;
+    /* border: 7px #331717a8 double; */
+    color: black;
+    background: white;
+  }
+  
+  .clicked-cell {
+    background: #593c3c5c;
+    pointer-events: none;
+    border-radius: 10px;
+  }
+  .wrong-clicked-cell {
+    background: #f91111c9;
+    pointer-events: none;
+    border-radius: 10px;
+  }
+  .not-clickable {
+    pointer-events: none;
+  }
+  .play p {
+    font-size: 25px;
+    text-align: center;
+    margin: 10px;
+  }
+  
+  #claim-ticket {
+    border-radius: 20px;
+    color: #ffffff;
+    background-color: #141e30;
+    border: none;
+    margin: 6px 3px;
+    padding: 10px;
+  }
+  
+  /*Ludo king colors :#021a42
+  #fefb09 yellow
+  #21409a blue
+  */
+  
+  .marquee {
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+  
+    color: white;
+  }
+  
+  .marquee p {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    line-height: 50px;
+    text-align: center;
+    -moz-transform: translateX(100%);
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+    -moz-animation: scroll-left 1s linear infinite;
+    -webkit-animation: scroll-left 1s linear infinite;
+    animation: scroll-left 20s linear infinite;
+  }
+  
+  @-moz-keyframes scroll-left {
+    0% {
+      -moz-transform: translateX(100%);
+    }
+    100% {
+      -moz-transform: translateX(-100%);
+    }
+  }
+  
+  @-webkit-keyframes scroll-left {
+    0% {
+      -webkit-transform: translateX(100%);
+    }
+    100% {
+      -webkit-transform: translateX(-100%);
+    }
+  }
+  
+  @keyframes scroll-left {
+    0% {
+      -moz-transform: translateX(100%);
+      -webkit-transform: translateX(100%);
+      transform: translateX(100%);
+    }
+    100% {
+      -moz-transform: translateX(-100%);
+      -webkit-transform: translateX(-100%);
+      transform: translateX(-100%);
+    }
+  }
+  
+
+.loader, .play, .wait, .game-ended{
+    display: none;
+}

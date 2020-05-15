@@ -1,5 +1,44 @@
+var user = null;
+var socket = io();
 var ticket           = null,
     disclosedNumbers = null;
+
+var firebaseConfig = {
+    // ...
+    apiKey: "AIzaSyBMtJWyBxZ4kVlqbAAHCFuBspdxbRW0dOM",
+     authDomain: "bingo-35ce9.firebaseapp.com",
+     databaseURL: "https://bingo-35ce9.firebaseio.com",
+     projectId: "bingo-35ce9",
+     storageBucket: "bingo-35ce9.appspot.com",
+     messagingSenderId: "564607526074",
+     appId: "1:564607526074:web:8753262a2aac9036ad8e83",
+     measurementId: "G-YDYDGBBZ9L"
+ 
+  };
+  // Initialize Firebase
+ firebase.initializeApp(firebaseConfig);
+
+ firebase.auth().onAuthStateChanged(function(userDetail) {
+    if (userDetail) {
+        user = userDetail;
+        initiate(user);
+    }
+    else{
+        console.log("no")
+    }
+ });
+
+function initiate(user) {
+    socket.emit('initialize-data', user);
+}
+
+socket.on('unauthorized-usage', (message) => {
+    console.log(message);
+})
+
+socket.on('unauthorized-usage', (message) => {
+    console.log(message);
+})
 
 socket.on('onLoadGetGameData', function(game){
     console.log(game);
