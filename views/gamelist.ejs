@@ -1,13 +1,57 @@
-<p>Game list</p>
-<div>
-    <p>Next game</p>
-    <% if(!nextGame.payment){ %>
-        <button>Pay</button>
-    <% } %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <style>
+      body {
+        font-family: "Montserrat", sans-serif;
+        font-weight: bold;
+        background-color: orange;
+        color: #ffffff;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1
+      style="
+        font-family: 'Montserrat', san-serif;
+        font-weight: bold;
+        font-size: 6rem;
+        text-align: center;
+        color: #1d093a;
+        margin: 20px;
+        padding: 30px;
+      "
+    >
+      My Games
+    </h1>
 
-    <a href="/game-start/<%= uid %>/<%= nextGame.data._id %>" >Play game</a>
+    <div class="list-box-container">
+      <!-- <h2>Past Winner</h2> -->
+      <div class="list-box">
+        <button class="btn">Game list</button>
+      </div>
+      <!-- <h2>Past Winner</h2> -->
+      <div class="list-box">
+        <button class="btn">Next Game</button><% if(!nextGame.payment){ %>
+        <button class="btn">Pay</button>
+        <% } %>
+      </div>
 
-</div>
-
-
-
+      <!-- <h2>Past Winner</h2> -->
+      <div class="list-box">
+        <button class="btn">
+          <a
+            style="text-decoration: none; color: #ffffff;"
+            href="/game-start/<%= uid %>/<%= nextGame.data._id %>"
+            >Play game</a
+          >
+        </button>
+      </div>
+    </div>
+  </body>
+</html>

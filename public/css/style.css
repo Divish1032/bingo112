@@ -100,6 +100,7 @@ body {
   transition: 0.5s;
   margin-top: 40px;
   letter-spacing: 4px;
+  border-radius: 5px;
 }
 
 .login-box button:hover {
@@ -115,7 +116,7 @@ body {
   display: block;
 }
 
-.login-box button span:nth-child(1) {
+/*.login-box button span:nth-child(1) {
   top: 0;
   left: -100%;
   width: 100%;
@@ -193,7 +194,7 @@ body {
     bottom: 100%;
   }
 }
-
+*/
 .timer {
   color: antiquewhite;
   background-color: #141e30;
@@ -222,7 +223,6 @@ body {
 }
 .login {
   margin-top: 50px;
-<<<<<<< HEAD
 }
 .ticket {
   background: #ffa500;
@@ -380,6 +380,51 @@ body {
     transform: translateX(-100%);
   }
 }
-=======
+
+.btn {
+  font-family: "Montserrat", sans-serif;
+  color: #ffffff;
+  background-color: #1d093a;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 80%;
+  margin-bottom: 10%;
+  border-radius: 20px;
 }
->>>>>>> 9920ea589757f45938d4c4ed73874a1d2b52e3be
+.list-box-container {
+  margin: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.list-box {
+  width: 40%;
+  height: 40%;
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: #1d093a;
+  margin: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  /* box-shadow: 20px 14px 51px #1d093a9f; */
+}
+@media screen and (min-width: 200px) and (max-width: 1000px) {
+  .list-box-container {
+    flex-direction: column !important;
+  }
+
+  .list-box {
+    width: 60%;
+    height: 40%;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #1d093a;
+    margin: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+}
