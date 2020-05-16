@@ -50,10 +50,10 @@
         text-decoration: none;
         cursor: pointer;
       }
-      #myBtn {
-        display: grid;
-        margin-left: 45%;
-        margin-right: 45%;
+      #myBtn, .home {
+        display: inline-block;
+        width: max-content;
+        margin: 0 10px;
         text-align: center;
         color: #ffff;
         background-color: purple;
@@ -73,7 +73,11 @@
       OOPS! YOU LOST!
     </h1>
     <!-- Trigger/Open The Modal -->
-    <button id="myBtn">Try again</button>
+    <div style="width: max-content;margin: 0 auto;">
+      <a id="myBtn">Try again</a>
+      <a href="/" class="home">Go Home</a>
+    </div>
+    
 
     <!-- The Modal -->
     <div id="myModal" class="modal">

@@ -46,7 +46,7 @@
         <% if(!nextGameOnline.payment){ %>
         <a href="/payment/<%= nextGameOnline.game._id %>/<%= uid %>" class="btn">Pay</a>
         <% }else{ %>
-        <a href="/game-start/<%= uid %>/<%= nextGameOnline.game._id %>" class="btn">Next Game</a>
+        <a href="/game-start/<%= uid %>/<%= nextGameOnline.game._id %>" class="btn">Start Game</a>
         <% } %>
       </div>
 
