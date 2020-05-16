@@ -78,6 +78,8 @@ socket.on('loadGameData', function(ticket, usedSequence){
     createTicket(ticket);
     showEmittedNumbers(usedSequence);
     $('.claim-btn').show();
+    if(screen.width <= 550)
+    rotate(this);
 });
 
 socket.on('nextNumber', function( data, number){
