@@ -1,7 +1,7 @@
 html {
     height: 100%;
   }
-  
+  <%= new Date(nextGame.data.game_time).toString().substr(0,24) %>
   body {
     margin: 0;
     padding: 0;
