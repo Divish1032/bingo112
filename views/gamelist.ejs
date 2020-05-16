@@ -29,11 +29,21 @@
     >
       My Games
     </h1>
-
     <div class="list-box-container">
       <!-- <h2>Past Winner</h2> -->
       <div class="list-box">
-        <button class="btn">Game list</button>
+        <h3>Next Game : </h3>
+        <br>
+        <p> Day - <%= new Date(nextGame.data.game_time).toString().substr(0,24) %> </p>
+
+        
+        <button class="btn">
+          <a
+            style="text-decoration: none; color: #ffffff;"
+            href="/game-start/<%= uid %>/<%= nextGame.data._id %>"
+            >Play game</a
+          >
+        </button>
       </div>
       <!-- <h2>Past Winner</h2> -->
       <div class="list-box">
@@ -54,4 +64,8 @@
       </div>
     </div>
   </body>
+
+  <script>
+
+  </script>
 </html>

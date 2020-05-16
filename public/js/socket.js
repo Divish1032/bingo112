@@ -67,6 +67,7 @@ socket.on('game-initialized', (t1, t2, current_game) => {
         $('.toast-message').text("Game Started")
         $('.toast').toast('show');
         gamestart();
+        $('#my-canvas').show();
     }
     else{
         console.log("Unknown error");
@@ -134,6 +135,14 @@ socket.on('full-house-winner', function(message, game_end_time_){
     alert(message);
     socket.close();
     window.location = "/end";
+});
+
+socket.on('full-house-winner-you', function(message, game_end_time_){
+    game_end_time = game_end_time_;
+    $('.full-house').attr('disabled', true);
+    $('.toast-message').text(message)
+    $('.toast').toast('show');
+    socket.close();
 });
 
 

@@ -8,6 +8,8 @@
  * Copyright 2017, Codrops
  * http://www.codrops.com
  */
+
+ 
 {
 	// Helper vars and functions.
 	const extend = function(a, b) {
@@ -105,7 +107,7 @@
 				y: (-1*t.title.y - t.title.y)/bounds.height*relmousepos.y + t.title.y
 			}
 		};
-		this.DOM.img.style.WebkitTransform = this.DOM.img.style.transform = 'translateX(' + transforms.img.x + 'px) translateY(' + transforms.img.y + 'px)';
+		//this.DOM.img.style.WebkitTransform = this.DOM.img.style.transform = 'translateX(' + transforms.img.x + 'px) translateY(' + transforms.img.y + 'px)';
 		this.DOM.title.style.WebkitTransform = this.DOM.title.style.transform = 'translateX(' + transforms.title.x + 'px) translateY(' + transforms.title.y + 'px)';
 	};
 
@@ -397,7 +399,7 @@
 function makeTimer() {
 
 	//		var endTime = new Date("29 April 2018 9:56:00 GMT+01:00");	
-		var endTime = new Date("16 May 2020 21:00:00 GMT+05:30");			
+		var endTime = new Date("16 May 2020 22:30:00 GMT+05:30");			
 			endTime = (Date.parse(endTime) / 1000);
 
 			var now = new Date();

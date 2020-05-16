@@ -93,6 +93,7 @@ app.get('/mygame-list/:uid', (req, res) => {
                   }
                });
             });
+            console.log(nextGame)
             res.render('gamelist', { nextGame, upcommingGames, pastUserGames, uid : req.params.uid });
          })
        });
@@ -235,7 +236,8 @@ io.on('connection', function(socket) {
             if(game_data && !game_data.full_house){
                Game.findOneAndUpdate({_id : current_game._id}, {$set : {full_house :  current_user.uid, played : true, game_end_time : new Date()}}, (err, result) => {
                socket.broadcast.emit('full-house-winner', current_user.phoneNumber+ ' has won full house', new Date());
-               socket.emit('full-house-winner', 'Congrats you won full house', new Date()); 
+               socket.emit('full-house-winner-you', 'Congrats you won full house', new Date()); 
+               s
                })
             }
             else{
@@ -427,7 +429,7 @@ function newGameTimerStart() {
    timerID           = null,
    game_players      = [],
    dibarred_user     = [];
-   refreshIntervalId = setInterval(doStuff, 10000);
+   refreshIntervalId = setInterval(doStuff, 100);
    /* timerID = setInterval(setTimer, 1000); */
 
    function doStuff() {

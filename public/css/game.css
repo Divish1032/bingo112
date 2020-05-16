@@ -174,7 +174,7 @@ html {
   }
   
 
-.loader, .play, .wait, .game-ended, .claim-btn{
+.loader, .play, .wait, .game-ended, .claim-btn, #my-canvas{
     display: none;
 }
 
