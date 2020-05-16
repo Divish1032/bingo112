@@ -23,7 +23,7 @@
         font-size: 6rem;
         text-align: center;
         color: #1d093a;
-        margin: 20px;
+        margin: 10px;
         padding: 30px;
       "
     >
@@ -32,11 +32,18 @@
 
     <div class="list-box-container">
       <!-- <h2>Past Winner</h2> -->
-      <div class="list-box">
+      <!-- <div class="list-box">
         <button class="btn">Game list</button>
-      </div>
+      </div> -->
       <!-- <h2>Past Winner</h2> -->
       <div class="list-box">
+        <h2 style="text-align: center;">Upcoming Game</h2>
+        <div id="timer">
+          <div id="days"></div>
+          <div id="hours"></div>
+          <div id="minutes"></div>
+          <div id="seconds"></div>
+        </div>
         <button class="btn">Next Game</button><% if(!nextGame.payment){ %>
         <button class="btn">Pay</button>
         <% } %>
@@ -44,6 +51,14 @@
 
       <!-- <h2>Past Winner</h2> -->
       <div class="list-box">
+        <h2 style="text-align: center;">Prizes</h2>
+        <ul>
+          <li>
+            200 for top row, middle row, bottom row
+          </li>
+          <li>500 for full house</li>
+          <li>100 for first five</li>
+        </ul>
         <button class="btn">
           <a
             style="text-decoration: none; color: #ffffff;"
