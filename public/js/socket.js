@@ -169,7 +169,7 @@ function showEmittedNumbers(data){
     data.forEach(x => {
         $('.marquee p').html($('.marquee p').html() + " "  + words[x] + ",");
     });
-    $('.nextnumber').text(data[data.length - 1]);
+    $('.nextnumber').text(words[data[data.length - 1]]);
     //$('.timer').text(data[data.length - 1]);
 }
 

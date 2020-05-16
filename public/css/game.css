@@ -194,12 +194,12 @@ html {
 .mobile-device {
   display: none;
   cursor: pointer;
-  width: 40px;
-  position: fixed;
-  bottom: 0;
+  width: 35px;
+  position: absolute;
+  top: 0;
   right: 0;
-  margin-right: 10px;
-  margin-bottom: 10px;
+  margin-right: 5px;
+  margin-top: 10px;
 }
 
 @media screen and (max-width: 500px){
