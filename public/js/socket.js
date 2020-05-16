@@ -94,7 +94,7 @@ socket.on('nextNumber', function( data, number){
     $('.news-message').append("<p>" + words[number] + ", </p>");
     if(counter == 1){
         var duration = $('.news-message').css('animation-duration');
-        duration = parseInt(duration.substr(0,2)) + 3; 
+        duration = parseInt(duration.substr(0,2)) + 2.5; 
         $('.news-message').css('animation-duration', duration.toString() + 's');
     }
     console.log($('.news-message').css('animation-duration'));
@@ -194,7 +194,7 @@ function showEmittedNumbers(data){
     });
     $('.nextnumber').text(words[data[data.length - 1]]);
     var duration = $('.news-message').css('animation-duration');
-    duration = parseInt(duration.substr(0,2)) + data.length * 3; 
+    duration = parseInt(duration.substr(0,2)) + data.length * 2.5; 
     $('.news-message').css('animation-duration', duration.toString() + 's');
     counter = 1;
     console.log($('.news-message').css('animation-duration'));
