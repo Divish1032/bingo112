@@ -78,8 +78,12 @@ socket.on('loadGameData', function(ticket, usedSequence){
     createTicket(ticket);
     showEmittedNumbers(usedSequence);
     $('.claim-btn').show();
-    if(screen.width <= 550)
-    rotate(this);
+    if(screen.width <= 550){
+        $('.toast-message').text(screen.width)
+        $('.toast').toast('show');
+        rotate(this);
+    }
+    
 });
 
 socket.on('nextNumber', function( data, number){
