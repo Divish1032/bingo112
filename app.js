@@ -54,76 +54,81 @@ app.get('/', function(req, res) {
 });
 
 app.get('/end', (req, res) => {
-   res.render('end')
+   res.render('end');
 });
 
 app.get('/mygame-list', (req, res) => {
-   res.render('invalid');
+   res.render('invalid', {message : "Invalid access to the game menu"});
 })
 
 app.get('/mygame-list/:uid', (req, res) => {
-   var nextGame = [];
-   var upcommingGames = [];
-   var pastUserGames = [];
-   var flag = 0;
-   admin.auth().getUser(req.params.uid)
-  .then(function(userRecord) {
-    // See the UserRecord reference doc for the contents of userRecord.
-    Game.find({played : true}).then( pastgames => {
-      Game.find({played : false}).sort({game_time : 1}).then(futuregames => {
-         GameClient.find({user_id : req.params.uid}, (err, game_client) => {
-            game_client.forEach(x => {
-               if(x.game_id == futuregames[0]._id){
-                  nextGame = { payment : true, data : futuregames[0] };
-                  flag = 1;
-               }
-            });
-            if(flag == 0){
-               nextGame = { payment : false, data : futuregames[0] };
+   var nextGameOnline = null;
+   admin.auth().getUser(req.params.uid).then(function(userRecord) {
+      Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(nextGame => {
+         GameClient.findOne({user_id : req.params.uid, game_id : nextGame._id, payment : true}, (err, game_c) => {
+            if(game_c){
+               nextGameOnline = { payment : true, game : nextGame };
             }
-   
-            for (let i = 1; i < futuregames.length; i++) {
-               upcommingGames.push(futuregames[i]);
+            else{
+               nextGameOnline = { payment : false, game : nextGame };
             }
-
-            game_client.forEach(x => {
-               pastgames.forEach(y => {
-                  if(x.game_id == y._id){
-                     pastUserGames.push(y);
-                  }
-               });
-            });
-            console.log(nextGame)
-            res.render('gamelist', { nextGame, upcommingGames, pastUserGames, uid : req.params.uid });
+            res.render('gamelist', { nextGameOnline, uid : req.params.uid });
          })
-       });
-    });
-    
-  })
-  .catch(function(error) {
-    console.log('Error fetching user data:', error);
-    res.render('invalid');
-  });
-
-})
-
-app.get('/game-start/:uid/:game_id', (req, res) => {
-   admin.auth().getUser(req.params.uid)
-  .then(function(userRecord) {
-      Game.find({played : false}).sort({game_time : 1}).limit(1).then(game => {
-         res.render('game', {game : game, uid : req.params.uid});
       });
   })
   .catch(function(error) {
     console.log('Error fetching user data:', error);
-    res.render('invalid');
-  });
+    res.render('invalid',{ message: "User data is not present, unauthorized login"});
+   });
+});
+
+app.get('/payment/:game_id/:user_id', (req, res) => {
+   Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(game => {
+      if(game._id == req.params.game_id){
+         res.render('payment', {uid : req.params.user_id, game_id : req.params.game_id});
+      }
+      else{
+         res.render('invalid', {message : "Invalid game access, this game is not the latest one."})
+      }
+   });
 })
 
-app.post('/end3', function(req, res) {
-   Game.create({ game_time : (req.body.time1), game_end_time : (req.body.time2) }, (err, redd) =>{
-      console.log(err);
-      res.send("dd")
+app.post('/payment/:game_id/:user_id', (req, res) => {
+   Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(game => {
+      if(game._id == req.params.game_id){
+         console.log("true")
+         GameClient.create({ game_id : req.params.game_id, user_id : req.params.user_id, payment : true}, (err, game_c) => {
+            if(!err){
+               var nextGameOnline = { payment : true, game : game };
+               res.render('gamelist', {message : "Payment is successfull", nextGameOnline, uid : req.params.user_id});
+            }
+            else{
+               res.render('invalid', {message : err})
+            }
+         }); 
+      }
+      else{
+         res.render('invalid', {message : "Invalid game access, this game is not the latest one."})
+      }
+   });
+})
+
+app.get('/game-start/:user_id/:game_id', (req, res) => {
+   GameClient.findOne({user_id : req.params.user_id, game_id : req.params.game_id, payment : true}, (err, game_c) => {
+      if(!game_c){
+         res.render('invalid', { message : "Unauthorized access, you have not done your payment for the game."})
+      }
+      else{
+         admin.auth().getUser(req.params.user_id).then(function(userRecord) {
+            Game.find({played : false}).sort({game_time : 1}).limit(1).then(game => {
+               res.render('game', {game : game, uid : req.params.user_id});
+            });
+         })
+         .catch(function(error) {
+          console.log('Error fetching user data:', error);
+          res.render('invalid', { message: "User data is not present, unauthorized login"});
+         });
+      }
    })
 });
 
@@ -429,7 +434,7 @@ function newGameTimerStart() {
    timerID           = null,
    game_players      = [],
    dibarred_user     = [];
-   refreshIntervalId = setInterval(doStuff, 10000);
+   refreshIntervalId = setInterval(doStuff, 5000);
    /* timerID = setInterval(setTimer, 1000); */
 
    function doStuff() {
@@ -447,6 +452,13 @@ function newGameTimerStart() {
       io.sockets.emit('timer', time--);
    } */
 }
+
+app.post('/end3', function(req, res) {
+   Game.create({ game_time : (req.body.time1), game_end_time : (req.body.time2) }, (err, redd) =>{
+      console.log(err);
+      res.send("dd")
+   })
+});
 
 
 http.listen(process.env.PORT || 3000, function() {

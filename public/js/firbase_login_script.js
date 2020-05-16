@@ -24,7 +24,6 @@ var firebaseConfig = {
         $('.loader, .login').hide();
         $('.homepage').show();
         user = userDetail;
-        console.log(user.uid)
     }
     else{
         $('.loader, .homepage').hide();

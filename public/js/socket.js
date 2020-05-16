@@ -6,6 +6,7 @@ var ticket           = null,
 var game_time      = null;
 var game_end_time  = null;
 var game           = null;
+var counter        = 0;
 
 var words = ['positive', 'joy', 'happy', 'zeal', 'smile', 'gain', 'nice', 'beautiful', 'profit', 'cheer', 'wonderful', 'good',
 'better', 'best', 'bright', 'optimistic', 'strong', 'will', 'hope', 'certain', 'sure', 'accept', 'warm', 'appreciate', 'friendly', 'adore', 'support', 'respect', 'sympathy', 'advice', 'recommend', 'clear', 'confident',
@@ -90,7 +91,14 @@ socket.on('loadGameData', function(ticket, usedSequence){
 socket.on('nextNumber', function( data, number){
     disclosedNumbers.push(number);
     $('.nextnumber').text(words[number]);
-    $('.marquee p').html($('.marquee p').html() + ", " + words[number]);
+    $('.news-message').append("<p>" + words[number] + ", </p>");
+    if(counter == 1){
+        var duration = $('.news-message').css('animation-duration');
+        duration = parseInt(duration.substr(0,2)) + 3; 
+        $('.news-message').css('animation-duration', duration.toString() + 's');
+    }
+    console.log($('.news-message').css('animation-duration'));
+
 });
 
 socket.on('timer', function(data){
@@ -182,10 +190,15 @@ $('.claim').click(function(){
 function showEmittedNumbers(data){
     disclosedNumbers = data;
     data.forEach(x => {
-        $('.marquee p').html($('.marquee p').html() + " "  + words[x] + ",");
+        $('.news-message').append("<p>" + words[x] + ", </p>");
     });
     $('.nextnumber').text(words[data[data.length - 1]]);
-    //$('.timer').text(data[data.length - 1]);
+    var duration = $('.news-message').css('animation-duration');
+    duration = parseInt(duration.substr(0,2)) + data.length * 3; 
+    $('.news-message').css('animation-duration', duration.toString() + 's');
+    counter = 1;
+    console.log($('.news-message').css('animation-duration'));
+    //$('.timer').text(data[data.length - 1]); 
 }
 
 function setClaimButtonState(){

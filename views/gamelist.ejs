@@ -16,51 +16,50 @@
     </style>
   </head>
   <body>
+
+
+
     <h1
+      class="mygamesHeader"
       style="
         font-family: 'Montserrat', san-serif;
         font-weight: bold;
-        font-size: 6rem;
+        font-size: 4.5rem;
         text-align: center;
         color: #1d093a;
-        margin: 20px;
-        padding: 30px;
+        margin: 32px 0 0;
+        padding: 0 30px;
+        text-decoration: underline;
       "
     >
       My Games
     </h1>
     <div class="list-box-container">
       <!-- <h2>Past Winner</h2> -->
-      <div class="list-box">
-        <h3>Next Game : </h3>
-        <br>
-        <p> Day - <%= new Date(nextGame.data.game_time).toString().substr(0,24) %> </p>
-
-        
-        <button class="btn">
-          <a
-            style="text-decoration: none; color: #ffffff;"
-            href="/game-start/<%= uid %>/<%= nextGame.data._id %>"
-            >Play game</a
-          >
-        </button>
-      </div>
+      <!-- <div class="list-box">
+        <button class="btn">Game list</button>
+      </div> -->
       <!-- <h2>Past Winner</h2> -->
       <div class="list-box">
-        <button class="btn">Next Game</button><% if(!nextGame.payment){ %>
-        <button class="btn">Pay</button>
+        <h2 style="text-align: center;">Upcoming Game</h2>
+        <p><%= new Date(nextGameOnline.game.game_time).toString().substr(0,24) %></p>
+        <% if(!nextGameOnline.payment){ %>
+        <a href="/payment/<%= nextGameOnline.game._id %>/<%= uid %>" class="btn">Pay</a>
+        <% }else{ %>
+        <a href="/game-start/<%= uid %>/<%= nextGameOnline.game._id %>" class="btn">Next Game</a>
         <% } %>
       </div>
 
       <!-- <h2>Past Winner</h2> -->
       <div class="list-box">
-        <button class="btn">
-          <a
-            style="text-decoration: none; color: #ffffff;"
-            href="/game-start/<%= uid %>/<%= nextGame.data._id %>"
-            >Play game</a
-          >
-        </button>
+        <h2 style="text-align: center;">Prizes</h2>
+        <ul>
+          <li>₹ 500 for full house.</li>
+          <li>
+            ₹ 200 for top row, middle row, bottom row.
+          </li>
+          <li>₹ 100 for first five.</li>
+        </ul>
       </div>
     </div>
   </body>

@@ -1,7 +1,6 @@
 html {
     height: 100%;
   }
-  <%= new Date(nextGame.data.game_time).toString().substr(0,24) %>
   body {
     margin: 0;
     padding: 0;
@@ -14,9 +13,9 @@ html {
     background-color: #141e30;
     text-align: center;
     border-radius: 10px;
-  
-    margin-left: 40%;
-    margin-right: 40%;
+    width: max-content;
+    padding: 5px 10px;
+    margin: 20px auto;
   }
   
   .fadeb {
@@ -44,6 +43,7 @@ html {
   .ticket td {
     width: 10%;
     height: 40px;
+    min-width: 60px;
     cursor: pointer;
     text-align: center;
     border: none;
@@ -118,61 +118,8 @@ html {
   #fefb09 yellow
   #21409a blue
   */
-  
-  .marquee {
-    height: 50px;
-    overflow: hidden;
-    position: relative;
-  
-    color: white;
-  }
-  
-  .marquee p {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    line-height: 50px;
-    text-align: center;
-    -moz-transform: translateX(100%);
-    -webkit-transform: translateX(100%);
-    transform: translateX(100%);
-    -moz-animation: scroll-left 1s linear infinite;
-    -webkit-animation: scroll-left 1s linear infinite;
-    animation: scroll-left 20s linear infinite;
-  }
-  
-  @-moz-keyframes scroll-left {
-    0% {
-      -moz-transform: translateX(100%);
-    }
-    100% {
-      -moz-transform: translateX(-100%);
-    }
-  }
-  
-  @-webkit-keyframes scroll-left {
-    0% {
-      -webkit-transform: translateX(100%);
-    }
-    100% {
-      -webkit-transform: translateX(-100%);
-    }
-  }
-  
-  @keyframes scroll-left {
-    0% {
-      -moz-transform: translateX(100%);
-      -webkit-transform: translateX(100%);
-      transform: translateX(100%);
-    }
-    100% {
-      -moz-transform: translateX(-100%);
-      -webkit-transform: translateX(-100%);
-      transform: translateX(-100%);
-    }
-  }
-  
+
+
 
 .loader, .play, .wait, .game-ended, .claim-btn, #my-canvas{
     display: none;
@@ -215,5 +162,40 @@ html {
   }
   .play h1{
     margin-top: 0!important;
+  }
+}
+
+section {
+  color: white;
+  font-family: helvetica;
+  text-transform: uppercase;
+}
+section div {
+  display: flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  min-width: 100%;
+}
+section div .news-message {
+  display: inherit;
+  flex-shrink: 0;
+  height: 50px;
+  align-items: center;
+  animation: slide-left 20s linear infinite;
+}
+section div .news-message p {
+  font-size: 25px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 100;
+  padding-left: 0.5em;
+}
+@keyframes slide-left {
+  from {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+  to {
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%);
   }
 }
