@@ -207,3 +207,13 @@ html {
     display: block!important;
   }
 }
+
+@media screen and (orientation: landscape) {
+
+  .play, .wait, .game-ended{
+    margin-top: 0!important;
+  }
+  .play h1{
+    margin-top: 0!important;
+  }
+}

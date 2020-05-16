@@ -7,7 +7,11 @@ var game_time      = null;
 var game_end_time  = null;
 var game           = null;
 
-
+var words = ['positive', 'joy', 'happy', 'zeal', 'smile', 'gain', 'nice', 'beautiful', 'profit', 'cheer', 'wonderful', 'good',
+'better', 'best', 'bright', 'optimistic', 'strong', 'will', 'hope', 'certain', 'sure', 'accept', 'warm', 'appreciate', 'friendly', 'adore', 'support', 'respect', 'sympathy', 'advice', 'recommend', 'clear', 'confident',
+'assure', 'accomplish', 'optimist', 'content', 'jolly', 'carefree', 'delight', 'elated', 'blessed', 'worship', 'glad', 'benefit',
+'fortunate', 'laugh', 'love', 'win', 'comfort', 'safe', 'merry', 'success', 'healthy', 'mind', 'matters', 'body', 'paradise', 'okay', 'glory', 'enjoy', 'amazing', 'joke', 'cute', 'hug', 'tasty', 'achieve', 'praise', 'optimist', 'smart', 'pleasant', 'awesome', 'peace', 
+'delight', 'kind', 'honest', 'trust', 'polite', 'generous', 'helping', 'guide', 'consistent', 'celebrate', 'confident', 'faith', 'truth', 'firm', 'sunshine', 'light', 'promise', 'calm', 'asha', 'ease', 'mental', 'well-being', 'bliss', 'courage', 'pledge', 'cool', 'brave']
 
 
 
@@ -77,8 +81,8 @@ socket.on('loadGameData', function(ticket, usedSequence){
 
 socket.on('nextNumber', function( data, number){
     disclosedNumbers.push(number);
-    $('.nextnumber').text(number);
-    $('.marquee p').html($('.marquee p').html() + ", " + number);
+    $('.nextnumber').text(words[number]);
+    $('.marquee p').html($('.marquee p').html() + ", " + words[number]);
 });
 
 socket.on('timer', function(data){
@@ -127,11 +131,17 @@ socket.on('full-house-winner', function(message, game_end_time_){
 
 
 
-
 $('.ticket td').click(function(){
     var td = this;
-    console.log("RR")
-    socket.emit('sendClickData', socket.id, $(this).text());
+    console.log("RR");
+    var ticket_id = null;
+    words.forEach((x,i) => {
+        if(x == $(this).text()){
+            ticket_id = i;
+        }
+    });
+    console.log(ticket_id);
+    socket.emit('sendClickData', socket.id, ticket_id);
     socket.on('statusClick', function(data){
         console.log(data)
         if(data){
@@ -156,7 +166,7 @@ $('.claim').click(function(){
 function showEmittedNumbers(data){
     disclosedNumbers = data;
     data.forEach(x => {
-        $('.marquee p').html($('.marquee p').html() + ", " + x);
+        $('.marquee p').html($('.marquee p').html() + " "  + words[x] + ",");
     });
     $('.nextnumber').text(data[data.length - 1]);
     //$('.timer').text(data[data.length - 1]);
@@ -181,7 +191,7 @@ function createTicket(data) {
             $(this).text();
             $(this).addClass('not-clickable');
         }
-        else $(this).text(value);
+        else $(this).text(words[value]);
         
         if(c == 8) r++;
         c++;
