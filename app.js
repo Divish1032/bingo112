@@ -429,7 +429,7 @@ function newGameTimerStart() {
    timerID           = null,
    game_players      = [],
    dibarred_user     = [];
-   refreshIntervalId = setInterval(doStuff, 100);
+   refreshIntervalId = setInterval(doStuff, 10000);
    /* timerID = setInterval(setTimer, 1000); */
 
    function doStuff() {
