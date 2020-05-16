@@ -174,7 +174,7 @@ html {
   }
   
 
-.loader, .play, .wait, .game-ended{
+.loader, .play, .wait, .game-ended, .claim-btn{
     display: none;
 }
 

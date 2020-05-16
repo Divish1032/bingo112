@@ -187,27 +187,33 @@ io.on('connection', function(socket) {
       }
    });
     
-   socket.on('sendClickData', function(id, data){      
-      var status = false;
-      usedSequence.forEach(x => {
-         if(x == data){
-            status = true;
+   socket.on('sendClickData', function(id, data){  
+      if(ticket){
+         var status = false;
+         usedSequence.forEach(x => {
+            if(x == data){
+               status = true;
+            }
+         });
+         for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 9; j++) {
+               var value = ticket[i][j];
+               if(value == data){
+                  if(status){
+                     ticket[i][j] = 100;
+                  }
+                  else{
+                     ticket[i][j] = 101;
+                  }
+               }         
+            }      
          }
-      });
-      for (let i = 0; i < 3; i++) {
-         for (let j = 0; j < 9; j++) {
-            var value = ticket[i][j];
-            if(value == data){
-               if(status){
-                  ticket[i][j] = 100;
-               }
-               else{
-                  ticket[i][j] = 101;
-               }
-            }         
-         }      
-      }
-      io.sockets.to(id).emit('statusClick', status);
+         io.sockets.to(id).emit('statusClick', status);
+      }  
+      else{
+         socket.emit("error-loading", "There is some errror while loading of the data, please refresh tab.")
+      }  
+      
    });
 
    socket.on('full-house', function(emit){
@@ -421,7 +427,7 @@ function newGameTimerStart() {
    timerID           = null,
    game_players      = [],
    dibarred_user     = [];
-   refreshIntervalId = setInterval(doStuff, 1000);
+   refreshIntervalId = setInterval(doStuff, 10000);
    /* timerID = setInterval(setTimer, 1000); */
 
    function doStuff() {

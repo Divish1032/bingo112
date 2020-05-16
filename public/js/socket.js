@@ -2,7 +2,7 @@ var user = null;
 var socket = io();
 var original_ticket = null;
 var ticket           = null,
-    disclosedNumbers = null;
+    disclosedNumbers = [];
 var game_time      = null;
 var game_end_time  = null;
 var game           = null;
@@ -77,6 +77,7 @@ socket.on('loadGameData', function(ticket, usedSequence){
     setClaimButtonState();
     createTicket(ticket);
     showEmittedNumbers(usedSequence);
+    $('.claim-btn').show();
 });
 
 socket.on('nextNumber', function( data, number){
