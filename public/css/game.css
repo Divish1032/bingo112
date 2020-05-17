@@ -90,12 +90,11 @@ html {
   
   .clicked-cell {
     background: #593c3c5c!important;
-    pointer-events: none!important;
   }
-  .wrong-clicked-cell {
+/*   .wrong-clicked-cell {
     background: #f91111c9!important;
     pointer-events: none!important;
-  }
+  } */
   .not-clickable {
     pointer-events: none;
   }

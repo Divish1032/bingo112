@@ -8,7 +8,7 @@ var game_end_time  = null;
 var game           = null;
 var counter        = 0;
 
-var words = ['positive', 'joy', 'happy', 'zeal', 'smile', 'gain', 'nice', 'beautiful', 'profit', 'cheer', 'wonderful', 'good',
+var words = ['', 'positive', 'joy', 'happy', 'zeal', 'smile', 'gain', 'nice', 'beautiful', 'profit', 'cheer', 'wonderful', 'good',
 'better', 'best', 'bright', 'optimistic', 'strong', 'will', 'hope', 'certain', 'sure', 'accept', 'warm', 'appreciate', 'friendly', 'adore', 'support', 'respect', 'sympathy', 'advice', 'recommend', 'clear', 'confident',
 'assure', 'accomplish', 'optimist', 'content', 'jolly', 'carefree', 'delight', 'elated', 'blessed', 'worship', 'glad', 'benefit',
 'fortunate', 'laugh', 'love', 'win', 'comfort', 'safe', 'merry', 'success', 'healthy', 'mind', 'matters', 'body', 'paradise', 'okay', 'glory', 'enjoy', 'amazing', 'joke', 'cute', 'hug', 'tasty', 'achieve', 'praise', 'optimist', 'smart', 'pleasant', 'awesome', 'peace', 
@@ -157,26 +157,22 @@ socket.on('full-house-winner-you', function(message, game_end_time_){
 
 
 $('.ticket td').click(function(){
-    var td = this;
-    console.log("RR");
     var ticket_id = null;
+    $(this).toggleClass('clicked-cell');
     words.forEach((x,i) => {
         if(x == $(this).text()){
             ticket_id = i;
         }
     });
-    console.log(ticket_id);
-    socket.emit('sendClickData', socket.id, ticket_id);
-    socket.on('statusClick', function(data){
-        console.log(data)
-        if(data){
-            $(td).addClass('clicked-cell');
-        }
-        else{
-            $(td).addClass('wrong-clicked-cell');
-        }
-        td=null;
-    });
+    for (let i = 0; i < ticket.length; i++) {
+        for (let j = 0; j < ticket[0].length; j++) {
+            var value = ticket[i][j];
+            if(ticket_id == Math.abs(value)){
+                ticket[i][j] = ticket[i][j] * -1;
+            }
+        }    
+    }
+    console.log(ticket);
 });
 
 $('.claim').click(function(){
@@ -185,7 +181,7 @@ $('.claim').click(function(){
     if($(this).hasClass('middle-row'))emit = 'middle-row';
     if($(this).hasClass('bottom-row'))emit = 'bottom-row';
     if($(this).hasClass('first-five'))emit = 'first-five';
-    socket.emit(emit, emit);
+    socket.emit(emit, ticket);
 });
 
 function showEmittedNumbers(data){
@@ -208,6 +204,7 @@ function setClaimButtonState(){
 
 function createTicket(data) {
     original_ticket = data;
+    ticket = data;
     var c = 0;
     var r = 0;
     $("td").each(function() {

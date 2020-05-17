@@ -309,51 +309,29 @@ io.on('connection', function(socket) {
          socket.emit("unauthorized-usage", "An unauthorised access");
       }
    });
-    
-   socket.on('sendClickData', function(id, data){  
-      if(ticket){
-         var status = false;
-         usedSequence.forEach(x => {
-            if(x == data){
-               status = true;
-            }
-         });
-         for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 9; j++) {
-               var value = ticket[i][j];
-               if(value == data){
-                  if(status){
-                     ticket[i][j] = 100;
-                  }
-                  else{
-                     ticket[i][j] = 101;
-                  }
-               }         
-            }      
-         }
-         io.sockets.to(id).emit('statusClick', status);
-      }  
-      else{
-         socket.emit("error-loading", "There is some errror while loading of the data, please refresh tab.")
-      }  
-      
-   });
 
-   socket.on('full-house', function(emit){
-      var flag = false;
+   socket.on('full-house', function(ticket_client){
+      var claim = null;
       for (let i = 0; i < 3; i++) {
          for (let j = 0; j < 9; j++) {
-            var value = ticket[i][j];
-            if(value != 100 && value != 0){
-               flag = true;
-            }
-         }      
-      }
-      var result = false;
-      if(!flag){
-         result = true;
-      }
-      if(result){
+             var value = ticket_client[i][j];
+             var flag = 0;
+             if(value != 0){
+               usedSequence.forEach(x => {
+                  if(x == Math.abs(value) && value != Math.abs(value)){
+                     flag = 1;
+                  }    
+               });
+               if(flag == 0){
+                  claim = false
+               }
+             }
+         }    
+     }
+     if(claim == null){
+        claim = true;
+     }
+      if(claim){
          Game.findOne({_id : current_game._id}, (err, game_data) =>{
             if(game_data && !game_data.full_house){
                Game.findOneAndUpdate({_id : current_game._id}, {$set : {full_house :  current_user.uid, played : true, game_end_time : new Date()}}, (err, result) => {
@@ -375,19 +353,26 @@ io.on('connection', function(socket) {
       
    });
 
-   socket.on('top-row', function(emit){
-      var flag = false;
-      for (let j = 0; j < 9; j++) {
-         var value = ticket[0][j];
-         if(value != 100 && value != 0){
-            flag = true;
-         }
-      }      
-      var result = false;
-      if(!flag){
-         result = true;
+   socket.on('top-row', function(ticket_client){
+      var claim = null;
+      for (let i = 0; i < 9; i++) {
+         var value = ticket_client[0][i];
+         var flag = 0;
+         if(value != 0){
+            usedSequence.forEach(x => {
+               if(x == Math.abs(value) && value != Math.abs(value)){
+                  flag = 1;
+               }    
+            });
+            if(flag == 0){
+               claim = false
+            }
+         } 
       }
-      if(result){
+      if(claim == null){
+         claim = true;
+      }
+      if(claim){
          Game.findOne({_id : current_game._id}, (err, game_data) =>{
             if(game_data && !game_data.top_row){
                Game.findOneAndUpdate({_id : current_game._id}, {$set : { top_row : current_user.uid }}, (err, result) => {
@@ -407,19 +392,28 @@ io.on('connection', function(socket) {
       }
    });
 
-   socket.on('middle-row', function(emit){
-      var flag = false;
-      for (let j = 0; j < 9; j++) {
-         var value = ticket[1][j];
-         if(value != 100 && value != 0){
-            flag = true;
-         }
-      }      
-      var result = false;
-      if(!flag){
-         result = true;
+   socket.on('middle-row', function(ticket_client){
+      var claim = null;
+      for (let i = 0; i < 9; i++) {
+         var value = ticket_client[1][i];
+         var flag = 0;
+         if(value != 0){
+            console.log("tic" + value)
+            usedSequence.forEach(x => {
+               if(x == Math.abs(value) && value != Math.abs(value)){
+                  flag = 1;
+                  console.log("se" + x);
+               }    
+            });
+            if(flag == 0){
+               claim = false
+            }
+         } 
       }
-      if(result){
+      if(claim == null){
+         claim = true;
+      }
+      if(claim){
          Game.findOne({_id : current_game._id}, (err, game_data) =>{
             if(game_data && !game_data.middle_row){
                Game.findOneAndUpdate({_id : current_game._id}, {$set : { middle_row : current_user.uid }}, (err, result) => {
@@ -437,22 +431,30 @@ io.on('connection', function(socket) {
          dibarred_user.push(current_user.uid);
          socket.emit('wrong-claim', current_user.phoneNumber);
       }
+
       
    });
 
-   socket.on('bottom-row', function(emit){
-      var flag = false;
-      for (let j = 0; j < 9; j++) {
-         var value = ticket[2][j];
-         if(value != 100 && value != 0){
-            flag = true;
-         }
-      }      
-      var result = false;
-      if(!flag){
-         result = true;
+   socket.on('bottom-row', function(ticket_client){
+      var claim = null;
+      for (let i = 0; i < 9; i++) {
+         var value = ticket_client[2][i];
+         var flag = 0;
+         if(value != 0){
+            usedSequence.forEach(x => {
+               if(x == Math.abs(value) && value != Math.abs(value)){
+                  flag = 1;
+               }    
+            });
+            if(flag == 0){
+               claim = false
+            }
+         } 
       }
-      if(result){
+      if(claim == null){
+         claim = true;
+      }
+      if(claim){
          Game.findOne({_id : current_game._id}, (err, game_data) =>{
             if(game_data && !game_data.bottom_row){
                Game.findOneAndUpdate({_id : current_game._id}, {$set : { bottom_row : current_user.uid }}, (err, result) => {
@@ -474,22 +476,33 @@ io.on('connection', function(socket) {
       
    });
 
-   socket.on('first-five', function(emit){
-      var flag = false;
+   socket.on('first-five', function(ticket_client){
+      var flag = 0;
+      var claim = null;
       var count = 0;
       for (let i = 0; i < 3; i++) {
          for (let j = 0; j < 9; j++) {
-            var value = ticket[i][j];
-            if(value == 100){
+            var value = ticket_client[i][j];
+            if(value != Math.abs(value)){
                count ++;
+               usedSequence.forEach(x => {
+                  if(x == Math.abs(value)){
+                     flag = 1;
+                  }    
+               });
+               if(flag == 0){
+                  claim = false
+               }
             }
          }      
       }     
-      var result = false;
-      if(count == 5){
-         result = true;
+      if(count == 5 && claim != false){
+         claim = true;
       }
-      if(result){
+      else{
+         claim = false;
+      }
+      if(claim){
          Game.findOne({_id : current_game._id}, (err, game_data) =>{
             if(game_data && !game_data.first_five){
                Game.findOneAndUpdate({_id : current_game._id}, {$set : { first_five : current_user.uid }}, (err, result) => {
@@ -552,12 +565,10 @@ function newGameTimerStart() {
    game_players      = [],
    dibarred_user     = [];
    game_next = null;
-   
-
    Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(gg => {
       game_next = gg;
-      console.log(game_next);
-      refreshIntervalId = setInterval(doStuff, 12000);
+      console.log(game_next)
+      refreshIntervalId = setInterval(doStuff, 100);
       function doStuff() {
          usedSequence.push(sequence[i]);
          time = 10;
@@ -565,7 +576,7 @@ function newGameTimerStart() {
          i++;
          if(i==90){
             clearInterval(refreshIntervalId);
-            var gameFin = setInterval(gameFinished, 20000);
+            var gameFin = setInterval(gameFinished, 2000000);
          }
       }
    });
