@@ -42,6 +42,7 @@ var players           = 0,
     timerID           = null;
 var game_players = [];
 var dibarred_user = [];
+var game_next = null;
 
 mongoose
   .connect("mongodb://Divish:genius007@ds263928.mlab.com:63928/intern_test", { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex : true }).then( response => {
@@ -159,10 +160,52 @@ app.post('/payment-confirmation', (req, res) => {
          }
       }
    })
+});
+
+app.get('/winners', (req, res) => {
+   var first_five = null;
+   var top_row = null;
+   var middle_row = null;
+   var bottom_row = null;
+   var full_house = null;
+/*    let userImportRecords = [
+      {
+        uid: 'uid1',
+      },
+      {
+        uid: 'uid2',
+        email: 'user2@example.com',
+        passwordHash: Buffer.from('passwordHash2'),
+        passwordSalt: Buffer.from('salt2')
+      },
+      //...
+    ];
+    
+
+   Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(nextGame => {
+      admin.auth().getUser(nextGame.first_five).then(function(userRecord) {
+            first_five = {user_id : userRecord.uid, name : userRecord.displayName};
+            admin.auth().getUser(nextGame.top_row).then(function(userRecord) {
+               top_row = {user_id : userRecord.uid, name : userRecord.displayName};
+               admin.auth().getUser(nextGame.middle_row).then(function(userRecord) {
+                  middle_row = {user_id : userRecord.uid, name : userRecord.displayName};
+                  admin.auth().getUser(nextGame.bottom_row).then(function(userRecord) {
+                     bottom_row = {user_id : userRecord.uid, name : userRecord.displayName};
+                     admin.auth().getUser(nextGame.full_house).then(function(userRecord) {
+                        full_house = {user_id : userRecord.uid, name : userRecord.displayName};
+                        res.render('winner', {full_house, top_row, middle_row, bottom_row, first_five});
+                  });
+               });
+            });
+         });
+      });
+   }); */
+
+      res.render('winner');
+   
 })
 
 app.get('/game-start/:user_id/:game_id', (req, res) => {
-
    Game.findOne({_id: req.params.game_id, played : false}, (err4, game) => {
       if(game){
          GameClient.findOne({user_id : req.params.user_id, game_id : req.params.game_id, payment : true}, (err, game_c) => {
@@ -201,6 +244,7 @@ io.on('connection', function(socket) {
    socket.on('initialize-data', function(user){
       Game.find({played : false}).sort({game_time : 1}).limit(1).then(game => {
          current_game = game[0];
+
          game_time = new Date(current_game.game_time);
          game_end_time = new Date(current_game.game_end_time);
          var flag = 0;
@@ -298,6 +342,7 @@ io.on('connection', function(socket) {
                Game.findOneAndUpdate({_id : current_game._id}, {$set : {full_house :  current_user.uid, played : true, game_end_time : new Date()}}, (err, result) => {
                socket.broadcast.emit('full-house-winner', current_user.phoneNumber+ ' has won full house', new Date());
                socket.emit('full-house-winner-you', 'Congrats you won full house', new Date()); 
+               clearInterval(refreshIntervalId);
                })
             }
             else{
@@ -489,28 +534,29 @@ function newGameTimerStart() {
    timerID           = null,
    game_players      = [],
    dibarred_user     = [];
-   refreshIntervalId = setInterval(doStuff, 12000);
-   /* timerID = setInterval(setTimer, 1000); */
+   game_next = null;
 
-   function doStuff() {
-      usedSequence.push(sequence[i]);
-      time = 10;
-      io.sockets.emit('nextNumber', 'Your next number is '+ sequence[i], sequence[i]);
-      i++;
-      if(i==90){
-         clearInterval(refreshIntervalId);
-         /* clearInterval(timerID); */
-         var gameFin = setInterval(gameFinished, 15000);
+   Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(gg => {
+      game_next = gg;
+      console.log(game_next);
+      refreshIntervalId = setInterval(doStuff, 12000);
+      function doStuff() {
+         usedSequence.push(sequence[i]);
+         time = 10;
+         io.sockets.emit('nextNumber', 'Your next number is '+ sequence[i], sequence[i]);
+         i++;
+         if(i==90){
+            clearInterval(refreshIntervalId);
+            var gameFin = setInterval(gameFinished, 12000);
+         }
       }
-   }
+   });
+}
 
-   function gameFinished() {
+function gameFinished() {
+   Game.findOneAndUpdate({_id : game_next._id}, {$set : {played : true, game_end_time : new Date()}}, (err, result) => {
       io.sockets.emit('game-finished');
-   }
-
-/*    function setTimer(){
-      io.sockets.emit('timer', time--);
-   } */
+   });
 }
 
 app.post('/end3', function(req, res) {

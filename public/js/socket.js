@@ -142,15 +142,14 @@ socket.on('full-house-winner', function(message, game_end_time_){
     $('.full-house').attr('disabled', true);
     alert(message);
     socket.close();
-    window.location = "/end";
+    window.location = "/winners";
 });
 
 socket.on('full-house-winner-you', function(message, game_end_time_){
     game_end_time = game_end_time_;
     $('.full-house').attr('disabled', true);
-    $('.toast-message').text(message)
-    $('.toast').toast('show');
     socket.close();
+    window.location = "/winners";
 });
 
 
@@ -231,6 +230,8 @@ function gamestart() {
     socket.emit('game-start', user);
     $('.play').show();
 }
+
+
 
 function initiate(user) {
     socket.emit('initialize-data', user);
@@ -314,8 +315,7 @@ window.addEventListener("load", () => {
     updateDetails(document.getElementById("button"));
 });
 
-
 socket.on('game-finished', function() {
     alert('Game has finished, you will be redirected to result page.');
-    window.location = "/end";
+    window.location = "/winners";
 })
