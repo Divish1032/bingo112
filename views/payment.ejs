@@ -66,8 +66,19 @@
     font-size: 2em!important;
   }
 }
-  
+  .loader{
+    display: none;
+  }
+  .fadeC{
+    opacity: 0.2;
+  }
     </style>
+
+<div class="loader">
+  <div class="spinner-border" style="color: #03e9f4;" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
         <div class="toast"
         role="alert"
         style="margin: auto; position: relative; z-index: 1;"
@@ -100,7 +111,6 @@
     >
       Payment Screen  
     </h1>
-    <img src="/img/paytmqr.jpg" class="qr-code" >
     <!-- Trigger/Open The Modal -->
 
     <% if(payment){ %>
@@ -109,6 +119,8 @@
       </p>
       <button type="submit" onclick="backHome()" id="myBtn">Back</button>
     <% }else{ %>
+      <img class="notpay" src="/img/paytmqr.jpg" class="qr-code" >
+
       <p class="notpay" style="color: black; text-align: center;margin-top: 35px;">
         This is just a test run so, payment is in testing mode. No money will be deducted from your account.
       </p>
@@ -179,6 +191,8 @@ var options = {
 
 
 function payment(gameid, user_id){
+  $('.loader').show();
+  $('.container').addClass('fadeC')
   game_id = gameid;
   console.log(game_id)
   var xhr = new XMLHttpRequest();
@@ -194,18 +208,24 @@ function payment(gameid, user_id){
           options.prefill.contact = user.phoneNumber;
           var rzp1 = new Razorpay(options);
           rzp1.open();
+          $('.loader').hide();
+          $('.container').removeClass('fadeC')
       }
   };
   xhr.send();
 }
 
 function paymentHandler(response){
+  $('.loader').show();
+  $('.container').addClass('fadeC')
   var xhr = new XMLHttpRequest();
   xhr.open("POST", '/payment-confirmation', true);
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.onreadystatechange = function () {
       if (xhr.readyState === 4 && xhr.status === 200) {
           var json = JSON.parse(xhr.responseText);
+          $('.loader').hide();
+          $('.container').removeClass('fadeC')
           $('.toast-message').text(json.message)
           $('.toast').toast('show');
           if(json.status == 1){

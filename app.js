@@ -61,6 +61,17 @@ app.get('/', function(req, res) {
    res.render('landing');
 });
 
+app.get('/get-game-time', function(req, res) {
+   Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(nextGame => {
+      if(nextGame){
+         res.send( {game_time : nextGame.game_time});
+      }
+      else{
+         res.send( {game_time : null});
+      }
+   });
+});
+
 app.get('/end', (req, res) => {
    res.render('end');
 });
@@ -73,15 +84,21 @@ app.get('/mygame-list/:uid', (req, res) => {
    var nextGameOnline = null;
    admin.auth().getUser(req.params.uid).then(function(userRecord) {
       Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(nextGame => {
-         GameClient.findOne({user_id : req.params.uid, game_id : nextGame._id, payment : true}, (err, game_c) => {
-            if(game_c){
-               nextGameOnline = { payment : true, game : nextGame };
-            }
-            else{
-               nextGameOnline = { payment : false, game : nextGame };
-            }
-            res.render('gamelist', { nextGameOnline, uid : req.params.uid });
-         })
+         if(nextGame){
+            GameClient.findOne({user_id : req.params.uid, game_id : nextGame._id, payment : true}, (err, game_c) => {
+               if(game_c){
+                  nextGameOnline = { payment : true, game : nextGame };
+               }
+               else{
+                  nextGameOnline = { payment : false, game : nextGame };
+               }
+               res.render('gamelist', { nextGameOnline, uid : req.params.uid });
+            })
+         }
+         else{
+            res.render('invalid', {message : "There is no next scheduled game"});
+         }
+         
       });
   })
   .catch(function(error) {
@@ -535,6 +552,7 @@ function newGameTimerStart() {
    game_players      = [],
    dibarred_user     = [];
    game_next = null;
+   
 
    Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(gg => {
       game_next = gg;
@@ -547,7 +565,7 @@ function newGameTimerStart() {
          i++;
          if(i==90){
             clearInterval(refreshIntervalId);
-            var gameFin = setInterval(gameFinished, 12000);
+            var gameFin = setInterval(gameFinished, 20000);
          }
       }
    });

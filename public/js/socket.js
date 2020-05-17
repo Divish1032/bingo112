@@ -13,7 +13,7 @@ var words = ['positive', 'joy', 'happy', 'zeal', 'smile', 'gain', 'nice', 'beaut
 'assure', 'accomplish', 'optimist', 'content', 'jolly', 'carefree', 'delight', 'elated', 'blessed', 'worship', 'glad', 'benefit',
 'fortunate', 'laugh', 'love', 'win', 'comfort', 'safe', 'merry', 'success', 'healthy', 'mind', 'matters', 'body', 'paradise', 'okay', 'glory', 'enjoy', 'amazing', 'joke', 'cute', 'hug', 'tasty', 'achieve', 'praise', 'optimist', 'smart', 'pleasant', 'awesome', 'peace', 
 'delight', 'kind', 'honest', 'trust', 'polite', 'generous', 'helping', 'guide', 'consistent', 'celebrate', 'confident', 'faith', 'truth', 'firm', 'sunshine', 'light', 'promise', 'calm', 'asha', 'ease', 'mental', 'well-being', 'bliss', 'courage', 'pledge', 'cool', 'brave']
-
+ words = words.sort();
 
 
 var firebaseConfig = {
@@ -91,14 +91,16 @@ socket.on('loadGameData', function(ticket, usedSequence){
 socket.on('nextNumber', function( data, number){
     disclosedNumbers.push(number);
     $('.nextnumber').text(words[number]);
-    $('.news-message').append("<p>" + words[number] + ", </p>");
-    if(counter == 1){
-        var duration = $('.news-message').css('animation-duration');
-        duration = parseInt(duration.substr(0,2)) + 2.5; 
-        $('.news-message').css('animation-duration', duration.toString() + 's');
+    console.log($('.news-message p').length)
+    if($('.news-message p').length == 6)
+    $('.news-message').css('animation-duration', '50s')
+    if($('.news-message p').length >= 12){
+        $('.news-message p:first-child').remove();
+        $('.news-message').append("<p>" + words[number] + ", </p>");
     }
-    console.log($('.news-message').css('animation-duration'));
-
+    else{
+        $('.news-message').append("<p>" + words[number] + ", </p>");
+    }
 });
 
 socket.on('timer', function(data){
@@ -188,16 +190,12 @@ $('.claim').click(function(){
 
 function showEmittedNumbers(data){
     disclosedNumbers = data;
-    data.forEach(x => {
+    var count = ( data.length >12)? data.length - 12 : 0;
+
+    for (let i = count; i < data.length; i++) {
+        var x = data[i];
         $('.news-message').append("<p>" + words[x] + ", </p>");
-    });
-    $('.nextnumber').text(words[data[data.length - 1]]);
-    var duration = $('.news-message').css('animation-duration');
-    duration = parseInt(duration.substr(0,2)) + data.length * 2.5; 
-    $('.news-message').css('animation-duration', duration.toString() + 's');
-    counter = 1;
-    console.log($('.news-message').css('animation-duration'));
-    //$('.timer').text(data[data.length - 1]); 
+    }
 }
 
 function setClaimButtonState(){

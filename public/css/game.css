@@ -181,7 +181,7 @@ section div .news-message {
   flex-shrink: 0;
   height: 50px;
   align-items: center;
-  animation: slide-left 20s linear infinite;
+  animation: slide-left 40s linear infinite;
 }
 section div .news-message p {
   font-size: 25px;
@@ -191,8 +191,8 @@ section div .news-message p {
 }
 @keyframes slide-left {
   from {
-    -webkit-transform: translateX(0);
-    transform: translateX(0);
+    -webkit-transform: translateX(100%);
+    transform: translateX(50%);
   }
   to {
     -webkit-transform: translateX(-100%);

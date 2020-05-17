@@ -391,15 +391,29 @@
 	init();
 };
 
+var game_time = null;
 
+function setGame(t1){
+	game_time = t1;
+	console.log(t1);
+}
 
+var xhr = new XMLHttpRequest();
+  xhr.open("GET", '/get-game-time', true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+		  var json = JSON.parse(xhr.responseText);
+		  console.log(json)
+          setInterval(function() { makeTimer(json.game_time); }, 1000);
+      }
+  };
+  xhr.send();
 
-
-
-function makeTimer() {
+function makeTimer(time) {
 
 	//		var endTime = new Date("29 April 2018 9:56:00 GMT+01:00");	
-		var endTime = new Date("16 May 2020 22:30:00 GMT+05:30");			
+		var endTime = new Date(time);			
 			endTime = (Date.parse(endTime) / 1000);
 
 			var now = new Date();
@@ -422,8 +436,6 @@ function makeTimer() {
 			$("#seconds").html(seconds + "<span>Seconds</span>");		
 
 	}
-
-  setInterval(function() { makeTimer(); }, 1000);
   
 
 

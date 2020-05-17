@@ -28,10 +28,10 @@ var gameSchema = new mongoose.Schema({
 		default : null
 	},
 	game_time : {
-		type : Date
+		type : String
 	},
 	game_end_time : {
-		type : Date
+		type : String
 	}
 })
 
