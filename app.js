@@ -25,6 +25,13 @@ var express    = require('express'),
   })
 });
 
+   var Razorpay = require('razorpay');
+
+   var instance = new Razorpay({
+      key_id: 'rzp_test_GJIdqc6kreFo02',
+      key_secret: 'WLN7gLT7bkIj1XoJWLXKOuB9'
+    });
+
 
 var players           = 0,
     sequence          = [],
@@ -83,34 +90,75 @@ app.get('/mygame-list/:uid', (req, res) => {
 });
 
 app.get('/payment/:game_id/:user_id', (req, res) => {
-   Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(game => {
-      if(game._id == req.params.game_id){
-         res.render('payment', {uid : req.params.user_id, game_id : req.params.game_id});
+   var payment = false;
+   GameClient.findOne({user_id : req.params.user_id, game_id : req.params.game_id, payment : true}, (err, game_c) => {
+      if(game_c){
+         payment = true;
       }
       else{
-         res.render('invalid', {message : "Invalid game access, this game is not the latest one."})
+         payment = false;
+      }
+      Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(game => {
+         if(game._id == req.params.game_id){
+            res.render('payment', {uid : req.params.user_id, game_id : req.params.game_id, payment});
+         }
+         else{
+            res.render('invalid', {message : "Invalid game access, this game is not the latest one."})
+         }
+      });
+   })
+   
+})
+
+app.post('/payment-order-create', (req, res) => {
+   var options = {
+      amount: 50000,  // amount in the smallest currency unit
+      currency: "INR",
+      receipt: "order_rcptid_11",
+      payment_capture: '1'
+    };
+
+   instance.orders.create(options, (err, response) => {
+      if(err){
+         console.log(err);
+         res.send({status : 0, message : err});
+      }
+      else{
+         console.log(response);
+         res.send({ status : 1, message : response});
       }
    });
 })
 
-app.post('/payment/:game_id/:user_id', (req, res) => {
-   Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(game => {
-      if(game._id == req.params.game_id){
-         console.log("true")
-         GameClient.create({ game_id : req.params.game_id, user_id : req.params.user_id, payment : true}, (err, game_c) => {
-            if(!err){
-               var nextGameOnline = { payment : true, game : game };
-               res.render('gamelist', {message : "Payment is successfull", nextGameOnline, uid : req.params.user_id});
-            }
-            else{
-               res.render('invalid', {message : err})
-            }
-         }); 
+app.post('/payment-confirmation', (req, res) => {
+   console.log(req.body);
+   var payment_id = req.body.response.razorpay_payment_id;
+   instance.payments.fetch(payment_id, (err, response) => {
+      if(err){
+         console.log(err);
+         res.send({status : 3, message:"Fetch payment confirmation."});
       }
       else{
-         res.render('invalid', {message : "Invalid game access, this game is not the latest one."})
+         if(response.status == 'authorized'){
+            GameClient.create({ game_id : req.body.game_id, user_id : req.body.user_id, payment : true, payment_id : payment_id}, (err, game_c) => {
+               if(err){
+                  console.log(err);
+                  res.send({status : 4, message:"Udating payment information error."});
+               }
+               else{
+                  console.log(response);
+                  res.send({status: 1 , message : "Payment Successfull."})
+               }
+            }); 
+         }
+         else if(response.status == 'failed'){
+            res.send({status : 0, message:"Transaction failed"});
+         }
+         else{
+            res.send({status : 2, message:"Some other problem occured for transaction."});
+         }
       }
-   });
+   })
 })
 
 app.get('/game-start/:user_id/:game_id', (req, res) => {

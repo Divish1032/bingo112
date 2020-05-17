@@ -3,10 +3,12 @@ var passportLocalMongoose = require("passport-local-mongoose");
 
 var gameClientSchema = new mongoose.Schema({
 		game_id : {
-            type : String
+            type : String,
+            required : true
         },
         user_id : {
-            type : String
+            type : String,
+            required : true
         },
         payment : {
             type : Boolean,
@@ -15,6 +17,9 @@ var gameClientSchema = new mongoose.Schema({
         ticket : [[{
             type : Number
         }]],
+        payment_id : {
+            type : String
+        },
         created_at : {
             type : Date,
             default : new Date()
