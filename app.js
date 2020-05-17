@@ -162,20 +162,28 @@ app.post('/payment-confirmation', (req, res) => {
 })
 
 app.get('/game-start/:user_id/:game_id', (req, res) => {
-   GameClient.findOne({user_id : req.params.user_id, game_id : req.params.game_id, payment : true}, (err, game_c) => {
-      if(!game_c){
-         res.render('invalid', { message : "Unauthorized access, you have not done your payment for the game."})
+
+   Game.findOne({_id: req.params.game_id, played : false}, (err4, game) => {
+      if(game){
+         GameClient.findOne({user_id : req.params.user_id, game_id : req.params.game_id, payment : true}, (err, game_c) => {
+            if(!game_c){
+               res.render('invalid', { message : "Unauthorized access, you have not done your payment for the game."})
+            }
+            else{
+               admin.auth().getUser(req.params.user_id).then(function(userRecord) {
+                  Game.find({played : false}).sort({game_time : 1}).limit(1).then(game => {
+                     res.render('game', {game : game, uid : req.params.user_id});
+                  });
+               })
+               .catch(function(error) {
+                console.log('Error fetching user data:', error);
+                res.render('invalid', { message: "User data is not present, unauthorized login"});
+               });
+            }
+         })
       }
       else{
-         admin.auth().getUser(req.params.user_id).then(function(userRecord) {
-            Game.find({played : false}).sort({game_time : 1}).limit(1).then(game => {
-               res.render('game', {game : game, uid : req.params.user_id});
-            });
-         })
-         .catch(function(error) {
-          console.log('Error fetching user data:', error);
-          res.render('invalid', { message: "User data is not present, unauthorized login"});
-         });
+         res.render('invalid', { message: "This game is already over. Try playing a new game."});
       }
    })
 });
@@ -290,7 +298,6 @@ io.on('connection', function(socket) {
                Game.findOneAndUpdate({_id : current_game._id}, {$set : {full_house :  current_user.uid, played : true, game_end_time : new Date()}}, (err, result) => {
                socket.broadcast.emit('full-house-winner', current_user.phoneNumber+ ' has won full house', new Date());
                socket.emit('full-house-winner-you', 'Congrats you won full house', new Date()); 
-               s
                })
             }
             else{
@@ -482,7 +489,7 @@ function newGameTimerStart() {
    timerID           = null,
    game_players      = [],
    dibarred_user     = [];
-   refreshIntervalId = setInterval(doStuff, 10000);
+   refreshIntervalId = setInterval(doStuff, 12000);
    /* timerID = setInterval(setTimer, 1000); */
 
    function doStuff() {
@@ -493,7 +500,12 @@ function newGameTimerStart() {
       if(i==90){
          clearInterval(refreshIntervalId);
          /* clearInterval(timerID); */
+         var gameFin = setInterval(gameFinished, 15000);
       }
+   }
+
+   function gameFinished() {
+      io.sockets.emit('game-finished');
    }
 
 /*    function setTimer(){

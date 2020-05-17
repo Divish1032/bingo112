@@ -313,3 +313,9 @@ window.addEventListener("load", () => {
     show();
     updateDetails(document.getElementById("button"));
 });
+
+
+socket.on('game-finished', function() {
+    alert('Game has finished, you will be redirected to result page.');
+    window.location = "/end";
+})
