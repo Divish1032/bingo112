@@ -101,6 +101,9 @@ socket.on('nextNumber', function( data, number){
     else{
         $('.news-message').append("<p>" + words[number] + ", </p>");
     }
+
+    var msg = new SpeechSynthesisUtterance(words[number]);
+    window.speechSynthesis.speak(msg);
 });
 
 socket.on('timer', function(data){

@@ -568,7 +568,7 @@ function newGameTimerStart() {
    Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(gg => {
       game_next = gg;
       console.log(game_next)
-      refreshIntervalId = setInterval(doStuff, 100);
+      refreshIntervalId = setInterval(doStuff, 12000);
       function doStuff() {
          usedSequence.push(sequence[i]);
          time = 10;
