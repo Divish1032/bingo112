@@ -179,47 +179,83 @@ app.post('/payment-confirmation', (req, res) => {
    })
 });
 
-app.get('/winners', (req, res) => {
+app.get('/winners/:id', (req, res) => {
    var first_five = null;
    var top_row = null;
    var middle_row = null;
    var bottom_row = null;
    var full_house = null;
-/*    let userImportRecords = [
-      {
-        uid: 'uid1',
-      },
-      {
-        uid: 'uid2',
-        email: 'user2@example.com',
-        passwordHash: Buffer.from('passwordHash2'),
-        passwordSalt: Buffer.from('salt2')
-      },
-      //...
-    ];
-    
 
-   Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(nextGame => {
-      admin.auth().getUser(nextGame.first_five).then(function(userRecord) {
-            first_five = {user_id : userRecord.uid, name : userRecord.displayName};
+   Game.findOne({_id : req.params.id}).then(nextGame => {
+      let promise1 = new Promise( (resolve, reject) => {
+         if(nextGame.first_five){
+            admin.auth().getUser(nextGame.first_five).then(function(userRecord) {
+               first_five = {user_id : userRecord.uid, name : userRecord.displayName};
+               resolve();
+            });
+         }
+         else{
+            resolve();
+         }
+      });
+
+      let promise2 = new Promise( (resolve, reject) => {
+         if(nextGame.top_row){
             admin.auth().getUser(nextGame.top_row).then(function(userRecord) {
                top_row = {user_id : userRecord.uid, name : userRecord.displayName};
-               admin.auth().getUser(nextGame.middle_row).then(function(userRecord) {
-                  middle_row = {user_id : userRecord.uid, name : userRecord.displayName};
-                  admin.auth().getUser(nextGame.bottom_row).then(function(userRecord) {
-                     bottom_row = {user_id : userRecord.uid, name : userRecord.displayName};
-                     admin.auth().getUser(nextGame.full_house).then(function(userRecord) {
-                        full_house = {user_id : userRecord.uid, name : userRecord.displayName};
-                        res.render('winner', {full_house, top_row, middle_row, bottom_row, first_five});
-                  });
-               });
+               console.log("2")
+               resolve();
             });
-         });
+         }
+         else{
+            resolve();
+         }
       });
-   }); */
 
-      res.render('winner');
-   
+      let promise3 = new Promise( (resolve, reject) => {
+         if(nextGame.middle_row){
+            admin.auth().getUser(nextGame.middle_row).then(function(userRecord) {
+               middle_row = {user_id : userRecord.uid, name : userRecord.displayName};
+               console.log("3")
+               resolve();
+            });
+         }
+         else{
+            resolve();
+         }
+      });
+      let promise4 = new Promise( (resolve, reject) => {
+         if(nextGame.bottom_row){
+            admin.auth().getUser(nextGame.bottom_row).then(function(userRecord) {
+               bottom_row = {user_id : userRecord.uid, name : userRecord.displayName};
+               console.log("4")
+               resolve();
+            });
+         }
+         else{
+            resolve();
+         }
+      });
+      let promise5 = new Promise( (resolve, reject) => {
+         if(nextGame.full_house){
+            admin.auth().getUser(nextGame.full_house).then(function(userRecord) {
+               full_house = {user_id : userRecord.uid, name : userRecord.displayName};
+               console.log("5")
+               resolve();
+            });
+         }
+         else{
+            resolve();
+         }
+      });
+
+      Promise.all([promise1, promise2, promise3, promise4, promise5]).then(data => {
+         console.log("6");
+         console.log( {first_five, top_row, middle_row, bottom_row, full_house})
+         res.render('winner', {first_five, top_row, middle_row, bottom_row, full_house});
+      })
+
+   });  
 })
 
 app.get('/game-start/:user_id/:game_id', (req, res) => {
@@ -275,7 +311,6 @@ io.on('connection', function(socket) {
          if(flag == 0){
             dibarred_user.forEach(x => {
                if(x == user.uid){
-                  console.log("2222")
                   socket.emit("unauthorized-usage", "User has been debbared from the current game");
                   flag = 1;
                }
@@ -335,8 +370,8 @@ io.on('connection', function(socket) {
          Game.findOne({_id : current_game._id}, (err, game_data) =>{
             if(game_data && !game_data.full_house){
                Game.findOneAndUpdate({_id : current_game._id}, {$set : {full_house :  current_user.uid, played : true, game_end_time : new Date()}}, (err, result) => {
-               socket.broadcast.emit('full-house-winner', current_user.phoneNumber+ ' has won full house', new Date());
-               socket.emit('full-house-winner-you', 'Congrats you won full house', new Date()); 
+               socket.broadcast.emit('full-house-winner', current_user.phoneNumber+ ' has won full house', game_data);
+               socket.emit('full-house-winner-you', 'Congrats you won full house', game_data); 
                clearInterval(refreshIntervalId);
                })
             }
@@ -558,8 +593,8 @@ newGameTimerStart();
 function newGameTimerStart() {
    sequence          = tambola.getDrawSequence(),
    i                 = 0,
-   usedSequence      = [],/* 
-   time              = 10, */
+   usedSequence      = [],
+   time              = 10,
    refreshIntervalId = null,
    timerID           = null,
    game_players      = [],
@@ -568,23 +603,28 @@ function newGameTimerStart() {
    Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(gg => {
       game_next = gg;
       console.log(game_next)
-      refreshIntervalId = setInterval(doStuff, 12000);
+      refreshIntervalId = setInterval(doStuff, 100);
+      timerID = setInterval(setTimer, 1000);
       function doStuff() {
          usedSequence.push(sequence[i]);
-         time = 10;
+         time = 12;
          io.sockets.emit('nextNumber', 'Your next number is '+ sequence[i], sequence[i]);
          i++;
          if(i==90){
             clearInterval(refreshIntervalId);
+            clearInterval(timerID);
             var gameFin = setInterval(gameFinished, 2000000);
          }
+      }
+      function setTimer(){
+         io.sockets.emit('timer', time--);
       }
    });
 }
 
 function gameFinished() {
    Game.findOneAndUpdate({_id : game_next._id}, {$set : {played : true, game_end_time : new Date()}}, (err, result) => {
-      io.sockets.emit('game-finished');
+      io.sockets.emit('game-finished', game_next._id);
    });
 }
 

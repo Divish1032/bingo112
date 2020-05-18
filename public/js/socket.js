@@ -10,9 +10,9 @@ var counter        = 0;
 
 var words = ['', 'positive', 'joy', 'happy', 'zeal', 'smile', 'gain', 'nice', 'beautiful', 'profit', 'cheer', 'wonderful', 'good',
 'better', 'best', 'bright', 'optimistic', 'strong', 'will', 'hope', 'certain', 'sure', 'accept', 'warm', 'appreciate', 'friendly', 'adore', 'support', 'respect', 'sympathy', 'advice', 'recommend', 'clear', 'confident',
-'assure', 'accomplish', 'optimist', 'content', 'jolly', 'carefree', 'delight', 'elated', 'blessed', 'worship', 'glad', 'benefit',
+'assure', 'accomplish', 'content', 'jolly', 'carefree', 'elated', 'blessed', 'worship', 'glad', 'benefit',
 'fortunate', 'laugh', 'love', 'win', 'comfort', 'safe', 'merry', 'success', 'healthy', 'mind', 'matters', 'body', 'paradise', 'okay', 'glory', 'enjoy', 'amazing', 'joke', 'cute', 'hug', 'tasty', 'achieve', 'praise', 'optimist', 'smart', 'pleasant', 'awesome', 'peace', 
-'delight', 'kind', 'honest', 'trust', 'polite', 'generous', 'helping', 'guide', 'consistent', 'celebrate', 'confident', 'faith', 'truth', 'firm', 'sunshine', 'light', 'promise', 'calm', 'asha', 'ease', 'mental', 'well-being', 'bliss', 'courage', 'pledge', 'cool', 'brave']
+'delight', 'kind', 'honest', 'trust', 'polite', 'generous', 'helping', 'guide', 'consistent', 'celebrate', 'faith', 'truth', 'firm', 'sunshine', 'light', 'promise', 'calm', 'asha', 'ease', 'mental', 'well-being', 'bliss', 'courage', 'pledge', 'cool', 'brave']
  words = words.sort();
 
 
@@ -102,8 +102,8 @@ socket.on('nextNumber', function( data, number){
         $('.news-message').append("<p>" + words[number] + ", </p>");
     }
 
-    var msg = new SpeechSynthesisUtterance(words[number]);
-    window.speechSynthesis.speak(msg);
+/*     var msg = new SpeechSynthesisUtterance(words[number]);
+    window.speechSynthesis.speak(msg); */
 });
 
 socket.on('timer', function(data){
@@ -116,6 +116,10 @@ socket.on('wrong-claim', function(id){
     socket.disconnect();
     window.location = "/end";
 });
+
+socket.on('timer', function(data){
+    $('.timer').text(data);
+}) 
 
 // Claim Controls
 socket.on('first-five-winner', function(message){
@@ -142,19 +146,19 @@ socket.on('bottom-row-winner', function(message){
     $('.bottom-row').attr('disabled', true);
 });
 
-socket.on('full-house-winner', function(message, game_end_time_){
-    game_end_time = game_end_time_;
+socket.on('full-house-winner', function(message, game){
+    game_end_time = new Date();
     $('.full-house').attr('disabled', true);
     alert(message);
     socket.close();
-    window.location = "/winners";
+    window.location = "/winners/" + game._id;
 });
 
-socket.on('full-house-winner-you', function(message, game_end_time_){
-    game_end_time = game_end_time_;
+socket.on('full-house-winner-you', function(message, game){
+    game_end_time = new Date();
     $('.full-house').attr('disabled', true);
     socket.close();
-    window.location = "/winners";
+    window.location = "/winners/" + game._id;
 });
 
 
@@ -315,5 +319,5 @@ window.addEventListener("load", () => {
 
 socket.on('game-finished', function() {
     alert('Game has finished, you will be redirected to result page.');
-    window.location = "/winners";
+    window.location = "/winners/" + id;
 })
