@@ -321,6 +321,7 @@ io.on('connection', function(socket) {
 
    socket.on('full-house', function(ticket_client, user, game){
       var claim = null;
+      console.log(ticket_client);
       for (let i = 0; i < 3; i++) {
          for (let j = 0; j < 9; j++) {
              var value = ticket_client[i][j];
@@ -488,6 +489,7 @@ io.on('connection', function(socket) {
       var flag = 0;
       var claim = null;
       var count = 0;
+      console.log(ticket_client);
       for (let i = 0; i < 3; i++) {
          for (let j = 0; j < 9; j++) {
             var value = ticket_client[i][j];
