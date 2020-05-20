@@ -183,7 +183,7 @@ app.get('/winners/:user_id/:game_id', middleware.ensureUserAuthentication, (req,
                });
             }
             else{
-               first_five = {user_id : userRecord.uid, name : "None"};
+               first_five = {user_id : "None", name : "None"};
                resolve();
             }
          });
@@ -196,7 +196,7 @@ app.get('/winners/:user_id/:game_id', middleware.ensureUserAuthentication, (req,
                });
             }
             else{
-               top_row = {user_id : userRecord.uid, name : "None"};
+               top_row = {user_id : "None", name : "None"};
                resolve();
             }
             
@@ -210,7 +210,7 @@ app.get('/winners/:user_id/:game_id', middleware.ensureUserAuthentication, (req,
                });
             }
             else{
-               middle_row = {user_id : userRecord.uid, name : "None"};
+               middle_row = {user_id : "None", name : "None"};
                resolve();
             }
          });
@@ -223,7 +223,7 @@ app.get('/winners/:user_id/:game_id', middleware.ensureUserAuthentication, (req,
                });
             }
             else{
-               bottom_row = {user_id : userRecord.uid, name : "None"};
+               bottom_row = {user_id : "None", name : "None"};
                resolve();
             }
          });
@@ -236,7 +236,7 @@ app.get('/winners/:user_id/:game_id', middleware.ensureUserAuthentication, (req,
                });
             }
             else{
-               full_house = {user_id : userRecord.uid, name : "None"};
+               full_house = {user_id : "None", name : "None"};
                resolve();
             }
          });
@@ -409,11 +409,9 @@ io.on('connection', function(socket) {
          var value = ticket_client[1][i];
          var flag = 0;
          if(value != 0){
-            console.log("tic" + value)
             usedSequence.forEach(x => {
                if(x == Math.abs(value) && value != Math.abs(value)){
                   flag = 1;
-                  console.log("se" + x);
                }    
             });
             if(flag == 0){
@@ -545,7 +543,7 @@ io.on('connection', function(socket) {
    socket.on('disconnect', function () {
       players--;
       console.log("Disconnected");   
-      if(user){
+      if(current_user){
          var index = game_players.indexOf(current_user.uid);
          if (index > -1) {
             game_players.splice(index, 1);
@@ -610,7 +608,7 @@ function doStuff() {
 
 function gameFinished() {
    Game.updateOne({_id : game_next._id}, {$set : {played : true, game_end_time : new Date()}}, (err, result) => {
-      //io.sockets.emit('game-finished', game_next._id);
+      io.sockets.emit('game-finished', game_next._id);
       console.log("-------");
       initiationGame();
    });

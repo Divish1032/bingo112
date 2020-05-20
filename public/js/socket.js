@@ -322,7 +322,7 @@ window.addEventListener("load", () => {
     updateDetails(document.getElementById("button"));
 });
 
-socket.on('game-finished', function() {
+socket.on('game-finished', function(id) {
     alert('Game has finished, you will be redirected to result page.');
-    window.location = "/winners/" + id;
+    window.location = "/winners/"  + user.uid + '/' + id;
 })
