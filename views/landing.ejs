@@ -244,6 +244,7 @@
           </div>
 
           <div class="game">
+            <% if(game_time){ %>
             <h1>Next Game to start in:</h1>
             <div id="timer">
               <div id="days"></div>
@@ -251,6 +252,9 @@
               <div id="minutes"></div>
               <div id="seconds"></div>
             </div>
+            <% }else{ %>
+            <h1>No next game scheduled</h1>
+            <% } %>
           </div>
 
           <div class="content-wrap">

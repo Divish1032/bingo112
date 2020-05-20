@@ -76,6 +76,10 @@ socket.on('game-initialized', (t1, t2, current_game) => {
 });
 
 socket.on('loadGameData', function(ticket, usedSequence){
+    var audio = document.getElementById("myAudio");
+    audio.volume = 0.2;
+    audio.play();
+    
     setClaimButtonState();
     createTicket(ticket);
     showEmittedNumbers(usedSequence);
@@ -102,8 +106,8 @@ socket.on('nextNumber', function( data, number){
         $('.news-message').append("<p>" + words[number] + ", </p>");
     }
 
-/*     var msg = new SpeechSynthesisUtterance(words[number]);
-    window.speechSynthesis.speak(msg); */
+    var msg = new SpeechSynthesisUtterance(words[number]);
+    window.speechSynthesis.speak(msg);
 });
 
 socket.on('timer', function(data){
@@ -151,14 +155,15 @@ socket.on('full-house-winner', function(message, game){
     $('.full-house').attr('disabled', true);
     alert(message);
     socket.close();
-    window.location = "/winners/" + game._id;
+    window.location = "/winners/" + user.uid + '/'  + game._id;
 });
 
 socket.on('full-house-winner-you', function(message, game){
     game_end_time = new Date();
     $('.full-house').attr('disabled', true);
+    alert(message);
     socket.close();
-    window.location = "/winners/" + game._id;
+    window.location = "/winners/" + user.uid + '/' + game._id;
 });
 
 

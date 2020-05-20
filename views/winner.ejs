@@ -73,51 +73,54 @@
       "
     >
       Winners
-    </h1>
-
-    <div class="container-fluid" style="margin: 40px auto;">
-      <table class="table">
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Category</th>
-            <th scope="col">Username</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="table-success">
-            <th scope="row">1</th>
-            <td>Full House</td>
-            <td><%= full_house.name %></td>
-          </tr>
-          <tr class="table-warning">
-            <th scope="row">2</th>
-            <td>First Five</td>
-            <td><%= first_five.name %></td>
-          </tr>
-          <tr class="table-info">
-            <th scope="row">3</th>
-            <td>Top Row</td>
-            <td><%= top_row.name %></td>
-          </tr>
-          <tr class="table-light">
-            <th scope="row">4</th>
-            <td>Middle Row</td>
-            <td><%= middle_row.name %></td>
-          </tr>
-          <tr class="table-danger">
-            <th scope="row">5</th>
-            <td>Bottom Row</td>
-            <td><%= bottom_row.name %></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
+    </h1> 
 
     <div style="width: max-content;margin: 0 auto;">
       <a href="/" class="home">Go Home</a>
     </div>
+
+    <% if(status){ %>
+      <div class="container-fluid" style="margin: 40px auto;">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Category</th>
+              <th scope="col">Username</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="table-success">
+              <th scope="row">1</th>
+              <td>Full House</td>
+              <td><%= full_house.name %></td>
+            </tr>
+            <tr class="table-warning">
+              <th scope="row">2</th>
+              <td>First Five</td>
+              <td><%= first_five.name %></td>
+            </tr>
+            <tr class="table-info">
+              <th scope="row">3</th>
+              <td>Top Row</td>
+              <td><%= top_row.name %></td>
+            </tr>
+            <tr class="table-light">
+              <th scope="row">4</th>
+              <td>Middle Row</td>
+              <td><%= middle_row.name %></td>
+            </tr>
+            <tr class="table-danger">
+              <th scope="row">5</th>
+              <td>Bottom Row</td>
+              <td><%= bottom_row.name %></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <% }else{ %> 
+      <h3 style="color: white;text-align: center;margin-top: 50px;">An invalid game.</h3>
+    <% } %>
   </body>
 
 </html>
