@@ -79,7 +79,7 @@ socket.on('loadGameData', function(ticket, usedSequence){
     var audio = document.getElementById("myAudio");
     audio.volume = 0.2;
     audio.play();
-    
+
     setClaimButtonState();
     createTicket(ticket);
     showEmittedNumbers(usedSequence);
@@ -193,7 +193,7 @@ $('.claim').click(function(){
     if($(this).hasClass('middle-row'))emit = 'middle-row';
     if($(this).hasClass('bottom-row'))emit = 'bottom-row';
     if($(this).hasClass('first-five'))emit = 'first-five';
-    socket.emit(emit, ticket);
+    socket.emit(emit, ticket, user, game);
 });
 
 function showEmittedNumbers(data){

@@ -265,16 +265,15 @@ app.post('/add-game', function(req, res) {
 io.on('connection', function(socket) {
    players++;
    console.log(players + " connected. This one is " + socket.id);
-   var current_user = null; 
    var current_game = null;
    var game_end_time = null;
    var game_time = null;
    var ticket = null;
+   console.log(dibarred_user);
 
    socket.on('initialize-data', function(user){
       Game.find({played : false}).sort({game_time : 1}).limit(1).then(game => {
          current_game = game[0];
-
          game_time = new Date(current_game.game_time);
          game_end_time = new Date(current_game.game_end_time);
          var flag = 0;
@@ -293,7 +292,6 @@ io.on('connection', function(socket) {
             });
             if(flag == 0){
                game_players.push(user.uid);
-               current_user = user;
                socket.emit("game-initialized", game_time, game_end_time, current_game);
             }
          }
@@ -321,7 +319,7 @@ io.on('connection', function(socket) {
       }
    });
 
-   socket.on('full-house', function(ticket_client){
+   socket.on('full-house', function(ticket_client, user, game){
       var claim = null;
       for (let i = 0; i < 3; i++) {
          for (let j = 0; j < 9; j++) {
@@ -345,26 +343,25 @@ io.on('connection', function(socket) {
       if(claim){
          Game.findOne({_id : current_game._id}, (err, game_data) =>{
             if(game_data && !game_data.full_house){
-               Game.findOneAndUpdate({_id : current_game._id}, {$set : {full_house :  current_user.uid, played : true, game_end_time : new Date()}}, (err, result) => {
-               socket.broadcast.emit('full-house-winner', current_user.phoneNumber+ ' has won full house', game_data);
+               Game.findOneAndUpdate({_id : current_game._id}, {$set : {full_house :  user.uid, played : true, game_end_time : new Date()}}, (err, result) => {
+               socket.broadcast.emit('full-house-winner', user.phoneNumber+ ' has won full house', game_data);
                socket.emit('full-house-winner-you', 'Congrats you won full house', game_data); 
                clearInterval(refreshIntervalId);
                })
             }
             else{
-               dibarred_user.push(current_user.uid);
-               socket.emit('wrong-claim', current_user.phoneNumber);
+               dibarred_user.push(user.uid);
+               socket.emit('wrong-claim', user.phoneNumber);
             }
          })
       }
       else{
-         dibarred_user.push(current_user.uid);
-         socket.emit('wrong-claim', current_user.phoneNumber);
+         dibarred_user.push(user.uid);
+         socket.emit('wrong-claim', user.phoneNumber);
       }
-      
    });
 
-   socket.on('top-row', function(ticket_client){
+   socket.on('top-row', function(ticket_client, user, game){
       var claim = null;
       for (let i = 0; i < 9; i++) {
          var value = ticket_client[0][i];
@@ -386,24 +383,24 @@ io.on('connection', function(socket) {
       if(claim){
          Game.findOne({_id : current_game._id}, (err, game_data) =>{
             if(game_data && !game_data.top_row){
-               Game.findOneAndUpdate({_id : current_game._id}, {$set : { top_row : current_user.uid }}, (err, result) => {
+               Game.findOneAndUpdate({_id : current_game._id}, {$set : { top_row : user.uid }}, (err, result) => {
                socket.broadcast.emit('top-row-winner', socket.id+ ' has won top row');
                socket.emit('top-row-winner', 'Congrats you won top row');
                })
             }
             else{
-               dibarred_user.push(current_user.uid);
-               socket.emit('wrong-claim', current_user.phoneNumber);
+               dibarred_user.push(user.uid);
+               socket.emit('wrong-claim', user.phoneNumber);
             }
          });
       }
       else{
-         dibarred_user.push(current_user.uid);
-         socket.emit('wrong-claim', current_user.phoneNumber);
+         dibarred_user.push(user.uid);
+         socket.emit('wrong-claim', user.phoneNumber);
       }
    });
 
-   socket.on('middle-row', function(ticket_client){
+   socket.on('middle-row', function(ticket_client, user, game){
       var claim = null;
       for (let i = 0; i < 9; i++) {
          var value = ticket_client[1][i];
@@ -427,26 +424,26 @@ io.on('connection', function(socket) {
       if(claim){
          Game.findOne({_id : current_game._id}, (err, game_data) =>{
             if(game_data && !game_data.middle_row){
-               Game.findOneAndUpdate({_id : current_game._id}, {$set : { middle_row : current_user.uid }}, (err, result) => {
+               Game.findOneAndUpdate({_id : current_game._id}, {$set : { middle_row : user.uid }}, (err, result) => {
                socket.broadcast.emit('middle-row-winner', socket.id+ ' has won middle row');
                socket.emit('middle-row-winner', 'Congrats you won middle row');
                });
             }
             else{
-               dibarred_user.push(current_user.uid);
-               socket.emit('wrong-claim', current_user.phoneNumber);
+               dibarred_user.push(user.uid);
+               socket.emit('wrong-claim', user.phoneNumber);
             }
          });
       }
       else{
-         dibarred_user.push(current_user.uid);
-         socket.emit('wrong-claim', current_user.phoneNumber);
+         dibarred_user.push(user.uid);
+         socket.emit('wrong-claim', user.phoneNumber);
       }
 
       
    });
 
-   socket.on('bottom-row', function(ticket_client){
+   socket.on('bottom-row', function(ticket_client, user, game){
       var claim = null;
       for (let i = 0; i < 9; i++) {
          var value = ticket_client[2][i];
@@ -468,26 +465,26 @@ io.on('connection', function(socket) {
       if(claim){
          Game.findOne({_id : current_game._id}, (err, game_data) =>{
             if(game_data && !game_data.bottom_row){
-               Game.findOneAndUpdate({_id : current_game._id}, {$set : { bottom_row : current_user.uid }}, (err, result) => {
+               Game.findOneAndUpdate({_id : current_game._id}, {$set : { bottom_row : user.uid }}, (err, result) => {
                socket.broadcast.emit('bottom-row-winner', socket.id+ ' has won bottom row');
                socket.emit('bottom-row-winner', 'Congrats you won bottom row');
                })
             }
             else{
-               dibarred_user.push(current_user.uid);
-               socket.emit('wrong-claim', current_user.phoneNumber);
+               dibarred_user.push(user.uid);
+               socket.emit('wrong-claim', user.phoneNumber);
             }
          })
       }
       else{
-         dibarred_user.push(current_user.uid);
-         socket.emit('wrong-claim', current_user.phoneNumber);
+         dibarred_user.push(user.uid);
+         socket.emit('wrong-claim', user.phoneNumber);
       }
 
       
    });
 
-   socket.on('first-five', function(ticket_client){
+   socket.on('first-five', function(ticket_client, user, game){
       var flag = 0;
       var claim = null;
       var count = 0;
@@ -516,20 +513,20 @@ io.on('connection', function(socket) {
       if(claim){
          Game.findOne({_id : current_game._id}, (err, game_data) =>{
             if(game_data && !game_data.first_five){
-               Game.findOneAndUpdate({_id : current_game._id}, {$set : { first_five : current_user.uid }}, (err, result) => {
+               Game.findOneAndUpdate({_id : current_game._id}, {$set : { first_five : user.uid }}, (err, result) => {
                   socket.emit('first-five-winner', 'Congrats you won first-five');
                   socket.broadcast.emit('first-five-winner', socket.id+ ' has won first-five');
                });
             }
             else{
-               dibarred_user.push(current_user.uid);
-               socket.emit('wrong-claim', current_user.phoneNumber);
+               dibarred_user.push(user.uid);
+               socket.emit('wrong-claim', user.phoneNumber);
             }
          });
       }
       else{
-         dibarred_user.push(current_user.uid);
-         socket.emit('wrong-claim', current_user.phoneNumber);
+         dibarred_user.push(user.uid);
+         socket.emit('wrong-claim', user.phoneNumber);
       }
       
    });
@@ -541,11 +538,11 @@ io.on('connection', function(socket) {
       }
    });
 
-   socket.on('disconnect', function () {
+   socket.on('disconnect', function (user) {
       players--;
       console.log("Disconnected");   
-      if(current_user){
-         var index = game_players.indexOf(current_user.uid);
+      if(user){
+         var index = game_players.indexOf(user.uid);
          if (index > -1) {
             game_players.splice(index, 1);
          }
