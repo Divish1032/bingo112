@@ -586,7 +586,8 @@ function newGameStart() {
    game_players      = [],
    dibarred_user     = [];
    console.log(game_next);
-   refreshIntervalId = setInterval(doStuff, 1000);
+   console.log("new game start");
+   refreshIntervalId = setInterval(doStuff, 6000);
    timerID = setInterval(setTimer, 1000);
 }
 
@@ -597,6 +598,7 @@ function setTimer(){
 function doStuff() {
    usedSequence.push(sequence[i]);
    time = 9;
+   console.log("Yess");
    io.sockets.emit('nextNumber', 'Your next number is '+ sequence[i], sequence[i]);
    i++;
    if(i==90){

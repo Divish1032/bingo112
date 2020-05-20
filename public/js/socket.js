@@ -246,7 +246,6 @@ function initiate(user) {
 
 function showTimer(time){
     var x = setInterval(function() {
-        console.log(time)
         var now = new Date().getTime();
 
         var distance = time - now;
@@ -259,8 +258,6 @@ function showTimer(time){
         // Output the result in an element with id="demo"
         var d = day + "D " + hours + "H " + minutes + "M " + seconds + "S ";
         $("#timer").html(d);
-
-        console.log(d);
         
         // If the count down is over, write some text 
         if (distance < 0) {
