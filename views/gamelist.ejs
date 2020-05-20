@@ -42,7 +42,7 @@
       <!-- <h2>Past Winner</h2> -->
       <div class="list-box">
         <h2 style="text-align: center;">Upcoming Game</h2>
-        <p><%= new Date(nextGameOnline.game.game_time).toString().substr(0,24) %></p>
+        <p><%= nextGameOnline.game.game_time.substr(0,20) %></p>
         <% if(!nextGameOnline.payment){ %>
         <a href="/payment/<%= user_id %>/<%= nextGameOnline.game._id %>" class="btn">Pay</a>
         <% }else{ %>

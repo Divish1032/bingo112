@@ -580,13 +580,13 @@ function newGameStart() {
    sequence          = tambola.getDrawSequence(),
    i                 = 0,
    usedSequence      = [],
-   time              = 4,
+   time              = 9,
    refreshIntervalId = null,
    timerID           = null,
    game_players      = [],
    dibarred_user     = [];
    console.log(game_next);
-   refreshIntervalId = setInterval(doStuff, 5000);
+   refreshIntervalId = setInterval(doStuff, 10000);
    timerID = setInterval(setTimer, 1000);
 }
 
@@ -596,7 +596,7 @@ function setTimer(){
 
 function doStuff() {
    usedSequence.push(sequence[i]);
-   time = 12;
+   time = 9;
    io.sockets.emit('nextNumber', 'Your next number is '+ sequence[i], sequence[i]);
    i++;
    if(i==90){
