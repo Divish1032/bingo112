@@ -266,6 +266,7 @@ io.on('connection', function(socket) {
    players++;
    console.log(players + " connected. This one is " + socket.id);
    var current_game = null;
+   var current_user = null;
    var game_end_time = null;
    var game_time = null;
    var ticket = null;
@@ -291,6 +292,7 @@ io.on('connection', function(socket) {
                }
             });
             if(flag == 0){
+               current_user = user;
                game_players.push(user.uid);
                socket.emit("game-initialized", game_time, game_end_time, current_game);
             }
@@ -540,14 +542,15 @@ io.on('connection', function(socket) {
       }
    });
 
-   socket.on('disconnect', function (user) {
+   socket.on('disconnect', function () {
       players--;
       console.log("Disconnected");   
       if(user){
-         var index = game_players.indexOf(user.uid);
+         var index = game_players.indexOf(current_user.uid);
          if (index > -1) {
             game_players.splice(index, 1);
          }
+         console.log("//")
          console.log(game_players)
       }
    });
@@ -585,7 +588,7 @@ function newGameStart() {
    game_players      = [],
    dibarred_user     = [];
    console.log(game_next);
-   refreshIntervalId = setInterval(doStuff, 10000);
+   refreshIntervalId = setInterval(doStuff, 1000);
    timerID = setInterval(setTimer, 1000);
 }
 
