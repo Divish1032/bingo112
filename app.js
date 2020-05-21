@@ -603,7 +603,7 @@ function setTimer(){
 function doStuff() {
    usedSequence.push(sequence[i]);
    time = 6;
-   console.log("Word shwon");
+   console.log("Word shwon  " + i);
    io.sockets.emit('nextNumber', 'Your next number is '+ sequence[i], sequence[i]);
    i++;
    if(i==90){

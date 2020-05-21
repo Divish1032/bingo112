@@ -88,7 +88,7 @@ socket.on('loadGameData', function(tic, usedSequence){
     var audio = document.getElementById("myAudio");
     audio.volume = 0.2;
     audio.play();
-    ticket2 = tic;
+    ticket = tic;
     setClaimButtonState();
     $('.ticket td').addClass('not-clickable');
     if(screen.width <= 600 && screen.orientation.type == "portrait-primary");
@@ -237,6 +237,10 @@ function createTicket(data) {
             $(this).text();
             $(this).addClass('not-clickable');
         }
+        else if(value != Math.abs(value)){
+            $(this).addClass('clicked-cell');
+            $(this).text(words[value *-1]);
+        }
         else $(this).text(words[value]);
         
         if(c == 8) r++;
@@ -306,7 +310,6 @@ function getOppositeOrientation() {
 
 async function rotate(lockButton) {
     modal.style.display = "none";
-    createTicket(ticket2);
     try {
         await fullScreenCheck();
     } catch (err) {
@@ -335,4 +338,22 @@ window.addEventListener("load", () => {
 socket.on('game-finished', function(id) {
     alert('Game has finished, you will be redirected to result page.');
     window.location = "/winners/"  + user.uid + '/' + id;
-})
+});
+
+
+$( window ).on( "orientationchange", function( event ) {
+    //Some code
+    console.log(screen.orientation.type)
+    console.log(screen.width)
+    
+    if(screen.width <= 600 && (screen.orientation.type == "portrait-primary" || screen.orientation.type == "portrait-secondary" )){
+        $('.ticket td').removeClass('clicked-cell');
+        $('.ticket td').addClass('not-clickable')
+        $('.ticket td').text('');
+        console.log("yes changes");
+    }
+    else{
+        createTicket(ticket);
+    }
+  });
+
