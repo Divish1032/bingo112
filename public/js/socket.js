@@ -2,6 +2,7 @@ var user = null;
 var socket = io();
 var original_ticket = null;
 var ticket           = null,
+    ticket2          = null;
     disclosedNumbers = [];
 var game_time      = null;
 var game_end_time  = null;
@@ -15,6 +16,11 @@ var words = ['', 'positive', 'joy', 'happy', 'zeal', 'smile', 'gain', 'nice', 'b
 'delight', 'kind', 'honest', 'trust', 'polite', 'generous', 'helping', 'guide', 'consistent', 'celebrate', 'faith', 'truth', 'firm', 'sunshine', 'light', 'promise', 'calm', 'asha', 'ease', 'mental', 'well-being', 'bliss', 'courage', 'pledge', 'cool', 'brave']
  words = words.sort();
 
+var modal = document.getElementById("myModal");
+var span = document.getElementsByClassName("closem")[0];
+span.onclick = function () {
+    modal.style.display = "none";
+};
 
 var firebaseConfig = {
     apiKey: "AIzaSyBMtJWyBxZ4kVlqbAAHCFuBspdxbRW0dOM",
@@ -67,43 +73,46 @@ socket.on('game-initialized', (t1, t2, current_game) => {
     else if(new Date() > new Date(game_time) && new Date() < new Date(game_end_time)){
         $('.toast-message').text("Game Started")
         $('.toast').toast('show');
+        if(screen.width <= 600 && screen.orientation.type == "portrait-primary"){
+            modal.style.display = "block";
+        }
         gamestart();
-        $('#my-canvas').show();
+
     }
     else{
         console.log("Unknown error");
     }
 });
 
-socket.on('loadGameData', function(ticket, usedSequence){
+socket.on('loadGameData', function(tic, usedSequence){
     var audio = document.getElementById("myAudio");
     audio.volume = 0.2;
     audio.play();
-
+    ticket2 = tic;
     setClaimButtonState();
-    createTicket(ticket);
+    $('.ticket td').addClass('not-clickable');
+    if(screen.width <= 600 && screen.orientation.type == "portrait-primary");
+    else{
+        createTicket(tic);
+    }
     showEmittedNumbers(usedSequence);
     $('.claim-btn').show();
-    if(screen.width <= 550){
-        $('.toast-message').text(screen.width)
-        $('.toast').toast('show');
-        rotate(window);
-    }
-    
+    $('.nextnumber').text(words[disclosedNumbers[disclosedNumbers.length - 1]]);
+    $('.timer').text("0");    
+
 });
 
 socket.on('nextNumber', function( data, number){
     disclosedNumbers.push(number);
     $('.nextnumber').text(words[number]);
-    console.log($('.news-message p').length)
     if($('.news-message p').length == 6)
     $('.news-message').css('animation-duration', '50s')
     if($('.news-message p').length >= 12){
         $('.news-message p:first-child').remove();
-        $('.news-message').append("<p>" + words[number] + ", </p>");
+        $('.news-message').append("<p>" + words[number] + ",</p>");
     }
     else{
-        $('.news-message').append("<p>" + words[number] + ", </p>");
+        $('.news-message').append("<p>" + words[number] + ",</p>");
     }
 
     var msg = new SpeechSynthesisUtterance(words[number]);
@@ -194,6 +203,7 @@ $('.claim').click(function(){
     if($(this).hasClass('bottom-row'))emit = 'bottom-row';
     if($(this).hasClass('first-five'))emit = 'first-five';
     socket.emit(emit, ticket, user, game);
+    socket.emit()
 });
 
 function showEmittedNumbers(data){
@@ -202,7 +212,7 @@ function showEmittedNumbers(data){
 
     for (let i = count; i < data.length; i++) {
         var x = data[i];
-        $('.news-message').append("<p>" + words[x] + ", </p>");
+        $('.news-message').append("<p>" + words[x] + ",</p>");
     }
 }
 
@@ -215,6 +225,7 @@ function setClaimButtonState(){
 }
 
 function createTicket(data) {
+    $('.ticket td').removeClass('not-clickable');
     original_ticket = data;
     ticket = data;
     var c = 0;
@@ -294,6 +305,8 @@ function getOppositeOrientation() {
 }
 
 async function rotate(lockButton) {
+    modal.style.display = "none";
+    createTicket(ticket2);
     try {
         await fullScreenCheck();
     } catch (err) {

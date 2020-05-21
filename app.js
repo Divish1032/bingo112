@@ -255,6 +255,10 @@ app.get('/game-start/:user_id/:game_id', [middleware.ensureGameAuth, middleware.
    res.render('game', {game : res.locals.nextGame, user_id : req.user.uid}); 
 });
 
+app.get('/add-game', function(req, res) {
+   res.render('gameinput');
+})
+
 app.post('/add-game', function(req, res) {
    Game.create({ game_time : (req.body.time1), game_end_time : (req.body.time2) }, (err, redd) =>{
       res.send("Success")
@@ -270,6 +274,7 @@ io.on('connection', function(socket) {
    var game_end_time = null;
    var game_time = null;
    var ticket = null;
+   console.log("Disbarred user");
    console.log(dibarred_user);
 
    socket.on('initialize-data', function(user){
@@ -349,7 +354,7 @@ io.on('connection', function(socket) {
                Game.findOneAndUpdate({_id : current_game._id}, {$set : {full_house :  user.uid, played : true, game_end_time : new Date()}}, (err, result) => {
                socket.broadcast.emit('full-house-winner', user.phoneNumber+ ' has won full house', game_data);
                socket.emit('full-house-winner-you', 'Congrats you won full house', game_data); 
-               clearInterval(refreshIntervalId);
+               clearAllTimeouts();
                })
             }
             else{
@@ -580,14 +585,14 @@ function newGameStart() {
    sequence          = tambola.getDrawSequence(),
    i                 = 0,
    usedSequence      = [],
-   time              = 9,
+   time              = 6,
    refreshIntervalId = null,
    timerID           = null,
    game_players      = [],
    dibarred_user     = [];
    console.log(game_next);
    console.log("new game start");
-   refreshIntervalId = setInterval(doStuff, 6000);
+   refreshIntervalId = setInterval(doStuff, 7000);
    timerID = setInterval(setTimer, 1000);
 }
 
@@ -597,13 +602,14 @@ function setTimer(){
 
 function doStuff() {
    usedSequence.push(sequence[i]);
-   time = 9;
-   console.log("Yess");
+   time = 6;
+   console.log("Word shwon");
    io.sockets.emit('nextNumber', 'Your next number is '+ sequence[i], sequence[i]);
    i++;
    if(i==90){
       clearInterval(refreshIntervalId);
       clearInterval(timerID);
+      console.log("Last peiced shown");
       setTimeout(gameFinished, 20000);
    }
 }
@@ -611,9 +617,17 @@ function doStuff() {
 function gameFinished() {
    Game.updateOne({_id : game_next._id}, {$set : {played : true, game_end_time : new Date()}}, (err, result) => {
       io.sockets.emit('game-finished', game_next._id);
-      console.log("-------");
+      console.log("Game ended by time");
       initiationGame();
    });
+}
+
+function clearAllTimeouts(){
+   clearInterval(refreshIntervalId);
+   clearInterval(timerID);
+   clearTimeout(gameFinished);
+   console.log("Game ended by player")
+   initiationGame();
 }
 
 

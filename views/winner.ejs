@@ -4,11 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tambola | Winners</title>
-    
+    <script src="/js/jquery.js"></script>
     <link rel="stylesheet" href="/css/bootstrap.css" />
     <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
+    <canvas id="my-canvas" style="position: absolute;z-index: -1;"></canvas>
+  
     <style>
       body {
         font-family: "Montserrat", sans-serif;
@@ -122,5 +124,11 @@
       <h3 style="color: white;text-align: center;margin-top: 50px;">An invalid game.</h3>
     <% } %>
   </body>
-
+  <script src="/confetti-js-master/dist/index.min.js"></script>
+  <script>
+    var confettiSettings = { target: 'my-canvas' };
+    var confetti = new ConfettiGenerator(confettiSettings);
+    confetti.render();
+    $('#my-canvas').show();
+  </script>
 </html>
