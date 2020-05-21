@@ -203,7 +203,7 @@ $('.claim').click(function(){
     if($(this).hasClass('bottom-row'))emit = 'bottom-row';
     if($(this).hasClass('first-five'))emit = 'first-five';
     socket.emit(emit, ticket, user, game);
-    socket.emit()
+    socket.emit('save-game-checkpoint', ticket, user, game);
 });
 
 function showEmittedNumbers(data){

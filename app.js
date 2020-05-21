@@ -354,7 +354,7 @@ io.on('connection', function(socket) {
                Game.findOneAndUpdate({_id : current_game._id}, {$set : {full_house :  user.uid, played : true, game_end_time : new Date()}}, (err, result) => {
                socket.broadcast.emit('full-house-winner', user.phoneNumber+ ' has won full house', game_data);
                socket.emit('full-house-winner-you', 'Congrats you won full house', game_data); 
-               clearAllTimeouts();
+               /* clearAllTimeouts(); */
                })
             }
             else{
@@ -538,6 +538,14 @@ io.on('connection', function(socket) {
       
    });
 
+   socket.on('save-game-checkpoint', function(ticket, user, game){
+      console.log("save");
+      GameClient.updateOne({user_id : user.uid, game_id : game._id}, {$set : {ticket : ticket}}, (err, result)=> {
+         console.log(err);
+         console.log("saved");
+      });
+   })
+
    socket.on('logout-user', function(user){
       var index = game_players.indexOf(user.uid);
       if (index > -1) {
@@ -592,7 +600,7 @@ function newGameStart() {
    dibarred_user     = [];
    console.log(game_next);
    console.log("new game start");
-   refreshIntervalId = setInterval(doStuff, 7000);
+   refreshIntervalId = setInterval(doStuff, 300);
    timerID = setInterval(setTimer, 1000);
 }
 
@@ -610,7 +618,7 @@ function doStuff() {
       clearInterval(refreshIntervalId);
       clearInterval(timerID);
       console.log("Last peiced shown");
-      setTimeout(gameFinished, 20000);
+      setTimeout(gameFinished, 2000000);
    }
 }
 
@@ -622,13 +630,13 @@ function gameFinished() {
    });
 }
 
-function clearAllTimeouts(){
+/* function clearAllTimeouts(){
    clearInterval(refreshIntervalId);
    clearInterval(timerID);
    clearTimeout(gameFinished);
    console.log("Game ended by player")
    initiationGame();
-}
+} */
 
 
 http.listen(process.env.PORT || 3000, function() {
