@@ -630,14 +630,17 @@ function gameFinished() {
    });
 }
 
-/* function clearAllTimeouts(){
-   clearInterval(refreshIntervalId);
-   clearInterval(timerID);
-   clearTimeout(gameFinished);
-   console.log("Game ended by player")
-   initiationGame();
-} */
+function refreshState() {
+   Game.findOne({played : false}).sort({game_time : 1, game_end_time: 1}).limit(1).then(gg => {
+      console.log("Checking");
+      if((!game_next && gg) || (game_next && gg && game_next._id != gg._id)){
+         console.log("Changed");
+         initiationGame();
+      }
+   });
+}
 
+setInterval(refreshState, 1000 * 60 * 10);
 
 http.listen(process.env.PORT || 3000, function() {
    console.log('listening on *:3000');
