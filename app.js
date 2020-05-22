@@ -633,7 +633,7 @@ function gameFinished() {
 function refreshState() {
    Game.findOne({played : false}).sort({game_time : 1, game_end_time: 1}).limit(1).then(gg => {
       console.log("Checking");
-      if((!game_next && gg) || (game_next && gg && game_next._id != gg._id)){
+      if((!game_next && gg) || (game_next && gg && !game_next._id.equals(gg._id))){
          console.log("Changed");
          initiationGame();
       }
