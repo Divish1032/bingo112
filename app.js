@@ -600,7 +600,7 @@ function newGameStart() {
    dibarred_user     = [];
    console.log(game_next);
    console.log("new game start");
-   refreshIntervalId = setInterval(doStuff, 300);
+   refreshIntervalId = setInterval(doStuff, 7000);
    timerID = setInterval(setTimer, 1000);
 }
 
@@ -618,7 +618,7 @@ function doStuff() {
       clearInterval(refreshIntervalId);
       clearInterval(timerID);
       console.log("Last peiced shown");
-      setTimeout(gameFinished, 2000000);
+      setTimeout(gameFinished, 20000);
    }
 }
 
