@@ -44,19 +44,33 @@ middlewareObj.ensureGameAuth =  function(req, res, next) {
  });
 }
 
-middlewareObj.checkPayment = function(req, res, next) {
+/* middlewareObj.checkPayment = function(req, res, next) {
   console.log(res.locals.nextGame._id)
   GameClient.findOne({user_id : req.params.user_id, game_id : res.locals.nextGame._id, payment : true}, (err, game_c) => {
     console.log(game_c);
     (!game_c) ? next() : res.redirect('/mygame-list/' + req.params.user_id);
   });
-}
+} */
 
 middlewareObj.ensurePaymentDone = function(req, res, next) {
-  console.log("2")
-  GameClient.findOne({user_id : req.user.uid, game_id : res.locals.nextGame._id, payment : true}, (err, game_c) => {
+  GameClient.findOne({user_id : req.params.user_id, game_id : req.params.game_id, payment : true}, (err, game_c) => {
     console.log(game_c);
-    (game_c) ? next() : res.redirect('/mygame-list/' + req.params.user_id);
+    if(game_c){
+      next();
+    }
+    else{
+      console.log("jj")
+      GameClient.create({ game_id : req.params.game_id, user_id : req.params.user_id, payment : true}, (err, game_c) => {
+        if(err){
+           console.log(err);
+           res.redirect('/')
+        }
+        else{
+          console.log('hh')
+           next();
+        }
+     });
+    }
   });
 }
 
@@ -72,7 +86,7 @@ middlewareObj.ensureUserAuthentication = function(req, res, next) {
  });
 }
 
-middlewareObj.ensureGameAuthRazorpay =  function(req, res, next) {
+/* middlewareObj.ensureGameAuthRazorpay =  function(req, res, next) {
   Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(nextGame => {
     console.log("1")
     if(nextGame){
@@ -88,9 +102,9 @@ middlewareObj.ensureGameAuthRazorpay =  function(req, res, next) {
       res.send({status : 0, message : "There is no next scheduled game"});
     }
  });
-}
+} */
 
-middlewareObj.ensureUserAuthenticationRazorpay = function(req, res, next) {
+/* middlewareObj.ensureUserAuthenticationRazorpay = function(req, res, next) {
   console.log("2")
   admin.auth().getUser(req.body.user_id).then(function(userRecord) {
     res.locals.users = userRecord;
@@ -100,14 +114,14 @@ middlewareObj.ensureUserAuthenticationRazorpay = function(req, res, next) {
     console.log(error);
     res.send({stauts : 0, message: "User data is not present, unauthorized login"});
  });
-}
+} */
 
-middlewareObj.checkPaymentRazorpay = function(req, res, next) {
+/* middlewareObj.checkPaymentRazorpay = function(req, res, next) {
   console.log("3")
   GameClient.findOne({user_id : req.body.user_id, game_id : res.locals.nextGame._id, payment : true}, (err, game_c) => {
     (!game_c) ? next() : res.send({ status : 0, message : "Payment already done"});
   });
-}
+} */
 
 middlewareObj.checkUser = function (uid, resolve) {
   admin.auth().getUser(uid).then(function(userRecord) {

@@ -57,10 +57,11 @@ app.use(bodyParser.json());
 app.get('/', function(req, res) {
    Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(nextGame => {
       if(nextGame){
-         res.render('landing', {game_time : nextGame.game_time});
+         var game_started = new Date(nextGame.game_time) < new Date();
+         res.render('landing', {game_time : nextGame.game_time, game_started});
       }
       else{
-         res.render('landing', {game_time : null});
+         res.render('landing', {game_time : null, game_started : false});
       }
    });
 });
@@ -82,7 +83,7 @@ app.get('/end', (req, res) => {
 
 app.get('/mygame-list/:user_id', [middleware.ensureGameAvailable, middleware.ensureUserAuthentication], (req, res) => {
    var nextGameOnline = null;
-   GameClient.findOne({user_id : req.params.user_id, game_id : res.locals.nextGame._id, payment : true}, (err, game_c) => {
+   /* GameClient.findOne({user_id : req.params.user_id, game_id : res.locals.nextGame._id, payment : true}, (err, game_c) => {
       console.log(game_c)
       if(game_c){
          nextGameOnline = { payment : true, game : res.locals.nextGame };
@@ -91,9 +92,11 @@ app.get('/mygame-list/:user_id', [middleware.ensureGameAvailable, middleware.ens
          nextGameOnline = { payment : false, game : res.locals.nextGame };
       }
       res.render('gamelist', { nextGameOnline, user_id : req.params.user_id });
-   });
+   }); */
+   nextGameOnline = {game : res.locals.nextGame };
+   res.render('gamelist', { nextGameOnline, user_id : req.params.user_id });
 });
-
+/* 
 app.get('/payment/:user_id/:game_id', [middleware.ensureGameAuth, middleware.ensureUserAuthentication, middleware.checkPayment], (req, res) => {
    res.render('payment', {uid : req.params.user_id, game_id : req.params.game_id});
 });
@@ -165,7 +168,7 @@ app.post('/payment-confirmation', [middleware.ensureGameAuthRazorpay, middleware
          }
       }
    })
-});
+}); */
 
 app.get('/winners/:user_id/:game_id', middleware.ensureUserAuthentication, (req, res) => {
    var first_five = null;
@@ -252,7 +255,7 @@ app.get('/winners/:user_id/:game_id', middleware.ensureUserAuthentication, (req,
 })
 
 app.get('/game-start/:user_id/:game_id', [middleware.ensureGameAuth, middleware.ensureUserAuthentication, middleware.ensurePaymentDone],  (req, res) => {
-   res.render('game', {game : res.locals.nextGame, user_id : req.user.uid}); 
+  res.render('game', {game : res.locals.nextGame, user_id : req.user.uid}); 
 });
 
 app.get('/add-game', function(req, res) {
@@ -328,7 +331,6 @@ io.on('connection', function(socket) {
 
    socket.on('full-house', function(ticket_client, user, game){
       var claim = null;
-      console.log(ticket_client);
       for (let i = 0; i < 3; i++) {
          for (let j = 0; j < 9; j++) {
              var value = ticket_client[i][j];
@@ -494,7 +496,6 @@ io.on('connection', function(socket) {
       var flag = 0;
       var claim = null;
       var count = 0;
-      console.log(ticket_client);
       for (let i = 0; i < 3; i++) {
          for (let j = 0; j < 9; j++) {
             var value = ticket_client[i][j];
@@ -541,7 +542,6 @@ io.on('connection', function(socket) {
    socket.on('save-game-checkpoint', function(ticket, user, game){
       console.log("save");
       GameClient.updateOne({user_id : user.uid, game_id : game._id}, {$set : {ticket : ticket}}, (err, result)=> {
-         console.log(err);
          console.log("saved");
       });
    })
@@ -640,7 +640,7 @@ function refreshState() {
    });
 }
 
-setInterval(refreshState, 1000 * 60 * 10);
+setInterval(refreshState, 1000 * 60 * 1);
 
 http.listen(process.env.PORT || 3000, function() {
    console.log('listening on *:3000');
