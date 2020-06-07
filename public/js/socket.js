@@ -38,7 +38,7 @@ firebase.initializeApp(firebaseConfig);
 firebase.auth().onAuthStateChanged(function(userDetail) {
     if (userDetail) {
         user = userDetail;
-        initiate(user);
+        socket.emit('initialize-data', user);
     }
     else{
         window.location = "/end";
@@ -77,7 +77,6 @@ socket.on('game-initialized', (t1, t2, current_game) => {
             modal.style.display = "block";
         }
         gamestart();
-
     }
     else{
         console.log("Unknown error");
@@ -204,11 +203,11 @@ $('.claim').click(function(){
 
 function showEmittedNumbers(data){
     disclosedNumbers = data;
+    console.log(data)
     var count = ( data.length >12)? data.length - 12 : 0;
-
+    $('.news-message').html('');
     for (let i = count; i < data.length; i++) {
         var x = data[i];
-        $('.news-message').html('');
         $('.news-message').append("<p>" + words[x] + ",</p>");
     }
 }
@@ -246,12 +245,8 @@ function createTicket(data) {
 }
 
 function gamestart() {
-    socket.emit('game-start', user);
+    socket.emit('game-start', user, game);
     $('.play').show();
-}
-
-function initiate(user) {
-    socket.emit('initialize-data', user);
 }
 
 function showTimer(time){
