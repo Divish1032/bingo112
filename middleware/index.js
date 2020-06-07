@@ -28,7 +28,6 @@ middlewareObj.ensureGameAvailable =  function(req, res, next) {
 
 middlewareObj.ensureGameAuth =  function(req, res, next) {
   Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(nextGame => {
-    console.log("11")
     if(nextGame){
       if( req.params.game_id == nextGame._id){
         res.locals.nextGame = nextGame;
@@ -44,14 +43,6 @@ middlewareObj.ensureGameAuth =  function(req, res, next) {
  });
 }
 
-/* middlewareObj.checkPayment = function(req, res, next) {
-  console.log(res.locals.nextGame._id)
-  GameClient.findOne({user_id : req.params.user_id, game_id : res.locals.nextGame._id, payment : true}, (err, game_c) => {
-    console.log(game_c);
-    (!game_c) ? next() : res.redirect('/mygame-list/' + req.params.user_id);
-  });
-} */
-
 middlewareObj.ensurePaymentDone = function(req, res, next) {
   GameClient.findOne({user_id : req.params.user_id, game_id : req.params.game_id, payment : true}, (err, game_c) => {
     console.log(game_c);
@@ -59,16 +50,11 @@ middlewareObj.ensurePaymentDone = function(req, res, next) {
       next();
     }
     else{
-      console.log("jj")
       GameClient.create({ game_id : req.params.game_id, user_id : req.params.user_id, payment : true}, (err, game_c) => {
         if(err){
-           console.log(err);
            res.redirect('/')
         }
-        else{
-          console.log('hh')
-           next();
-        }
+        else next();
      });
     }
   });
@@ -76,7 +62,6 @@ middlewareObj.ensurePaymentDone = function(req, res, next) {
 
 middlewareObj.ensureUserAuthentication = function(req, res, next) {
   admin.auth().getUser(req.params.user_id).then(function(userRecord) {
-    console.log("3")
     req.user = userRecord;
     next();
   })
@@ -85,6 +70,25 @@ middlewareObj.ensureUserAuthentication = function(req, res, next) {
     res.render('invalid',{ message: "User data is not present, unauthorized login"});
  });
 }
+
+middlewareObj.checkUser = function (uid, resolve) {
+  admin.auth().getUser(uid).then(function(userRecord) {
+    return resolve;
+ });
+}
+
+middlewareObj.admin = admin
+
+module.exports = middlewareObj;
+
+
+/* middlewareObj.checkPayment = function(req, res, next) {
+  console.log(res.locals.nextGame._id)
+  GameClient.findOne({user_id : req.params.user_id, game_id : res.locals.nextGame._id, payment : true}, (err, game_c) => {
+    console.log(game_c);
+    (!game_c) ? next() : res.redirect('/mygame-list/' + req.params.user_id);
+  });
+} */
 
 /* middlewareObj.ensureGameAuthRazorpay =  function(req, res, next) {
   Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(nextGame => {
@@ -122,16 +126,3 @@ middlewareObj.ensureUserAuthentication = function(req, res, next) {
     (!game_c) ? next() : res.send({ status : 0, message : "Payment already done"});
   });
 } */
-
-middlewareObj.checkUser = function (uid, resolve) {
-  admin.auth().getUser(uid).then(function(userRecord) {
-    return resolve;
-
- });
-}
-
-middlewareObj.admin = admin
-
-
-
-module.exports = middlewareObj;

@@ -196,6 +196,7 @@ io.on('connection', function(socket) {
          var flag = 0;
          game_players.forEach(x => {
             if(x == user.uid){
+               console.log("User playing already");
                socket.emit("unauthorized-usage", "User has already playing in another device/tab");
                flag = 1;
             }
@@ -203,11 +204,13 @@ io.on('connection', function(socket) {
          if(flag == 0){
             dibarred_user.forEach(x => {
                if(x == user.uid){
+                  console.log("Debarred User");
                   socket.emit("unauthorized-usage", "User has been debbared from the current game");
                   flag = 1;
                }
             });
             if(flag == 0){
+               console.log("Game Initiated for player");
                current_user = user;
                game_players.push(user.uid);
                socket.emit("game-initialized", game_time, game_end_time, current_game);
@@ -221,10 +224,12 @@ io.on('connection', function(socket) {
       if(game){
          GameClient.find({user_id : user.uid, game_id : game._id}, (err, client) => {
             if(client[0].ticket != null && client[0].ticket.length!=0){
+               console.log("Old ticket retrieved");
                var ticket = client[0].ticket;
                socket.emit('loadGameData', ticket, usedSequence);
             }
             else{
+               console.log("New ticker generated");
                var ticket = tambola.getTickets(1)[0];
                GameClient.findOneAndUpdate({user_id : user.uid, game_id : game._id}, {$set : { ticket : ticket}}, (err, result) => {
                   socket.emit('loadGameData', ticket, usedSequence);
@@ -233,6 +238,7 @@ io.on('connection', function(socket) {
          })
       }
       else{
+         console.log("Game not present: null");
          socket.emit("unauthorized-usage", "An unauthorised access");
       }
    });
@@ -261,6 +267,7 @@ io.on('connection', function(socket) {
       if(claim){
          Game.findOne({_id : game._id}, (err, game_data) =>{
             if(game_data && !game_data.full_house){
+               console.log("FH Won");
                Game.findOneAndUpdate({_id : game._id}, {$set : {full_house :  user.uid, played : true, game_end_time : new Date()}}, (err, result) => {
                socket.broadcast.emit('full-house-winner', user.phoneNumber+ ' has won full house', game_data);
                socket.emit('full-house-winner-you', 'Congrats you won full house', game_data); 
@@ -268,12 +275,14 @@ io.on('connection', function(socket) {
                })
             }
             else{
+               console.log("Wrong Claim FH");
                dibarred_user.push(user.uid);
                socket.emit('wrong-claim', user.phoneNumber);
             }
          })
       }
       else{
+         console.log("Wrong Clai FH");
          dibarred_user.push(user.uid);
          socket.emit('wrong-claim', user.phoneNumber);
       }
@@ -301,18 +310,21 @@ io.on('connection', function(socket) {
       if(claim){
          Game.findOne({_id : game._id}, (err, game_data) =>{
             if(game_data && !game_data.top_row){
+               console.log("TR Won");
                Game.findOneAndUpdate({_id : game._id}, {$set : { top_row : user.uid }}, (err, result) => {
                socket.broadcast.emit('top-row-winner', socket.id+ ' has won top row');
                socket.emit('top-row-winner', 'Congrats you won top row');
                })
             }
             else{
+               console.log("Wrong Claim TR");
                dibarred_user.push(user.uid);
                socket.emit('wrong-claim', user.phoneNumber);
             }
          });
       }
       else{
+         console.log("Wrong Claim TR");
          dibarred_user.push(user.uid);
          socket.emit('wrong-claim', user.phoneNumber);
       }
@@ -340,18 +352,21 @@ io.on('connection', function(socket) {
       if(claim){
          Game.findOne({_id : game._id}, (err, game_data) =>{
             if(game_data && !game_data.middle_row){
+               console.log("MR Won");
                Game.findOneAndUpdate({_id : game._id}, {$set : { middle_row : user.uid }}, (err, result) => {
                socket.broadcast.emit('middle-row-winner', socket.id+ ' has won middle row');
                socket.emit('middle-row-winner', 'Congrats you won middle row');
                });
             }
             else{
+               console.log("Wrong Claim MR");
                dibarred_user.push(user.uid);
                socket.emit('wrong-claim', user.phoneNumber);
             }
          });
       }
       else{
+         console.log("Wrong Claim MR");
          dibarred_user.push(user.uid);
          socket.emit('wrong-claim', user.phoneNumber);
       }
@@ -381,18 +396,21 @@ io.on('connection', function(socket) {
       if(claim){
          Game.findOne({_id : game._id}, (err, game_data) =>{
             if(game_data && !game_data.bottom_row){
+               console.log("BR Won");
                Game.findOneAndUpdate({_id : game._id}, {$set : { bottom_row : user.uid }}, (err, result) => {
                socket.broadcast.emit('bottom-row-winner', socket.id+ ' has won bottom row');
                socket.emit('bottom-row-winner', 'Congrats you won bottom row');
                })
             }
             else{
+               console.log("Wrong Claim BR");
                dibarred_user.push(user.uid);
                socket.emit('wrong-claim', user.phoneNumber);
             }
          })
       }
       else{
+         console.log("Wrong Claim BR");
          dibarred_user.push(user.uid);
          socket.emit('wrong-claim', user.phoneNumber);
       }
@@ -429,18 +447,21 @@ io.on('connection', function(socket) {
       if(claim){
          Game.findOne({_id : game._id}, (err, game_data) =>{
             if(game_data && !game_data.first_five){
+               console.log("FF Won");
                Game.findOneAndUpdate({_id : game._id}, {$set : { first_five : user.uid }}, (err, result) => {
                   socket.emit('first-five-winner', 'Congrats you won first-five');
                   socket.broadcast.emit('first-five-winner', socket.id+ ' has won first-five');
                });
             }
             else{
+               console.log("Wrong Claim FF");
                dibarred_user.push(user.uid);
                socket.emit('wrong-claim', user.phoneNumber);
             }
          });
       }
       else{
+         console.log("Wrong Claim FF");
          dibarred_user.push(user.uid);
          socket.emit('wrong-claim', user.phoneNumber);
       }
@@ -448,13 +469,13 @@ io.on('connection', function(socket) {
    });
 
    socket.on('save-game-checkpoint', function(ticket, user, game){
-      console.log("save");
       GameClient.updateOne({user_id : user.uid, game_id : game._id}, {$set : {ticket : ticket}}, (err, result)=> {
-         console.log("saved");
+         console.log("Game checkpoint saved");
       });
    })
 
    socket.on('logout-user', function(user){
+      console.log("User logged out");
       var index = game_players.indexOf(user.uid);
       if (index > -1) {
          game_players.splice(index, 1);
@@ -462,19 +483,22 @@ io.on('connection', function(socket) {
    });
 
    socket.on('get-showed-sequence', function(){
+      console.log("Reconnecting User");
       socket.emit('emit-used-sequence', usedSequence, sequence[i]);
    })
 
    socket.on('disconnect', function () {
-      players--;
-      console.log("Disconnected");   
+      players--;   
       if(current_user){
          var index = game_players.indexOf(current_user.uid);
          if (index > -1) {
             game_players.splice(index, 1);
          }
-         console.log("//")
+         console.log("User actually disconnected")
          console.log(game_players)
+      }
+      else{
+         console.log("User disconnection error: null");
       }
    });
 });
@@ -482,6 +506,7 @@ io.on('connection', function(socket) {
 initiationGame();
 
 function initiationGame() {
+   console.log("Server game start");
    Game.findOne({played : false}).sort({game_time : 1, game_end_time: 1}).limit(1).then(gg => {
       game_next = gg;
       if(gg && new Date(gg.game_end_time) > new Date()){
@@ -495,7 +520,7 @@ function initiationGame() {
             console.log("No game available");
          }
          else{
-            console.log("its over")
+            console.log("Its Over")
             gameFinished();
          }
       }
@@ -511,7 +536,7 @@ function newGameStart() {
    timerID           = null,
    game_players      = [],
    dibarred_user     = [];
-   console.log("new game start");
+   console.log("New game start");
    refreshIntervalId = setInterval(doStuff, 5000);
    timerID = setInterval(setTimer, 1000);
 }
@@ -523,7 +548,7 @@ function setTimer(){
 function doStuff() {
    usedSequence.push(sequence[i]);
    time = 4;
-   console.log("Word shwon  " + i);
+   console.log("Word shwon  " + i + " - " + sequence[i]);
    io.sockets.emit('nextNumber', 'Your next number is '+ sequence[i], sequence[i]);
    i++;
    if(i==90){
@@ -535,7 +560,6 @@ function doStuff() {
 }
 
 function gameFinished() {
-   console.log("found")
    Game.updateOne({_id : game_next._id}, {$set : {played : true, game_end_time : new Date()}}, (err, result) => {
       io.sockets.emit('game-finished', game_next._id);
       console.log("Game ended by time");

@@ -203,7 +203,6 @@ $('.claim').click(function(){
 
 function showEmittedNumbers(data){
     disclosedNumbers = data;
-    console.log(data)
     var count = ( data.length >12)? data.length - 12 : 0;
     $('.news-message').html('');
     for (let i = count; i < data.length; i++) {
