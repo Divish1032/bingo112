@@ -2,15 +2,11 @@ var   express       = require('express'),
       app           = express(),
       bodyParser    = require('body-parser'),
       http          = require('http').Server(app),
-      request       = require('request'),
       io            = require('socket.io')(http),
       tambola       = require('tambola-generator'),
       mongoose      = require('mongoose'),
-      passport      = require('passport'),
-      Razorpay      = require('razorpay')
-      flash         = require('connect-flash'),
-      cookieParser  = require('cookie-parser'),
-      cookieSession = require('cookie-session'),
+/*    Razorpay      = require('razorpay'),
+      request       = require('request'), */   
       middleware    = require('./middleware/index'),
       vault         = require('./middleware/vault'),
       Game          = require("./models/game"),
@@ -27,25 +23,14 @@ var   refreshIntervalId = null,
       time              = null,
       i                 = null;
 
-var   instance = new Razorpay({
+/* var   instance = new Razorpay({
    key_id: vault.razorpay.key_id,
    key_secret: vault.razorpay.key_secret
-});
+}); */
 
 mongoose.connect(vault.mlab, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex : true }).then( response => {
    console.log("MongoDB Connected");
 });
-
-app.use(cookieSession({
-   name: 'session',
-   keys: ['SECRECT KEY'],
-   maxAge: 30 * 24 * 60 * 60 * 1000
-}));
-
-// Passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(cookieParser());
 
 /* Set the Public folder to server*/
 app.use(express.static(__dirname + "/public"));
@@ -96,79 +81,6 @@ app.get('/mygame-list/:user_id', [middleware.ensureGameAvailable, middleware.ens
    nextGameOnline = {game : res.locals.nextGame };
    res.render('gamelist', { nextGameOnline, user_id : req.params.user_id });
 });
-/* 
-app.get('/payment/:user_id/:game_id', [middleware.ensureGameAuth, middleware.ensureUserAuthentication, middleware.checkPayment], (req, res) => {
-   res.render('payment', {uid : req.params.user_id, game_id : req.params.game_id});
-});
-
-app.post('/payment-order-create', [middleware.ensureGameAuthRazorpay, middleware.ensureUserAuthenticationRazorpay, middleware.checkPaymentRazorpay], (req, res) => {
-   var options = { amount: 2500, currency: "INR", receipt: "order_rcptid_11", payment_capture: '1' };
-   instance.orders.create(options, (err, response) => {
-      if(err){
-         console.log(err);
-         res.send({status : 0, message : err});
-      }
-      else{
-         console.log(response);
-         res.send({ status : 1, message : response});
-      }
-   });
-});
-
-app.post('/payment-confirmation', [middleware.ensureGameAuthRazorpay, middleware.ensureUserAuthenticationRazorpay, middleware.checkPaymentRazorpay], (req, res) => {
-   var payment_id = req.body.response.razorpay_payment_id;
-   instance.payments.fetch(payment_id, (err, response) => {
-      if(err){
-         console.log(err);
-         res.send({status : 3, message:"Fetch payment confirmation."});
-      }
-      else{
-         console.log(response);
-         if(response.status == 'authorized'){
-            request({
-               method: 'POST',
-               url: 'https://'+ vault.razorpay.key_id +':'+ vault.razorpay.key_secret +'@api.razorpay.com/v1/payments/'+ payment_id +'/capture',
-               form: {
-                 amount: 2500,
-                 currency: INR
-               }
-             }, function (error, response, body) {
-               console.log('Status:', response.statusCode);
-               console.log('Headers:', JSON.stringify(response.headers));
-               console.log('Response:', body);
-               GameClient.create({ game_id : req.body.game_id, user_id : req.body.user_id, payment : true, payment_id : payment_id}, (err, game_c) => {
-                  if(err){
-                     console.log(err);
-                     res.send({status : 4, message:"Udating payment information error."});
-                  }
-                  else{
-                     console.log(response);
-                     res.send({status: 1 , message : "Payment Successfull."})
-                  }
-               }); 
-             });
-         }
-         else if(response.status == 'failed'){
-            res.send({status : 0, message:"Transaction failed"});
-         }
-         else if(response.status == 'captured'){
-            GameClient.create({ game_id : req.body.game_id, user_id : req.body.user_id, payment : true, payment_id : payment_id}, (err, game_c) => {
-               if(err){
-                  console.log(err);
-                  res.send({status : 4, message:"Udating payment information error."});
-               }
-               else{
-                  console.log(response);
-                  res.send({status: 1 , message : "Payment Successfull."})
-               }
-            }); 
-         }
-         else{
-            res.send({status : 2, message:"Some other problem occured for transaction."});
-         }
-      }
-   })
-}); */
 
 app.get('/winners/:user_id/:game_id', middleware.ensureUserAuthentication, (req, res) => {
    var first_five = null;
@@ -553,6 +465,10 @@ io.on('connection', function(socket) {
       }
    });
 
+   socket.on('get-showed-sequence', function(){
+      socket.emit('emit-used-sequence', usedSequence, sequence[i]);
+   })
+
    socket.on('disconnect', function () {
       players--;
       console.log("Disconnected");   
@@ -598,9 +514,8 @@ function newGameStart() {
    timerID           = null,
    game_players      = [],
    dibarred_user     = [];
-   console.log(game_next);
    console.log("new game start");
-   refreshIntervalId = setInterval(doStuff, 7000);
+   refreshIntervalId = setInterval(doStuff, 5000);
    timerID = setInterval(setTimer, 1000);
 }
 
@@ -610,7 +525,7 @@ function setTimer(){
 
 function doStuff() {
    usedSequence.push(sequence[i]);
-   time = 6;
+   time = 4;
    console.log("Word shwon  " + i);
    io.sockets.emit('nextNumber', 'Your next number is '+ sequence[i], sequence[i]);
    i++;
@@ -645,6 +560,82 @@ setInterval(refreshState, 1000 * 60 * 1);
 http.listen(process.env.PORT || 3000, function() {
    console.log('listening on *:3000');
 });
+
+
+
+/* 
+app.get('/payment/:user_id/:game_id', [middleware.ensureGameAuth, middleware.ensureUserAuthentication, middleware.checkPayment], (req, res) => {
+   res.render('payment', {uid : req.params.user_id, game_id : req.params.game_id});
+});
+
+app.post('/payment-order-create', [middleware.ensureGameAuthRazorpay, middleware.ensureUserAuthenticationRazorpay, middleware.checkPaymentRazorpay], (req, res) => {
+   var options = { amount: 2500, currency: "INR", receipt: "order_rcptid_11", payment_capture: '1' };
+   instance.orders.create(options, (err, response) => {
+      if(err){
+         console.log(err);
+         res.send({status : 0, message : err});
+      }
+      else{
+         console.log(response);
+         res.send({ status : 1, message : response});
+      }
+   });
+});
+
+app.post('/payment-confirmation', [middleware.ensureGameAuthRazorpay, middleware.ensureUserAuthenticationRazorpay, middleware.checkPaymentRazorpay], (req, res) => {
+   var payment_id = req.body.response.razorpay_payment_id;
+   instance.payments.fetch(payment_id, (err, response) => {
+      if(err){
+         console.log(err);
+         res.send({status : 3, message:"Fetch payment confirmation."});
+      }
+      else{
+         console.log(response);
+         if(response.status == 'authorized'){
+            request({
+               method: 'POST',
+               url: 'https://'+ vault.razorpay.key_id +':'+ vault.razorpay.key_secret +'@api.razorpay.com/v1/payments/'+ payment_id +'/capture',
+               form: {
+                 amount: 2500,
+                 currency: INR
+               }
+             }, function (error, response, body) {
+               console.log('Status:', response.statusCode);
+               console.log('Headers:', JSON.stringify(response.headers));
+               console.log('Response:', body);
+               GameClient.create({ game_id : req.body.game_id, user_id : req.body.user_id, payment : true, payment_id : payment_id}, (err, game_c) => {
+                  if(err){
+                     console.log(err);
+                     res.send({status : 4, message:"Udating payment information error."});
+                  }
+                  else{
+                     console.log(response);
+                     res.send({status: 1 , message : "Payment Successfull."})
+                  }
+               }); 
+             });
+         }
+         else if(response.status == 'failed'){
+            res.send({status : 0, message:"Transaction failed"});
+         }
+         else if(response.status == 'captured'){
+            GameClient.create({ game_id : req.body.game_id, user_id : req.body.user_id, payment : true, payment_id : payment_id}, (err, game_c) => {
+               if(err){
+                  console.log(err);
+                  res.send({status : 4, message:"Udating payment information error."});
+               }
+               else{
+                  console.log(response);
+                  res.send({status: 1 , message : "Payment Successfull."})
+               }
+            }); 
+         }
+         else{
+            res.send({status : 2, message:"Some other problem occured for transaction."});
+         }
+      }
+   })
+}); */
 
 
 

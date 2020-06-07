@@ -117,11 +117,7 @@ socket.on('nextNumber', function( data, number){
 
     var msg = new SpeechSynthesisUtterance(words[number]);
     window.speechSynthesis.speak(msg);
-});
-
-socket.on('timer', function(data){
-    $('.timer').text(data);
-});  
+}); 
 
 // Game Control 
 socket.on('wrong-claim', function(id){
@@ -212,6 +208,7 @@ function showEmittedNumbers(data){
 
     for (let i = count; i < data.length; i++) {
         var x = data[i];
+        $('.news-message').html('');
         $('.news-message').append("<p>" + words[x] + ",</p>");
     }
 }
@@ -253,8 +250,6 @@ function gamestart() {
     $('.play').show();
 }
 
-
-
 function initiate(user) {
     socket.emit('initialize-data', user);
 }
@@ -289,8 +284,13 @@ socket.on('error', (error) => {
   });
 
 socket.on('reconnect', (attemptNumber) => {
-    console.log("reconnected" + attemptNumber);
-  });
+    socket.emit('get-showed-sequence');
+});
+
+socket.on('emit-used-sequence', function(data, number){
+    showEmittedNumbers(data);
+    $('.nextnumber').text(words[number]);
+})
 
 
 
@@ -356,4 +356,3 @@ $( window ).on( "orientationchange", function( event ) {
         createTicket(ticket);
     }
   });
-
