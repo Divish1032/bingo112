@@ -10,16 +10,17 @@ var firebaseConfig = {
      appId: "1:564607526074:web:8753262a2aac9036ad8e83",
      measurementId: "G-YDYDGBBZ9L"
  
-  };
-  // Initialize Firebase
- firebase.initializeApp(firebaseConfig);
+};
 
- var phoneNumber = null;
- var code = null;
- var username = null;
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+var phoneNumber = null;
+var code = null;
+var username = null;
 
 
- firebase.auth().onAuthStateChanged(function(userDetail) {
+firebase.auth().onAuthStateChanged(function(userDetail) {
     if (userDetail) {
         $('.loader, .login').hide();
         $('.homepage').show();
@@ -29,24 +30,20 @@ var firebaseConfig = {
         $('.loader, .homepage').hide();
         $('.login').show();
     }
- });
+});
 
-
-
- window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
      'size': 'invisible',
      'callback': function(response) { onSignInSubmit(); 
     console.log(response)}
- });
+});
  
 
- var appVerifier = window.recaptchaVerifier;
+var appVerifier = window.recaptchaVerifier;
  
- firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function() {
-     })
-     .catch(function(error) { console.log(error); }); 
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(error) { console.log(error); }); 
  
- function submitPhone() {
+function submitPhone() {
     phoneNumber = "+91" + $('#phone').val();
     username    = $('#username').val();
     if(phoneNumber.length != 13){
@@ -72,14 +69,14 @@ var firebaseConfig = {
         });
     }
     
- }
+}
 
- $('#otpModal').on('hidden.bs.modal', function (e) {
+$('#otpModal').on('hidden.bs.modal', function (e) {
     $('.login-dialog').show();
-  })
+})
  
  
- function submitCode() {
+function submitCode() {
      code = $('#code').val();
      
      $('.loader').show();
@@ -100,15 +97,14 @@ var firebaseConfig = {
         $('.toast-message').text(error.message);
         $('.toast').toast('show');
     });   
- }
+}
  
- 
- function signOut() {
+function signOut() {
     $('.loader').show();
     firebase.auth().signOut().then(function() {
         $('.loader').hide();
     }).catch(function(error) { console.log(error); });   
- }
+}
 
 function gamelist(){
     /* $.redirect('', {'arg1': 'value1', 'arg2': 'value2'}); */
