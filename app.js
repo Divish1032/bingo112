@@ -333,7 +333,6 @@ io.on('connection', function(socket) {
             if(game_data && !game_data.top_row){
                console.log("TR Won");
                Game.findOneAndUpdate({_id : game._id}, {$set : { top_row : user.uid }}, (err, result) => {
-                  findUser(user.uid);
                   socket.broadcast.emit('top-row-winner', user.displayName +' has won top row');
                   socket.emit('top-row-winner', 'Congrats you won top row');
                })
@@ -569,10 +568,16 @@ function setTimer(){
 }
 
 function doStuff() {
+   var words = ['', 'positive', 'joy', 'happy', 'zeal', 'smile', 'gain', 'nice', 'beautiful', 'profit', 'cheer', 'wonderful', 'good',
+'better', 'best', 'bright', 'optimistic', 'strong', 'will', 'hope', 'certain', 'sure', 'accept', 'warm', 'appreciate', 'friendly', 'adore', 'support', 'respect', 'sympathy', 'advice', 'recommend', 'clear', 'confident',
+'assure', 'accomplish', 'content', 'jolly', 'carefree', 'elated', 'blessed', 'worship', 'glad', 'benefit',
+'fortunate', 'laugh', 'love', 'win', 'comfort', 'safe', 'merry', 'success', 'healthy', 'mind', 'matters', 'body', 'paradise', 'okay', 'glory', 'enjoy', 'amazing', 'joke', 'cute', 'hug', 'tasty', 'achieve', 'praise', 'optimist', 'smart', 'pleasant', 'awesome', 'peace', 
+'delight', 'kind', 'honest', 'trust', 'polite', 'generous', 'helping', 'guide', 'consistent', 'celebrate', 'faith', 'truth', 'firm', 'sunshine', 'light', 'promise', 'calm', 'asha', 'ease', 'mental', 'well-being', 'bliss', 'courage', 'pledge', 'cool', 'brave']
+ words = words.sort();
    usedSequence.push(sequence[i]);
    time = 4;
-   console.log("Word shwon  " + i + " - " + sequence[i]);
-   io.sockets.emit('nextNumber', 'Your next number is '+ sequence[i], sequence[i], i+1);
+   console.log("Word shwon  " + i + " - " + word[sequence[i]]);
+   io.sockets.emit('nextNumber', 'Your next word is '+ sequence[i], sequence[i], i+1);
    i++;
    if(i==90){
       io.sockets.emit('last-word-shown');
