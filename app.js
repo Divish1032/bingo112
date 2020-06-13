@@ -576,7 +576,7 @@ function doStuff() {
  words = words.sort();
    usedSequence.push(sequence[i]);
    time = 4;
-   console.log("Word shwon  " + i + " - " + word[sequence[i]]);
+   console.log("Word shwon  " + i + " - " + words[sequence[i]]);
    io.sockets.emit('nextNumber', 'Your next word is '+ sequence[i], sequence[i], i+1);
    i++;
    if(i==90){
