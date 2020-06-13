@@ -354,3 +354,49 @@ $( window ).on( "orientationchange", function( event ) {
     $('.toast-message').text("Connection discontinued - if words missed, look into last 12 words.")
     $('.toast').toast('show');
   });
+
+  socket.on('connect_error', (error) => {
+    $('.toast-message').text("connect error");
+    $('.toast').toast('show');
+  });
+
+  socket.on('connect_timeout', (error) => {
+    $('.toast-message').text("connect_timeout");
+    $('.toast').toast('show');
+  });
+
+  socket.on('disconnect', (error) => {
+    $('.toast-message').text("disconnect");
+    $('.toast').toast('show');
+  });
+
+  socket.on('reconnect_attempt', (error) => {
+    $('.toast-message').text("reconnect_attempt");
+    $('.toast').toast('show');
+  });
+
+  socket.on('reconnecting', (error) => {
+    $('.toast-message').text("reconnecting");
+    $('.toast').toast('show');
+  });
+
+  socket.on('reconnect_error', (error) => {
+    $('.toast-message').text("reconnect_error");
+    $('.toast').toast('show');
+  });
+
+
+  socket.on('reconnect_failed', (error) => {
+    $('.toast-message').text("reconnect_failed");
+    $('.toast').toast('show');
+  });
+
+  socket.on('disconnect', (error) => {
+    $('.toast-message').text("disconnect");
+    $('.toast').toast('show');
+  });
+
+  
+  socket.on('connect', () => {
+    console.log(socket.disconnected); // false
+  });
