@@ -181,7 +181,7 @@ app.post('/add-game', function(req, res) {
    })
 });
 
-app.get('/admin', (req, res) => {
+/* app.get('/admin', (req, res) => {
    var gameusers = [];  
    Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(nextGame => {
       Game.find({played: true}).sort({game_time : -1}).limit(15).then(pastGames => {
@@ -220,7 +220,7 @@ app.get('/fetch-users-game/:id', (req, res) => {
          res.send({gameusers});
       });
    });
-})
+}) */
 
 io.on('connection', function(socket) {
    players++;
