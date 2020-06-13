@@ -271,12 +271,6 @@ function showTimer(time){
     }, 1000);
 }
 
-socket.on('reconnect', (attemptNumber) => {
-    $('.toast-message').text("Reconnected.")
-    $('.toast').toast('show');
-    socket.emit('get-showed-sequence');
-});
-
 socket.on('emit-used-sequence', function(data, number){
     showEmittedNumbers(data);
     $('.nextnumber').text(words[number]);
@@ -350,53 +344,34 @@ $( window ).on( "orientationchange", function( event ) {
   });
 
 
-  socket.on('error', (error) => {
-    $('.toast-message').text("Connection discontinued - if words missed, look into last 12 words.")
+socket.on('reconnect', (attemptNumber) => {
+    $('.toast-message').text("Game reconnected.")
     $('.toast').toast('show');
-  });
+    socket.emit('get-showed-sequence');
+});
 
-  socket.on('connect_error', (error) => {
-    $('.toast-message').text("connect error");
+socket.on('disconnect', (error) => {
+    $('.toast-message').text("Network issue...");
     $('.toast').toast('show');
-  });
+});
 
-  socket.on('connect_timeout', (error) => {
-    $('.toast-message').text("connect_timeout");
+
+
+socket.on('reconnecting', (error) => {
+    $('.toast-message').text("Game reconnecting...");
     $('.toast').toast('show');
-  });
+});
 
-  socket.on('disconnect', (error) => {
-    $('.toast-message').text("disconnect");
+socket.on('reconnect_error', (error) => {
+    $('.toast-message').text("If word lost due to network will be present in last 12 words.");
     $('.toast').toast('show');
-  });
-
-  socket.on('reconnect_attempt', (error) => {
-    $('.toast-message').text("reconnect_attempt");
-    $('.toast').toast('show');
-  });
-
-  socket.on('reconnecting', (error) => {
-    $('.toast-message').text("reconnecting");
-    $('.toast').toast('show');
-  });
-
-  socket.on('reconnect_error', (error) => {
-    $('.toast-message').text("reconnect_error");
-    $('.toast').toast('show');
-  });
+});
 
 
-  socket.on('reconnect_failed', (error) => {
-    $('.toast-message').text("reconnect_failed");
-    $('.toast').toast('show');
-  });
 
-  socket.on('disconnect', (error) => {
-    $('.toast-message').text("disconnect");
-    $('.toast').toast('show');
-  });
 
-  
+
+
   socket.on('connect', () => {
     console.log(socket.disconnected); // false
   });
