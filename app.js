@@ -553,7 +553,7 @@ function newGameStart() {
    sequence          = tambola.getDrawSequence(),
    i                 = 0,
    usedSequence      = [],
-   time              = 6,
+   time              = 4,
    refreshIntervalId = null,
    timerID           = null,
    game_players      = [],
