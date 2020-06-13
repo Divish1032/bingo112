@@ -144,7 +144,7 @@ body {
 .accordianroot .expansion-panel-body-content::before {
   content: "";
   left: 24px;
-  top: 24px;
+  top: 10px;
   height: 18px;
   width: 4px;
   position: absolute;

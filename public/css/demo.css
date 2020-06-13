@@ -850,3 +850,7 @@ h1.ml8 {
 .expansion-panel-body-content ul li {
   margin: 15px 0;
 }
+
+.expansion-panel-body-content ul  {
+  padding-left: 25px;
+}
