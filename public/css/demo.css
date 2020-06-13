@@ -845,3 +845,8 @@ h1.ml8 {
     transform: none;
   }
 }
+
+
+.expansion-panel-body-content ul li {
+  margin: 15px 0;
+}

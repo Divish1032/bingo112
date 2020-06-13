@@ -363,7 +363,7 @@ socket.on('reconnecting', (error) => {
 });
 
 socket.on('reconnect_error', (error) => {
-    $('.toast-message').text("If word lost due to network will be present in last 12 words.");
+    $('.toast-message').text("For any missed word check the last 12 words section, when connection resumes.");
     $('.toast').toast('show');
 });
 

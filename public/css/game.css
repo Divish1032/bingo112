@@ -112,7 +112,7 @@ body {
   margin: 6px 3px;
   padding: 5px 10px;
 }
-#claim-ticket:hover {
+#claim-ticket:hover:enabled {
   color: #0f3883;
   background-color: #ffffff;
 }
