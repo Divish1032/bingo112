@@ -28,6 +28,7 @@ var   refreshIntervalId = null,
    key_secret: vault.razorpay.key_secret
 }); */
 
+
 mongoose.connect(vault.mlab, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex : true }).then( response => {
    console.log("MongoDB Connected");
 });
@@ -181,24 +182,43 @@ app.post('/add-game', function(req, res) {
 });
 
 app.get('/admin', (req, res) => {
+   var gameusers = [];  
    Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(nextGame => {
-      Game.find({played: true}).sort({game_time : 1}).limit(10).then(pastGames => {
-         console.log(nextGame);
-         console.log("-----------------------------------");
-         console.log(pastGames);
-         console.log("-----------------------------------");
-         GameClient.find({game_id : nextGame._id}).then(nextGamePlayers => {
-            console.log(nextGamePlayers);
-            res.render('admin', {nextGame, pastGames, nextGamePlayers});
-         });
+      Game.find({played: true}).sort({game_time : -1}).limit(15).then(pastGames => {
+         if(nextGame){
+            GameClient.find({game_id : nextGame._id}).then(nextGamePlayers => {
+               var user = [];  
+               nextGamePlayers.forEach(x => {
+                  user.push({uid : x.user_id});
+               });
+               middleware.admin.auth().getUsers(user).then(function(getUsersResult) {
+                  getUsersResult.users.forEach((userRecord) => {
+                    gameusers.push({uid : userRecord.uid, name : userRecord.displayName, phone : userRecord.phoneNumber})
+                  });
+                  res.render('admin', {nextGame, pastGames, nextGamePlayers, gameusers});
+               });
+            });
+         }
+         else{
+            res.render('admin', {nextGame : null, pastGames, nextGamePlayers : null, gameusers});
+         }
       })
    });
 });
 
 app.get('/fetch-users-game/:id', (req, res) => {
+   var gameusers = [];
    GameClient.find({game_id : req.params.id}).then(gamePlayers => {
-      console.log(gamePlayers);
-      res.send({gamePlayers});
+      var user = [];  
+      gamePlayers.forEach(x => {
+         user.push({uid : x.user_id});
+      });
+      middleware.admin.auth().getUsers(user).then(function(getUsersResult) {
+         getUsersResult.users.forEach((userRecord) => {
+            gameusers.push({uid : userRecord.uid, name : userRecord.displayName, phone : userRecord.phoneNumber})
+         });
+         res.send({gameusers});
+      });
    });
 })
 
@@ -569,11 +589,11 @@ function setTimer(){
 
 function doStuff() {
    var words = ['', 'positive', 'joy', 'happy', 'zeal', 'smile', 'gain', 'nice', 'beautiful', 'profit', 'cheer', 'wonderful', 'good',
-'better', 'best', 'bright', 'optimistic', 'strong', 'will', 'hope', 'certain', 'sure', 'accept', 'warm', 'appreciate', 'friendly', 'adore', 'support', 'respect', 'sympathy', 'advice', 'recommend', 'clear', 'confident',
-'assure', 'accomplish', 'content', 'jolly', 'carefree', 'elated', 'blessed', 'worship', 'glad', 'benefit',
-'fortunate', 'laugh', 'love', 'win', 'comfort', 'safe', 'merry', 'success', 'healthy', 'mind', 'matters', 'body', 'paradise', 'okay', 'glory', 'enjoy', 'amazing', 'joke', 'cute', 'hug', 'tasty', 'achieve', 'praise', 'optimist', 'smart', 'pleasant', 'awesome', 'peace', 
-'delight', 'kind', 'honest', 'trust', 'polite', 'generous', 'helping', 'guide', 'consistent', 'celebrate', 'faith', 'truth', 'firm', 'sunshine', 'light', 'promise', 'calm', 'asha', 'ease', 'mental', 'well-being', 'bliss', 'courage', 'pledge', 'cool', 'brave']
- words = words.sort();
+                  'better', 'best', 'bright', 'optimistic', 'strong', 'will', 'hope', 'certain', 'sure', 'accept', 'warm', 'appreciate', 'friendly', 'adore', 'support', 'respect', 'sympathy', 'advice', 'recommend', 'clear', 'confident',
+                  'assure', 'accomplish', 'content', 'jolly', 'carefree', 'elated', 'blessed', 'worship', 'glad', 'benefit',
+                  'fortunate', 'laugh', 'love', 'win', 'comfort', 'safe', 'merry', 'success', 'healthy', 'mind', 'matters', 'body', 'paradise', 'okay', 'glory', 'enjoy', 'amazing', 'joke', 'cute', 'hug', 'tasty', 'achieve', 'praise', 'optimist', 'smart', 'pleasant', 'awesome', 'peace', 
+                  'delight', 'kind', 'honest', 'trust', 'polite', 'generous', 'helping', 'guide', 'consistent', 'celebrate', 'faith', 'truth', 'firm', 'sunshine', 'light', 'promise', 'calm', 'asha', 'ease', 'mental', 'well-being', 'bliss', 'courage', 'pledge', 'cool', 'brave']
+   words = words.sort();
    usedSequence.push(sequence[i]);
    time = 4;
    console.log("Word shwon  " + i + " - " + words[sequence[i]]);
