@@ -290,7 +290,7 @@ io.on('connection', function(socket) {
             if(game_data && !game_data.full_house){
                console.log("FH Won");
                Game.findOneAndUpdate({_id : game._id}, {$set : {full_house :  user.uid, played : true, game_end_time : new Date()}}, (err, result) => {
-               socket.broadcast.emit('full-house-winner', user.phoneNumber+ ' has won full house', game_data);
+               socket.broadcast.emit('full-house-winner', user.displayName+ ' has won full house', game_data);
                socket.emit('full-house-winner-you', 'Congrats you won full house', game_data); 
                /* clearAllTimeouts(); */
                })
@@ -333,8 +333,9 @@ io.on('connection', function(socket) {
             if(game_data && !game_data.top_row){
                console.log("TR Won");
                Game.findOneAndUpdate({_id : game._id}, {$set : { top_row : user.uid }}, (err, result) => {
-               socket.broadcast.emit('top-row-winner', socket.id+ ' has won top row');
-               socket.emit('top-row-winner', 'Congrats you won top row');
+                  findUser(user.uid);
+                  socket.broadcast.emit('top-row-winner', user.displayName +' has won top row');
+                  socket.emit('top-row-winner', 'Congrats you won top row');
                })
             }
             else{
@@ -375,7 +376,7 @@ io.on('connection', function(socket) {
             if(game_data && !game_data.middle_row){
                console.log("MR Won");
                Game.findOneAndUpdate({_id : game._id}, {$set : { middle_row : user.uid }}, (err, result) => {
-               socket.broadcast.emit('middle-row-winner', socket.id+ ' has won middle row');
+               socket.broadcast.emit('middle-row-winner', user.displayName + ' has won middle row');
                socket.emit('middle-row-winner', 'Congrats you won middle row');
                });
             }
@@ -419,7 +420,7 @@ io.on('connection', function(socket) {
             if(game_data && !game_data.bottom_row){
                console.log("BR Won");
                Game.findOneAndUpdate({_id : game._id}, {$set : { bottom_row : user.uid }}, (err, result) => {
-               socket.broadcast.emit('bottom-row-winner', socket.id+ ' has won bottom row');
+               socket.broadcast.emit('bottom-row-winner', user.displayName +  ' has won bottom row');
                socket.emit('bottom-row-winner', 'Congrats you won bottom row');
                })
             }
@@ -471,7 +472,7 @@ io.on('connection', function(socket) {
                console.log("FF Won");
                Game.findOneAndUpdate({_id : game._id}, {$set : { first_five : user.uid }}, (err, result) => {
                   socket.emit('first-five-winner', 'Congrats you won first-five');
-                  socket.broadcast.emit('first-five-winner', socket.id+ ' has won first-five');
+                  socket.broadcast.emit('first-five-winner', user.displayName + ' has won first-five');
                });
             }
             else{
@@ -578,7 +579,7 @@ function doStuff() {
       clearInterval(refreshIntervalId);
       clearInterval(timerID);
       console.log("Last peiced shown");
-      setTimeout(gameFinished, 20000);
+      setTimeout(gameFinished, 22000);
    }
 }
 
