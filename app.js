@@ -180,6 +180,27 @@ app.post('/add-game', function(req, res) {
    })
 });
 
+app.get('/admin', (req, res) => {
+   Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(nextGame => {
+      Game.find({played: true}).sort({game_time : 1}).limit(10).then(pastGames => {
+         console.log(nextGame);
+         console.log("-----------------------------------");
+         console.log(pastGames);
+         console.log("-----------------------------------");
+         GameClient.find({game_id : nextGame._id}).then(nextGamePlayers => {
+            console.log(nextGamePlayers);
+            res.render('admin', {nextGame, pastGames, nextGamePlayers});
+         });
+      })
+   });
+});
+
+app.get('/fetch-users-game/:id', (req, res) => {
+   GameClient.find({game_id : req.params.id}).then(gamePlayers => {
+      console.log(gamePlayers);
+      res.send({gamePlayers});
+   });
+})
 
 io.on('connection', function(socket) {
    players++;
@@ -503,6 +524,7 @@ io.on('connection', function(socket) {
    });
 });
 
+
 initiationGame();
 
 function initiationGame() {
@@ -549,9 +571,10 @@ function doStuff() {
    usedSequence.push(sequence[i]);
    time = 4;
    console.log("Word shwon  " + i + " - " + sequence[i]);
-   io.sockets.emit('nextNumber', 'Your next number is '+ sequence[i], sequence[i]);
+   io.sockets.emit('nextNumber', 'Your next number is '+ sequence[i], sequence[i], i+1);
    i++;
    if(i==90){
+      io.sockets.emit('last-word-shown');
       clearInterval(refreshIntervalId);
       clearInterval(timerID);
       console.log("Last peiced shown");

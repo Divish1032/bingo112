@@ -101,7 +101,7 @@ socket.on('loadGameData', function(tic, usedSequence){
 
 });
 
-socket.on('nextNumber', function( data, number){
+socket.on('nextNumber', function( data, number, count){
     disclosedNumbers.push(number);
     $('.nextnumber').text(words[number]);
     if($('.news-message p').length == 6)
@@ -116,6 +116,7 @@ socket.on('nextNumber', function( data, number){
 
     var msg = new SpeechSynthesisUtterance(words[number]);
     window.speechSynthesis.speak(msg);
+    console.log( count +" - " + words[number]);
 }); 
 
 // Game Control 
@@ -188,7 +189,6 @@ $('.ticket td').click(function(){
             }
         }    
     }
-    console.log(ticket);
 });
 
 $('.claim').click(function(){
@@ -271,19 +271,20 @@ function showTimer(time){
     }, 1000);
 }
 
-
-
-socket.on('error', (error) => {
-    console.log("error")
-  });
-
 socket.on('reconnect', (attemptNumber) => {
+    $('.toast-message').text("Reconnected.")
+    $('.toast').toast('show');
     socket.emit('get-showed-sequence');
 });
 
 socket.on('emit-used-sequence', function(data, number){
     showEmittedNumbers(data);
     $('.nextnumber').text(words[number]);
+});
+
+socket.on('last-word-shown', function (){
+    $('.toast-message').text("Last word shown - you have 20s for the game to end");
+    $('.toast').toast('show');
 })
 
 
@@ -336,10 +337,7 @@ socket.on('game-finished', function(id) {
 
 
 $( window ).on( "orientationchange", function( event ) {
-    //Some code
-    console.log(screen.orientation.type)
-    console.log(screen.width)
-    
+   
     if(screen.width <= 600 && (screen.orientation.type == "portrait-primary" || screen.orientation.type == "portrait-secondary" )){
         $('.ticket td').removeClass('clicked-cell');
         $('.ticket td').addClass('not-clickable')
@@ -349,4 +347,10 @@ $( window ).on( "orientationchange", function( event ) {
     else{
         createTicket(ticket);
     }
+  });
+
+
+  socket.on('error', (error) => {
+    $('.toast-message').text("Connection discontinued - if words missed, look into last 12 words.")
+    $('.toast').toast('show');
   });

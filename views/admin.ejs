@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel Bingo</title>
+</head>
+<body>
+    <h2>Admin</h2>
+
+    <h4>Next Game</h4>
+    <h5>Game Id :  <%= nextGame._id %></h5>
+    <p>Game Time : <%= nextGame.game_time %></p>
+    <p>Game Players List :</p>
+    <% nextGamePlayers.forEach(x => { %>
+        <p><%= x.user_id %></p>
+    <% }) %>
+
+    <br>
+    <hr>
+    <br>
+    <h4>Past Games :</h4>
+    <% pastGames.forEach(x => { %>
+        <h5 onclick="fetchUsers('<%= x._id %>')">Game Id :  <%= x._id %></h5>
+        <p>Game Time : <%= x.game_time %></p>
+        <div class="<%= x._id %>"></div>
+    <% }) %>
+
+</body>
+
+<script>
+    function fetchUsers(id){
+        var xhr = new XMLHttpRequest();
+        var url = "/fetch-users-game/" + id;
+        xhr.open("GET", url, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var json = JSON.parse(xhr.responseText);
+                console.log(json);
+            }
+        };
+        //var data = JSON.stringify({"uid": user.uid});
+        xhr.send();
+    }
+</script>
+</html>
