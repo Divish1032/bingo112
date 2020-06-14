@@ -1,3 +1,4 @@
+
 var user = null;
 var firebaseConfig = {
     // ...
@@ -107,26 +108,8 @@ function signOut() {
 }
 
 function gamelist(){
-    /* $.redirect('', {'arg1': 'value1', 'arg2': 'value2'}); */
-    //$('window').redirect('/mygame-list', {'arg1': 'value1', 'arg2': 'value2'});
     window.location.href = "/mygame-list/" + user.uid; 
-
-/*     var xhr = new XMLHttpRequest();
-    var url = "/mygame-list";
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var json = JSON.parse(xhr.responseText);
-            console.log(json);
-        }
-    };
-    var data = JSON.stringify({"uid": user.uid});
-    xhr.send(data); */
 }
-
-
- 
 
 
 

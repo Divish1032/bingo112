@@ -171,19 +171,19 @@ app.get('/game-start/:user_id/:game_id', [middleware.ensureGameAuth, middleware.
   res.render('game', {game : res.locals.nextGame, user_id : req.user.uid}); 
 });
 
-app.get('/add-game', function(req, res) {
-   res.render('gameinput');
-})
 
-app.post('/add-game', function(req, res) {
+app.post('/add-game/:user_id', middleware.ensureAdminPriveledge, function(req, res) {
    Game.create({ game_time : (req.body.time1), game_end_time : (req.body.time2) }, (err, redd) =>{
-      res.send("Success")
+      res.redirect('/admin/' + req.params.user_id);
    })
 });
 
-/* app.get('/admin', (req, res) => {
+app.get('/admin/:user_id', middleware.ensureAdminPriveledge, (req, res) => {
    var gameusers = [];  
-   Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(nextGame => {
+   var nextGame = null;
+   Game.find({played : false}).sort({game_time : 1}).then(nextGames => {
+      nextGame = nextGames[0];
+      console.log(nextGames)
       Game.find({played: true}).sort({game_time : -1}).limit(15).then(pastGames => {
          if(nextGame){
             GameClient.find({game_id : nextGame._id}).then(nextGamePlayers => {
@@ -195,18 +195,18 @@ app.post('/add-game', function(req, res) {
                   getUsersResult.users.forEach((userRecord) => {
                     gameusers.push({uid : userRecord.uid, name : userRecord.displayName, phone : userRecord.phoneNumber})
                   });
-                  res.render('admin', {nextGame, pastGames, nextGamePlayers, gameusers});
+                  res.render('admin', {user_id: req.params.user_id, nextGame, pastGames, nextGamePlayers, gameusers, nextGames});
                });
             });
          }
          else{
-            res.render('admin', {nextGame : null, pastGames, nextGamePlayers : null, gameusers});
+            res.render('admin', {user_id: req.params.user_id, nextGame : null, pastGames, nextGamePlayers : null, gameusers, nextGames});
          }
       })
    });
 });
 
-app.get('/fetch-users-game/:id', (req, res) => {
+app.get('/fetch-users-game/:id/:user_id', middleware.ensureAdminPriveledge, (req, res) => {
    var gameusers = [];
    GameClient.find({game_id : req.params.id}).then(gamePlayers => {
       var user = [];  
@@ -220,7 +220,56 @@ app.get('/fetch-users-game/:id', (req, res) => {
          res.send({gameusers});
       });
    });
-}) */
+})
+
+app.get('/fetch-winners-game/:id/:user_id', middleware.ensureAdminPriveledge, (req, res) => {
+   var gameusers = [];
+   Game.findOne({_id : req.params.id}).then(gameWinner => {
+      var user = [];  
+      if(gameWinner.full_house != null)user.push({uid : gameWinner.full_house});
+      if(gameWinner.first_five != null)user.push({uid : gameWinner.first_five});
+      if(gameWinner.top_row != null)user.push({uid : gameWinner.top_row});
+      if(gameWinner.middle_row != null)user.push({uid : gameWinner.middle_row});
+      if(gameWinner.bottom_row != null)user.push({uid : gameWinner.bottom_row});
+      middleware.admin.auth().getUsers(user).then(function(getUsersResult) {
+         getUsersResult.users.forEach((userRecord) => {
+            gameusers.push({uid : userRecord.uid, name : userRecord.displayName, phone : userRecord.phoneNumber})
+         });
+
+        winners = [];
+         gameusers.forEach(y => {
+            if(y.uid == gameWinner.full_house)
+               winners.push({game : "Full House", user : y});
+            if(y.uid == gameWinner.first_five)
+               winners.push({game : "First five", user : y});
+            if(y.uid == gameWinner.top_row)
+               winners.push({game : "Top Row", user : y});
+            if(y.uid == gameWinner.middle_row)
+               winners.push({game : "Middle Row", user : y});
+            if(y.uid == gameWinner.bottom_row)
+               winners.push({game : "Bottom Row", user : y});
+         });
+
+         res.send({winners});
+      });
+   });
+})
+
+app.post('/delete-game/:id/:user_id', middleware.ensureAdminPriveledge, (req, res) => {
+   Game.deleteOne({_id : req.params.id}).then(gameWinner => {
+      res.redirect('/admin/' + req.params.user_id + '?id=upcoming');
+   }).catch(err => {
+      res.send({message : err});
+   });
+});
+
+app.post('/update-game/:id/:user_id', middleware.ensureAdminPriveledge, (req, res) => {
+   Game.updateOne({_id : req.params.id}, {$set : { game_time : req.body.time }}).then(gameWinner => {
+      res.redirect('/admin/' + req.params.user_id + '?id=next');
+   }).catch(err => {
+      res.send({message : err});
+   });
+})
 
 io.on('connection', function(socket) {
    players++;
@@ -627,6 +676,9 @@ function refreshState() {
 }
 
 setInterval(refreshState, 1000 * 60 * 1);
+
+
+
 
 http.listen(process.env.PORT || 3000, function() {
    console.log('listening on *:3000');

@@ -311,8 +311,8 @@ const newOrientation = getOppositeOrientation();
 
 function show() {
     const { type, angle } = screen.orientation;
-    console.log(`Orientation type is ${type} & angle is ${angle}.`);
-}
+/*     console.log(`Orientation type is ${type} & angle is ${angle}.`);
+ */}
 
 screen.orientation.addEventListener("change", () => {
     show();
@@ -336,7 +336,6 @@ $( window ).on( "orientationchange", function( event ) {
         $('.ticket td').removeClass('clicked-cell');
         $('.ticket td').addClass('not-clickable')
         $('.ticket td').text('');
-        console.log("yes changes");
     }
     else{
         createTicket(ticket);

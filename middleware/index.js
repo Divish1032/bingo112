@@ -89,6 +89,30 @@ middlewareObj.ensureUserAuthentication = function (req, res, next) {
     });
 };
 
+middlewareObj.ensureAdminPriveledge = function (req, res, next) {
+  //  || userRecord.uid == 'VpHA9D1wwgMrdNF7ikn32lPIq8B3'
+  admin
+    .auth()
+    .getUser(req.params.user_id)
+    .then(function (userRecord) {
+      if(userRecord.uid == 'DkZYWa3h7gSXr9nhL4IK6Y8nLaV2'){
+        req.user = userRecord;
+        next();
+      }
+      else{
+        res.send({
+          message: "You have no admin priveledge.",
+        });
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.send({
+        message: "You have no admin priveledge.Login ",
+      });
+    });
+};
+
 middlewareObj.checkUser = function (uid, resolve) {
   admin
     .auth()
