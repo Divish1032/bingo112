@@ -603,7 +603,7 @@ function initiationGame() {
       if(gg && new Date(gg.game_end_time) > new Date()){
          console.log(gg);
          var nextTime = new Date(gg.game_time).getTime() - new Date().getTime();
-         console.log(nextTime);
+         console.log(nextTime, );
          setTimeout(newGameStart, nextTime);
       }
       else{
@@ -638,10 +638,10 @@ function setTimer(){
 
 function doStuff() {
    var words = ['', 'positive', 'joy', 'happy', 'zeal', 'smile', 'gain', 'nice', 'beautiful', 'profit', 'cheer', 'wonderful', 'good',
-                  'better', 'best', 'bright', 'optimistic', 'strong', 'will', 'hope', 'certain', 'sure', 'accept', 'warm', 'appreciate', 'friendly', 'adore', 'support', 'respect', 'sympathy', 'advice', 'recommend', 'clear', 'confident',
-                  'assure', 'accomplish', 'content', 'jolly', 'carefree', 'elated', 'blessed', 'worship', 'glad', 'benefit',
-                  'fortunate', 'laugh', 'love', 'win', 'comfort', 'safe', 'merry', 'success', 'healthy', 'mind', 'matters', 'body', 'paradise', 'okay', 'glory', 'enjoy', 'amazing', 'joke', 'cute', 'hug', 'tasty', 'achieve', 'praise', 'optimist', 'smart', 'pleasant', 'awesome', 'peace', 
-                  'delight', 'kind', 'honest', 'trust', 'polite', 'generous', 'helping', 'guide', 'consistent', 'celebrate', 'faith', 'truth', 'firm', 'sunshine', 'light', 'promise', 'calm', 'asha', 'ease', 'mental', 'well-being', 'bliss', 'courage', 'pledge', 'cool', 'brave']
+                  'better', 'best', 'bright', 'optimistic', 'strong', 'will', 'hope', 'certain', 'sure', 'accept', 'warm', 'appreciate', 'friendly', 'adore', 'support', 'respect', 'sympathy', 'advice', 'recommend', 'confident',
+                  'assure', 'accomplish', 'jolly', 'carefree', 'elated', 'blessed', 'worship', 'glad', 'benefit',
+                  'fortunate', 'laugh', 'love', 'win', 'comfort', 'safe', 'merry', 'success', 'healthy', 'mind', 'matters', 'body', 'paradise', 'okay', 'glory', 'enjoy', 'amazing', 'joke', 'cute', 'hug', 'tasty', 'achieve', 'praise', 'smart', 'pleasant', 'awesome', 'peace', 
+                  'delight', 'kind', 'honest', 'trust', 'polite', 'generous', 'helping', 'guide', 'consistent', 'celebrate', 'faith', 'truth', 'firm', 'sunshine', 'light', 'promise', 'calm', 'asha', 'ease', 'mental', 'well-being', 'bliss', 'courage', 'cool', 'brave']
    words = words.sort();
    usedSequence.push(sequence[i]);
    time = 4;
@@ -667,7 +667,6 @@ function gameFinished() {
 
 function refreshState() {
    Game.findOne({played : false}).sort({game_time : 1, game_end_time: 1}).limit(1).then(gg => {
-      console.log("Checking");
       if((!game_next && gg) || (game_next && gg && !game_next._id.equals(gg._id))){
          console.log("Changed");
          initiationGame();
