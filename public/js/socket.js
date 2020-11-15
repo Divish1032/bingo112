@@ -9,18 +9,14 @@ var game_end_time  = null;
 var game           = null;
 var counter        = 0;
 
-var words = ['', 'positive', 'joy', 'happy', 'zeal', 'smile', 'gain', 'nice', 'beautiful', 'profit', 'cheer', 'wonderful', 'good',
+var words = ['positive', 'joy', 'happy', 'zeal', 'smile', 'gain', 'nice', 'beautiful', 'profit', 'cheer', 'wonderful', 'good',
 'better', 'best', 'bright', 'optimistic', 'strong', 'will', 'hope', 'certain', 'sure', 'accept', 'warm', 'appreciate', 'friendly', 'adore', 'support', 'respect', 'sympathy', 'advice', 'recommend', 'confident',
 'assure', 'accomplish', 'jolly', 'carefree', 'elated', 'blessed', 'worship', 'glad', 'benefit',
 'fortunate', 'laugh', 'love', 'win', 'comfort', 'safe', 'merry', 'success', 'healthy', 'mind', 'matters', 'body', 'paradise', 'okay', 'glory', 'enjoy', 'amazing', 'joke', 'cute', 'hug', 'tasty', 'achieve', 'praise', 'smart', 'pleasant', 'awesome', 'peace', 
 'delight', 'kind', 'honest', 'trust', 'polite', 'generous', 'helping', 'guide', 'consistent', 'celebrate', 'faith', 'truth', 'firm', 'sunshine', 'light', 'promise', 'calm', 'asha', 'ease', 'mental', 'well-being', 'bliss', 'courage', 'cool', 'brave']
  words = words.sort();
 
-var modal = document.getElementById("myModal");
-var span = document.getElementsByClassName("closem")[0];
-span.onclick = function () {
-    modal.style.display = "none";
-};
+
 
 var firebaseConfig = {
     apiKey: "AIzaSyBMtJWyBxZ4kVlqbAAHCFuBspdxbRW0dOM",
@@ -73,9 +69,6 @@ socket.on('game-initialized', (t1, t2, current_game) => {
     else if(new Date() > new Date(game_time) && new Date() < new Date(game_end_time)){
         $('.toast-message').text("Game Started")
         $('.toast').toast('show');
-        if(screen.width <= 600 && screen.orientation.type == "portrait-primary"){
-            modal.style.display = "block";
-        }
         gamestart();
     }
     else{
@@ -90,10 +83,7 @@ socket.on('loadGameData', function(tic, usedSequence){
     ticket = tic;
     setClaimButtonState();
     $('.ticket td').addClass('not-clickable');
-    if(screen.width <= 600 && screen.orientation.type == "portrait-primary");
-    else{
-        createTicket(tic);
-    }
+    createTicket(tic);
     showEmittedNumbers(usedSequence);
     $('.claim-btn').show();
     $('.nextnumber').text(words[disclosedNumbers[disclosedNumbers.length - 1]]);
@@ -101,22 +91,12 @@ socket.on('loadGameData', function(tic, usedSequence){
 
 });
 
-socket.on('nextNumber', function( data, number, count){
+socket.on('nextNumber', function( data, number, index){
     disclosedNumbers.push(number);
     $('.nextnumber').text(words[number]);
-    if($('.news-message p').length == 6)
-    $('.news-message').css('animation-duration', '50s')
-    if($('.news-message p').length >= 12){
-        $('.news-message p:first-child').remove();
-        $('.news-message').append("<p>" + words[number] + ",</p>");
-    }
-    else{
-        $('.news-message').append("<p>" + words[number] + ",</p>");
-    }
-
+    buildEmittedWords();
     var msg = new SpeechSynthesisUtterance(words[number]);
     window.speechSynthesis.speak(msg);
-    console.log( count +" - " + words[number]);
 }); 
 
 // Game Control 
@@ -173,7 +153,7 @@ socket.on('full-house-winner-you', function(message, game){
 
 
 
-$('.ticket td').click(function(){
+$('#ticket .row div').click(function(){
     var ticket_id = null;
     $(this).toggleClass('clicked-cell');
     words.forEach((x,i) => {
@@ -181,8 +161,8 @@ $('.ticket td').click(function(){
             ticket_id = i;
         }
     });
-    for (let i = 0; i < ticket.length; i++) {
-        for (let j = 0; j < ticket[0].length; j++) {
+    for (let i = 0; i < 6; i++) {
+        for (let j = 0; j < 3; j++) {
             var value = ticket[i][j];
             if(ticket_id == Math.abs(value)){
                 ticket[i][j] = ticket[i][j] * -1;
@@ -193,9 +173,9 @@ $('.ticket td').click(function(){
 
 $('.claim').click(function(){
     if($(this).hasClass('full-house'))emit = 'full-house';
-    if($(this).hasClass('top-row'))emit = 'top-row';
-    if($(this).hasClass('middle-row'))emit = 'middle-row';
-    if($(this).hasClass('bottom-row'))emit = 'bottom-row';
+    if($(this).hasClass('first-column'))emit = 'first-column';
+    if($(this).hasClass('second-column'))emit = 'second-column';
+    if($(this).hasClass('third-column'))emit = 'third-column';
     if($(this).hasClass('first-five'))emit = 'first-five';
     socket.emit(emit, ticket, user, game);
     socket.emit('save-game-checkpoint', ticket, user, game);
@@ -203,11 +183,33 @@ $('.claim').click(function(){
 
 function showEmittedNumbers(data){
     disclosedNumbers = data;
-    var count = ( data.length >12)? data.length - 12 : 0;
-    $('.news-message').html('');
-    for (let i = count; i < data.length; i++) {
-        var x = data[i];
-        $('.news-message').append("<p>" + words[x] + ",</p>");
+    buildEmittedWords();
+}
+
+function buildEmittedWords(){
+    $('.showesWordsRow1, .showesWordsRow2, .showesWordsRow3, .showesWordsRow4').html("");
+    let count = 0;
+    for (let i = disclosedNumbers.length - 1; i >= 0; i--) {
+        const x = disclosedNumbers[i];
+        if((count + 1) % 4 === 1){
+            if(count === 0){
+                $('.showesWordsRow1').append("<span style='font-size:18px'>" + words[disclosedNumbers[i]] + "</span>");
+            }
+            else{
+                $('.showesWordsRow1').append("<span>" + words[disclosedNumbers[i]] + "</span>")
+            }
+        }
+        else if((count + 1) % 4 === 2){
+            $('.showesWordsRow2').append("<span>" + words[disclosedNumbers[i]]  + "</span>")
+        }
+        else if((count + 1) % 4 === 3){
+            $('.showesWordsRow3').append("<span>" + words[disclosedNumbers[i]] + "</span>")
+        }
+        else{
+            $('.showesWordsRow4').append("<span>" + words[disclosedNumbers[i]] + "</span>")
+        }
+
+        count++;
     }
 }
 
@@ -223,24 +225,26 @@ function createTicket(data) {
     $('.ticket td').removeClass('not-clickable');
     original_ticket = data;
     ticket = data;
-    var c = 0;
-    var r = 0;
-    $("td").each(function() {
-        if(c%9 == 0) c = 0;
-        var value = data[r][c];
-        if(value == 0){
-            $(this).text();
-            $(this).addClass('not-clickable');
-        }
-        else if(value != Math.abs(value)){
-            $(this).addClass('clicked-cell');
-            $(this).text(words[value *-1]);
-        }
-        else $(this).text(words[value]);
-        
-        if(c == 8) r++;
-        c++;
-    });
+    for (let i = 0; i < 6; i++) {
+        for (let j = 0; j < 3; j++) {
+            let val = data[i][j];
+            let word = null;
+            if(i === 0)
+               word = $(`#ticket .row1 div:nth-child(` + (j + 1) + `)`);
+            else if(i === 1)
+               word = $(`#ticket .row2 div:nth-child(` + (j + 1) + `)`);
+            else if(i === 2)
+               word = $(`#ticket .row3 div:nth-child(` + (j + 1) + `)`);
+            else if(i === 3)
+               word = $(`#ticket .row4 div:nth-child(` + (j + 1) + `)`);
+            else if(i === 4)
+               word = $(`#ticket .row5 div:nth-child(` + (j + 1) + `)`);
+            else
+               word = $(`#ticket .row6 div:nth-child(` + (j + 1) + `)`);  
+            word.text(words[Math.abs(val)])
+            if(val !== Math.abs(val)) word.addClass('clicked-cell')
+        }      
+    }
 }
 
 function gamestart() {
@@ -281,66 +285,6 @@ socket.on('last-word-shown', function (){
     $('.toast').toast('show');
 })
 
-
-
-function fullScreenCheck() {
-    if (document.fullscreenElement) return;
-    return document.documentElement.requestFullscreen();
-}
-
-function updateDetails(lockButton) {
-    const buttonOrientation = getOppositeOrientation();
-}
-
-function getOppositeOrientation() {
-    const { type } = screen.orientation;
-    return type.startsWith("portrait") ? "landscape" : "portrait";
-}
-
-async function rotate(lockButton) {
-    modal.style.display = "none";
-    try {
-        await fullScreenCheck();
-    } catch (err) {
-        console.error(err);
-}
-const newOrientation = getOppositeOrientation();
-    await screen.orientation.lock(newOrientation);
-    updateDetails(lockButton);
-}
-
-function show() {
-    const { type, angle } = screen.orientation;
-/*     console.log(`Orientation type is ${type} & angle is ${angle}.`);
- */}
-
-screen.orientation.addEventListener("change", () => {
-    show();
-    updateDetails(document.getElementById("button"));
-});
-
-window.addEventListener("load", () => {
-    show();
-    updateDetails(document.getElementById("button"));
-});
-
-socket.on('game-finished', function(id) {
-    alert('Game has finished, you will be redirected to result page.');
-    window.location = "/winners/"  + user.uid + '/' + id;
-});
-
-
-$( window ).on( "orientationchange", function( event ) {
-   
-    if(screen.width <= 600 && (screen.orientation.type == "portrait-primary" || screen.orientation.type == "portrait-secondary" )){
-        $('.ticket td').removeClass('clicked-cell');
-        $('.ticket td').addClass('not-clickable')
-        $('.ticket td').text('');
-    }
-    else{
-        createTicket(ticket);
-    }
-  });
 
 
 socket.on('reconnect', (attemptNumber) => {

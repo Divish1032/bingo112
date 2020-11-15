@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="/css/bootstrap.css" />
     <script src="/js/bootstrap.js"></script>
     <link rel="stylesheet" href="/css/game.css" />
+    <link rel="stylesheet" href="/css/game2.css" />
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-168783496-1"></script>
     <script>
@@ -55,14 +56,13 @@
     </div>
 
     <!-- The Modal -->
-    <div id="myModal" class="modal">
-      <!-- Modal content -->
+    <!-- <div id="myModal" class="modal">
       <div class="modal-content">
         <span class="closem">&times;</span>
         <p style="text-align: center;">Switch to landscape mode, for smooth functioning of game. Ticket would not be displayed on portrait mode.</p>
         <button class="btn btn-info" onclick="rotate(this)">Switch</button>
       </div>
-    </div>
+    </div> -->
 
     <div class="game-ended jumbotron jumbotron-fluid" style="margin-top: 50px;">
       <div class="container">
@@ -82,111 +82,93 @@
       </div>
     </div>
 
-    <div class="play" style="margin-top: 50px;">
-      <!-- <div class="nextnumber">
-        <p></p>
-      </div> -->
-     <!--  <marquee style="color: white;" behavior="scroll" width=“210” direction="left">wejfw fjawfwadw dw wfdw qdj wqd qdj wfefjarlfaejalej eaafjwa lfeajfeal jerk eelkr gegkeelgr r  fwwfw fwfl;wfw fwf kfj wfkwje lfjwef wfjwk wklfj waeflkwj kewfjklfjawfjwflw ffkjwlkf welkf we</marquee>
-       -->
-      <section>
-        <h3 style="margin: 40px auto 5px;
-        font-size: 28px;
-        text-align: center;
-        text-decoration: underline;
-        color: orange;">Last 12 Words : </h3>
-        <div style="overflow: hidden;">
-          <section class="news-message" style="overflow: hidden;">
-            
-          </section>
+
+    <div class="play"> 
+      <div id="background-wrap">
+        <div class="bubble x1"></div>
+        <div class="bubble x2"></div>
+        <div class="bubble x3"></div>
+        <div class="bubble x4"></div>
+        <div class="bubble x5"></div>
+        <div class="bubble x6"></div>
+        <div class="bubble x7"></div>
+        <div class="bubble x8"></div>
+        <div class="bubble x9"></div>
+        <div class="bubble x10"></div>
+    </div>
+
+
+    <div class="container-fluid" style="margin-top: 45px;">
+        <div class="row" style="width: inherit;margin: auto;">
+            <div class="col-6" style="margin: auto;padding-left: 0;">
+                <div class="col-sm-12" id="word-display">
+                    <h2 class="nextnumber"></h2>
+                </div>
+                <div class="col-sm-12" id="timer">
+                    <h5 class="timer"></h5>
+                </div>
+            </div>
+            <div class="col-6" id="words-batch">
+                <div class="row">
+                    <div class="showesWordsRow1">
+                    </div>
+                    <div class="showesWordsRow2">
+                    </div>
+                    <div class="showesWordsRow3">
+                    </div>
+                    <div class="showesWordsRow4">
+                    </div>
+                </div>
+            </div>
         </div>
-      </section>
-      
-      <!-- <div class="marquee">
-        Disclosed Words :
-      </div> -->
+    </div>
 
-      <h1 class="nextnumber" style="color: white;"></h1>
-      <p class="timer" style="color: white;margin: 0;"></p>
+    <div class="container-fluid" id="ticket">
+        <div class="row row1">
+          <div class="col-4"></div>
+          <div class="col-4"></div>
+          <div class="col-4"></div>
+        </div>
+        <div class="row row2">
+          <div class="col-4"></div>
+          <div class="col-4"></div>
+          <div class="col-4"></div>
+        </div>
+        <div class="row row3">
+          <div class="col-4"></div>
+          <div class="col-4"></div>
+          <div class="col-4"></div>
+        </div>
+        <div class="row row4">
+          <div class="col-4"></div>
+          <div class="col-4"></div>
+          <div class="col-4"></div>
+        </div>
+        <div class="row row5">
+          <div class="col-4"></div>
+          <div class="col-4"></div>
+          <div class="col-4"></div>
+        </div>
+        <div class="row row6">
+          <div class="col-4"></div>
+          <div class="col-4"></div>
+          <div class="col-4"></div>
+        </div>
+    </div>
 
-      <!-- <div class="shownNumber"></div> -->
+    <div class="conatiner-fluid" id="claim_btns">
+        <div class="row">
+            <button class="btn claim first-column" id="claim-ticket">First Column</button>
+            <button class="btn claim second-column" id="claim-ticket">Second Column</button>
+            <button class="btn claim third-column" id="claim-ticket">Third Column</button>
+        </div>
 
-      <table class="ticket">
-        <tbody>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
+        <div class="row">
+            <button class="btn claim full-house" id="claim-ticket">Full House</button>
+            <button class="btn claim first-five" id="claim-ticket">First Five</button>
+        </div>
 
-      <div class="container claim-btn" style="margin: 15px auto; text-align: center;">
-        <button
-          class="btn-sm btn btn-outline-secondary claim full-house"
-          id="claim-ticket"
-        >
-          Full House
-        </button>
-        <button
-          class="btn-sm btn btn-outline-secondary claim top-row"
-          id="claim-ticket"
-        >
-          Top Row
-        </button>
-        <button
-          class="btn-sm btn btn-outline-secondary claim middle-row"
-          id="claim-ticket"
-        >
-          Middle Row
-        </button>
-        <button
-          class="btn-sm btn btn-outline-secondary claim bottom-row"
-          id="claim-ticket"
-        >
-          Bottom Row
-        </button>
-        <button
-          class="btn-sm btn btn-outline-secondary claim first-five"
-          id="claim-ticket"
-        >
-          First Five
-        </button>
-      </div>
-
-      
-
-      <img src="/img/exapnd.png" class="mobile-device" onclick="rotate(this)" alt="">
-
-      <!-- <button onclick="setStorage()">Set storage</button>
-              <button onclick="getStorage()">get storage</button> -->
+    </div>
     </div>
   </body>
 

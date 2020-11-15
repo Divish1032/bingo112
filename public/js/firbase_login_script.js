@@ -24,6 +24,8 @@ var username = null;
 firebase.auth().onAuthStateChanged(function(userDetail) {
     if (userDetail) {
         $('.loader, .login').hide();
+        
+        console.log(userDetail);
         $('.homepage').show();
         user = userDetail;
     }

@@ -8,16 +8,6 @@ body {
   background: #1d093a;
 }
 
-.nextnumber {
-  color: antiquewhite;
-  background-color: #141e30;
-  text-align: center;
-  border-radius: 10px;
-  width: max-content;
-  padding: 5px 10px;
-  margin: 5px auto;
-}
-
 .fadeb {
   opacity: 0.3;
 }
@@ -29,37 +19,6 @@ body {
   top: 50%;
 }
 
-.ticket {
-  background: orange;
-  border-radius: 10px;
-  border: 1px solid #141e30;
-  border-collapse: separate;
-  border-radius: 10px;
-  -moz-border-radius: 10px;
-  margin: 10px auto;
-  width: 90%;
-  padding: 20px;
-}
-.ticket td {
-  width: 10%;
-  height: 40px;
-  /* min-width: 60px; */
-  cursor: pointer;
-  text-align: center;
-  border: none;
-  border-radius: 10px;
-  color: #141e30;
-  background-color: #ffffff;
-  margin: 20px;
-}
-.shownNumber {
-  width: 93%;
-  margin: 0 auto;
-  border: none;
-  background-color: orange;
-  border-radius: 13px;
-  padding: 8px 10px;
-}
 
 @media screen and (min-width: 600px) {
   .shownNumber span {
@@ -89,7 +48,7 @@ body {
 }
 
 .clicked-cell {
-  background: #593c3c5c !important;
+  background: #FCDFB8 !important;
 }
 /*   .wrong-clicked-cell {
     background: #f91111c9!important;
@@ -97,11 +56,6 @@ body {
   } */
 .not-clickable {
   pointer-events: none;
-}
-.play p {
-  font-size: 25px;
-  text-align: center;
-  margin: 10px 5px;
 }
 
 #claim-ticket {
@@ -209,48 +163,4 @@ section div .news-message p {
     -webkit-transform: translateX(-100%);
     transform: translateX(-100%);
   }
-}
-
-/* The Modal (background) */
-.modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0, 0, 0); /* Fallback color */
-  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
-}
-
-/* Modal Content/Box */
-.modal-content {
-  background-color: #fefefe;
-  margin: 50% auto; /* 15% from the top and centered */
-  padding: 20px 30px;
-  border: none;
-  width: 75%; /* Could be more or less, depending on screen size */
-  border-radius: 20px;
-}
-
-/* The Close Button */
-.closem {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bolder;
-  width: max-content;
-  cursor: pointer;
-  position: absolute;
-  right: 10px;
-  top: 10px;
-}
-
-.closem:hover,
-.closem:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
 }

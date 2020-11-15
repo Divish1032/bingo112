@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Bingo</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="keywords" />
+    <meta content="" name="description" />
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/jquery.js"></script>
+    <script src="/js/popper.js"></script>
+    <link rel="stylesheet" href="/css/bootstrap.css" />
+    <script src="/js/bootstrap.js"></script>
+    <link rel="stylesheet" href="/css/game2.css">
+
+</head>
+
+<body>
+
+    <div id="background-wrap">
+        <div class="bubble x1"></div>
+        <div class="bubble x2"></div>
+        <div class="bubble x3"></div>
+        <div class="bubble x4"></div>
+        <div class="bubble x5"></div>
+        <div class="bubble x6"></div>
+        <div class="bubble x7"></div>
+        <div class="bubble x8"></div>
+        <div class="bubble x9"></div>
+        <div class="bubble x10"></div>
+    </div>
+
+
+    <div class="container-fluid" style="margin-top: 45px;">
+        <div class="row" style="width: inherit;margin: auto;">
+            <div class="col-6" style="margin: auto;padding-left: 0;">
+                <div class="col-sm-12" id="word-display">
+                    <h2>Warmth</h2>
+                </div>
+                <div class="col-sm-12" id="timer">
+                    <h5>05:13</h5>
+                </div>
+            </div>
+            <div class="col-6" id="words-batch">
+                <div class="row">
+                    <div>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                    </div>
+                    <div>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                    </div>
+                    <div>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                    </div>
+                    <div>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                        <span>Color</span>
+                        <span>Warmth</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid" id="ticket">
+        <div class="row row1">
+            <div class="col-4">
+                Wonder
+            </div>
+            <div class="col-4">
+                Humble
+            </div>
+            <div class="col-4">
+                Hug
+            </div>
+        </div>
+        <div class="row row2">
+            <div class="col-4">
+                Wonder
+            </div>
+            <div class="col-4">
+                Humble
+            </div>
+            <div class="col-4">
+                Hug
+            </div>
+        </div>
+        <div class="row row3">
+            <div class="col-4">
+                Wonder
+            </div>
+            <div class="col-4">
+                Humble
+            </div>
+            <div class="col-4">
+                Hug
+            </div>
+        </div>
+        <div class="row row4">
+            <div class="col-4">
+                Wonder
+            </div>
+            <div class="col-4">
+                Humble
+            </div>
+            <div class="col-4">
+                Hug
+            </div>
+        </div>
+        <div class="row row5">
+            <div class="col-4">
+                Wonder
+            </div>
+            <div class="col-4">
+                Humble
+            </div>
+            <div class="col-4">
+                Hug
+            </div>
+        </div>
+        <div class="row row6">
+            <div class="col-4">
+                Wonder
+            </div>
+            <div class="col-4">
+                Humble
+            </div>
+            <div class="col-4">
+                Hug
+            </div>
+        </div>
+    </div>
+
+    <div class="conatiner-fluid" id="claim_btns">
+        <div class="row">
+            <button class="btn">First Column</button>
+            <button class="btn">Second Column</button>
+            <button class="btn">Third Column</button>
+        </div>
+
+        <div class="row">
+            <button class="btn">Full House</button>
+            <button class="btn">First Five</button>
+        </div>
+
+    </div>
+</body>
+
+</html>
+
+
+<div class="play" style="margin-top: 50px;">
+    <!-- <div class="nextnumber">
+      <p></p>
+    </div> -->
+   <!--  <marquee style="color: white;" behavior="scroll" width=“210” direction="left">wejfw fjawfwadw dw wfdw qdj wqd qdj wfefjarlfaejalej eaafjwa lfeajfeal jerk eelkr gegkeelgr r  fwwfw fwfl;wfw fwf kfj wfkwje lfjwef wfjwk wklfj waeflkwj kewfjklfjawfjwflw ffkjwlkf welkf we</marquee>
+     -->
+    <section>
+      <h3 style="margin: 40px auto 5px;
+      font-size: 28px;
+      text-align: center;
+      text-decoration: underline;
+      color: orange;">Last 12 Words : </h3>
+      <div style="overflow: hidden;">
+        <section class="news-message" style="overflow: hidden;">
+          
+        </section>
+      </div>
+    </section>
+    
+    <!-- <div class="marquee">
+      Disclosed Words :
+    </div> -->
+
+    <h1 class="nextnumber" style="color: white;"></h1>
+    <p class="timer" style="color: white;margin: 0;"></p>
+
+    <!-- <div class="shownNumber"></div> -->
+
+    <table class="ticket">
+      <tbody>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="container claim-btn" style="margin: 15px auto; text-align: center;">
+      <button
+        class="btn-sm btn btn-outline-secondary claim full-house"
+        id="claim-ticket"
+      >
+        Full House
+      </button>
+      <button
+        class="btn-sm btn btn-outline-secondary claim top-row"
+        id="claim-ticket"
+      >
+        Top Row
+      </button>
+      <button
+        class="btn-sm btn btn-outline-secondary claim middle-row"
+        id="claim-ticket"
+      >
+        Middle Row
+      </button>
+      <button
+        class="btn-sm btn btn-outline-secondary claim bottom-row"
+        id="claim-ticket"
+      >
+        Bottom Row
+      </button>
+      <button
+        class="btn-sm btn btn-outline-secondary claim first-five"
+        id="claim-ticket"
+      >
+        First Five
+      </button>
+    </div>
+
+    
+
+    <img src="/img/exapnd.png" class="mobile-device" onclick="rotate(this)" alt="">
+
+    <!-- <button onclick="setStorage()">Set storage</button>
+            <button onclick="getStorage()">get storage</button> -->
+  </div>
+
+
+  <script>
+      
+function fullScreenCheck() {
+    if (document.fullscreenElement) return;
+    return document.documentElement.requestFullscreen();
+}
+
+function updateDetails(lockButton) {
+    const buttonOrientation = getOppositeOrientation();
+}
+
+function getOppositeOrientation() {
+    const { type } = screen.orientation;
+    return type.startsWith("portrait") ? "landscape" : "portrait";
+}
+
+async function rotate(lockButton) {
+    modal.style.display = "none";
+    try {
+        await fullScreenCheck();
+    } catch (err) {
+        console.error(err);
+}
+const newOrientation = getOppositeOrientation();
+    await screen.orientation.lock(newOrientation);
+    updateDetails(lockButton);
+}
+
+function show() {
+    const { type, angle } = screen.orientation;
+/*     console.log(`Orientation type is ${type} & angle is ${angle}.`);
+ */}
+
+screen.orientation.addEventListener("change", () => {
+    show();
+    updateDetails(document.getElementById("button"));
+});
+
+window.addEventListener("load", () => {
+    show();
+    updateDetails(document.getElementById("button"));
+});
+
+socket.on('game-finished', function(id) {
+    alert('Game has finished, you will be redirected to result page.');
+    window.location = "/winners/"  + user.uid + '/' + id;
+});
+
+
+$( window ).on( "orientationchange", function( event ) {
+   
+    if(screen.width <= 600 && (screen.orientation.type == "portrait-primary" || screen.orientation.type == "portrait-secondary" )){
+        $('.ticket td').removeClass('clicked-cell');
+        $('.ticket td').addClass('not-clickable')
+        $('.ticket td').text('');
+    }
+    else{
+        createTicket(ticket);
+    }
+  });
+
+
+  </script>

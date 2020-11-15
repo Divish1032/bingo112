@@ -41,13 +41,13 @@ app.use(bodyParser.json());
 
 
 app.get('/', function(req, res) {
-   Game.findOne({played : false}).sort({game_time : 1}).limit(1).then(nextGame => {
-      if(nextGame){
+   Game.findOne({ played: false }).sort({ game_time: 1 }).limit(1).then(nextGame => {
+      if (nextGame) {
          var game_started = new Date(nextGame.game_time) < new Date();
-         res.render('landing', {game_time : nextGame.game_time, game_started});
+         res.render('landing', { game_time: nextGame.game_time, game_started });
       }
-      else{
-         res.render('landing', {game_time : null, game_started : false});
+      else {
+         res.render('landing', { game_time: null, game_started: false });
       }
    });
 });
@@ -271,6 +271,26 @@ app.post('/update-game/:id/:user_id', middleware.ensureAdminPriveledge, (req, re
    });
 })
 
+
+function generateTicket() {
+   let set = [];
+   let ticket = [
+      [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0]
+   ]
+   for(let i = 0; i<6; i++){
+      for (let j = 0; j < 3; j++) {
+         let val = Math.floor(Math.random() * 80);  
+         while(set.indexOf(val) != -1){
+            val = Math.floor(Math.random() * 80);
+         }
+         set.push(val);
+         ticket[i][j] = val;     
+      }
+   }
+
+   return ticket;
+}
+
 io.on('connection', function(socket) {
    players++;
    console.log(players + " connected. This one is " + socket.id);
@@ -315,12 +335,13 @@ io.on('connection', function(socket) {
          GameClient.find({user_id : user.uid, game_id : game._id}, (err, client) => {
             if(client[0].ticket != null && client[0].ticket.length!=0){
                console.log("Old ticket retrieved");
+               console.log(client[0].ticket);
                var ticket = client[0].ticket;
                socket.emit('loadGameData', ticket, usedSequence);
             }
             else{
                console.log("New ticker generated");
-               var ticket = tambola.getTickets(1)[0];
+               var ticket = generateTicket();
                GameClient.findOneAndUpdate({user_id : user.uid, game_id : game._id}, {$set : { ticket : ticket}}, (err, result) => {
                   socket.emit('loadGameData', ticket, usedSequence);
                });
@@ -335,8 +356,8 @@ io.on('connection', function(socket) {
 
    socket.on('full-house', function(ticket_client, user, game){
       var claim = null;
-      for (let i = 0; i < 3; i++) {
-         for (let j = 0; j < 9; j++) {
+      for (let i = 0; i < 6; i++) {
+         for (let j = 0; j < 3; j++) {
              var value = ticket_client[i][j];
              var flag = 0;
              if(value != 0){
@@ -378,10 +399,10 @@ io.on('connection', function(socket) {
       }
    });
 
-   socket.on('top-row', function(ticket_client, user, game){
+   socket.on('first-column', function(ticket_client, user, game){
       var claim = null;
-      for (let i = 0; i < 9; i++) {
-         var value = ticket_client[0][i];
+      for (let i = 0; i < 6; i++) {
+         var value = ticket_client[i][0];
          var flag = 0;
          if(value != 0){
             usedSequence.forEach(x => {
@@ -420,10 +441,10 @@ io.on('connection', function(socket) {
       }
    });
 
-   socket.on('middle-row', function(ticket_client, user, game){
+   socket.on('second-column', function(ticket_client, user, game){
       var claim = null;
-      for (let i = 0; i < 9; i++) {
-         var value = ticket_client[1][i];
+      for (let i = 0; i < 6; i++) {
+         var value = ticket_client[i][1];
          var flag = 0;
          if(value != 0){
             usedSequence.forEach(x => {
@@ -464,10 +485,10 @@ io.on('connection', function(socket) {
       
    });
 
-   socket.on('bottom-row', function(ticket_client, user, game){
+   socket.on('third-column', function(ticket_client, user, game){
       var claim = null;
-      for (let i = 0; i < 9; i++) {
-         var value = ticket_client[2][i];
+      for (let i = 0; i < 6; i++) {
+         var value = ticket_client[i][2];
          var flag = 0;
          if(value != 0){
             usedSequence.forEach(x => {
@@ -512,8 +533,8 @@ io.on('connection', function(socket) {
       var flag = 0;
       var claim = null;
       var count = 0;
-      for (let i = 0; i < 3; i++) {
-         for (let j = 0; j < 9; j++) {
+      for (let i = 0; i < 6; i++) {
+         for (let j = 0; j < 3; j++) {
             var value = ticket_client[i][j];
             if(value != Math.abs(value)){
                count ++;
@@ -622,13 +643,13 @@ function newGameStart() {
    sequence          = tambola.getDrawSequence(),
    i                 = 0,
    usedSequence      = [],
-   time              = 4,
+   time              = 5,
    refreshIntervalId = null,
    timerID           = null,
    game_players      = [],
    dibarred_user     = [];
    console.log("New game start");
-   refreshIntervalId = setInterval(doStuff, 5000);
+   refreshIntervalId = setInterval(doStuff, 6000);
    timerID = setInterval(setTimer, 1000);
 }
 
@@ -637,15 +658,8 @@ function setTimer(){
 }
 
 function doStuff() {
-   var words = ['', 'positive', 'joy', 'happy', 'zeal', 'smile', 'gain', 'nice', 'beautiful', 'profit', 'cheer', 'wonderful', 'good',
-                  'better', 'best', 'bright', 'optimistic', 'strong', 'will', 'hope', 'certain', 'sure', 'accept', 'warm', 'appreciate', 'friendly', 'adore', 'support', 'respect', 'sympathy', 'advice', 'recommend', 'confident',
-                  'assure', 'accomplish', 'jolly', 'carefree', 'elated', 'blessed', 'worship', 'glad', 'benefit',
-                  'fortunate', 'laugh', 'love', 'win', 'comfort', 'safe', 'merry', 'success', 'healthy', 'mind', 'matters', 'body', 'paradise', 'okay', 'glory', 'enjoy', 'amazing', 'joke', 'cute', 'hug', 'tasty', 'achieve', 'praise', 'smart', 'pleasant', 'awesome', 'peace', 
-                  'delight', 'kind', 'honest', 'trust', 'polite', 'generous', 'helping', 'guide', 'consistent', 'celebrate', 'faith', 'truth', 'firm', 'sunshine', 'light', 'promise', 'calm', 'asha', 'ease', 'mental', 'well-being', 'bliss', 'courage', 'cool', 'brave']
-   words = words.sort();
    usedSequence.push(sequence[i]);
-   time = 4;
-   console.log("Word shwon  " + i + " - " + words[sequence[i]]);
+   time = 5;
    io.sockets.emit('nextNumber', 'Your next word is '+ sequence[i], sequence[i], i+1);
    i++;
    if(i==90){
