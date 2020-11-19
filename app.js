@@ -680,6 +680,7 @@ function newGameStart() {
    game_players      = [],
    dibarred_user     = [];
    console.log("New game start");
+   doStuff();
    refreshIntervalId = setInterval(doStuff, 6000);
    timerID = setInterval(setTimer, 1000);
 }
@@ -693,7 +694,7 @@ function doStuff() {
    time = 5;
    io.sockets.emit('nextNumber', usedSequence, sequence[i], i);
    i++;
-   if(i==90){
+   if(i == 80){
       io.sockets.emit('last-word-shown');
       clearInterval(refreshIntervalId);
       clearInterval(timerID);
