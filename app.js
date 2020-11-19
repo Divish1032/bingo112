@@ -287,6 +287,21 @@ function generateTicket() {
          ticket[i][j] = val;     
       }
    }
+   let temp = [];
+   var  k = 0;
+   for(let i = 0; i<6; i++){
+      for (let j = 0; j < 3; j++) {
+         temp[k++] = ticket[i][j];   
+      }
+   }
+
+   temp.sort();
+   k = 0;
+   for(let i = 0; i<6; i++){
+      for (let j = 0; j < 3; j++) {
+         ticket[i][j] = temp[k++];   
+      }
+   }
 
    return ticket;
 }
@@ -295,9 +310,6 @@ io.on('connection', function(socket) {
    players++;
    console.log(players + " connected. This one is " + socket.id);
    var current_user = null;
-   console.log("Disbarred user");
-   console.log(dibarred_user);
-
    socket.on('initialize-data', function(user){
       Game.find({played : false}).sort({game_time : 1}).limit(1).then(game => {
          var current_game = game[0];
@@ -423,8 +435,8 @@ io.on('connection', function(socket) {
             if(game_data && !game_data.top_row){
                console.log("TR Won");
                Game.findOneAndUpdate({_id : game._id}, {$set : { top_row : user.uid }}, (err, result) => {
-                  socket.broadcast.emit('top-row-winner', user.displayName +' has won top row');
-                  socket.emit('top-row-winner', 'Congrats you won top row');
+                  socket.broadcast.emit('top-row-winner', user.displayName +' has won the first column');
+                  socket.emit('top-row-winner', 'Congrats you won the first column');
                })
             }
             else{
@@ -465,8 +477,8 @@ io.on('connection', function(socket) {
             if(game_data && !game_data.middle_row){
                console.log("MR Won");
                Game.findOneAndUpdate({_id : game._id}, {$set : { middle_row : user.uid }}, (err, result) => {
-               socket.broadcast.emit('middle-row-winner', user.displayName + ' has won middle row');
-               socket.emit('middle-row-winner', 'Congrats you won middle row');
+               socket.broadcast.emit('middle-row-winner', user.displayName + ' has won the second column');
+               socket.emit('middle-row-winner', 'Congrats you won the second column');
                });
             }
             else{
@@ -509,8 +521,8 @@ io.on('connection', function(socket) {
             if(game_data && !game_data.bottom_row){
                console.log("BR Won");
                Game.findOneAndUpdate({_id : game._id}, {$set : { bottom_row : user.uid }}, (err, result) => {
-               socket.broadcast.emit('bottom-row-winner', user.displayName +  ' has won bottom row');
-               socket.emit('bottom-row-winner', 'Congrats you won bottom row');
+               socket.broadcast.emit('bottom-row-winner', user.displayName +  ' has won the third column');
+               socket.emit('bottom-row-winner', 'Congrats you won the third column');
                })
             }
             else{
@@ -622,7 +634,6 @@ function initiationGame() {
    Game.findOne({played : false}).sort({game_time : 1, game_end_time: 1}).limit(1).then(gg => {
       game_next = gg;
       if(gg && new Date(gg.game_end_time) > new Date()){
-         console.log(gg);
          var nextTime = new Date(gg.game_time).getTime() - new Date().getTime();
          console.log(nextTime, );
          setTimeout(newGameStart, nextTime);
@@ -660,7 +671,7 @@ function setTimer(){
 function doStuff() {
    usedSequence.push(sequence[i]);
    time = 5;
-   io.sockets.emit('nextNumber', 'Your next word is '+ sequence[i], sequence[i], i+1);
+   io.sockets.emit('nextNumber', usedSequence, sequence[i], i);
    i++;
    if(i==90){
       io.sockets.emit('last-word-shown');

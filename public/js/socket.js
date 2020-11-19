@@ -91,8 +91,8 @@ socket.on('loadGameData', function(tic, usedSequence){
 
 });
 
-socket.on('nextNumber', function( data, number, index){
-    disclosedNumbers.push(number);
+socket.on('nextNumber', function( usedSequence, number, index){
+    disclosedNumbers = usedSequence
     $('.nextnumber').text(words[number]);
     buildEmittedWords();
     var msg = new SpeechSynthesisUtterance(words[number]);
@@ -107,6 +107,9 @@ socket.on('wrong-claim', function(id){
 });
 
 socket.on('timer', function(data){
+    if(data < 0 )
+    $('.timer').text("0");
+    else
     $('.timer').text(data);
 }) 
 
@@ -120,19 +123,19 @@ socket.on('first-five-winner', function(message){
 socket.on('top-row-winner', function(message){
     $('.toast-message').text(message)
     $('.toast').toast('show');
-    $('.top-row').attr('disabled', true);
+    $('.first-column').attr('disabled', true);
 });
 
 socket.on('middle-row-winner', function(message){
     $('.toast-message').text(message)
     $('.toast').toast('show');
-    $('.middle-row').attr('disabled', true);
+    $('.second-column').attr('disabled', true);
 });
 
 socket.on('bottom-row-winner', function(message){
     $('.toast-message').text(message)
     $('.toast').toast('show');
-    $('.bottom-row').attr('disabled', true);
+    $('.third-column').attr('disabled', true);
 });
 
 socket.on('full-house-winner', function(message, game){
@@ -187,26 +190,15 @@ function showEmittedNumbers(data){
 }
 
 function buildEmittedWords(){
-    $('.showesWordsRow1, .showesWordsRow2, .showesWordsRow3, .showesWordsRow4').html("");
+    $('#words-batch .row').html("");
     let count = 0;
     for (let i = disclosedNumbers.length - 1; i >= 0; i--) {
         const x = disclosedNumbers[i];
-        if((count + 1) % 4 === 1){
-            if(count === 0){
-                $('.showesWordsRow1').append("<span style='font-size:18px'>" + words[disclosedNumbers[i]] + "</span>");
-            }
-            else{
-                $('.showesWordsRow1').append("<span>" + words[disclosedNumbers[i]] + "</span>")
-            }
-        }
-        else if((count + 1) % 4 === 2){
-            $('.showesWordsRow2').append("<span>" + words[disclosedNumbers[i]]  + "</span>")
-        }
-        else if((count + 1) % 4 === 3){
-            $('.showesWordsRow3').append("<span>" + words[disclosedNumbers[i]] + "</span>")
+        if(count === 0){
+            $('#words-batch .row').append("<span style='font-size:18px'>" + words[x] + "</span>");
         }
         else{
-            $('.showesWordsRow4').append("<span>" + words[disclosedNumbers[i]] + "</span>")
+            $('#words-batch .row').append("<span>" + words[x] + "</span>")
         }
 
         count++;

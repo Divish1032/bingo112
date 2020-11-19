@@ -47,7 +47,7 @@ padding: 0 10px 5px 10px;
 #words-batch span{
     font-size: 12px;
 font-weight: bold;
-margin: 0 5px;
+margin: auto 5px;
 color: #872FCB;
 }
 
@@ -57,6 +57,7 @@ overflow: auto;
 width: 100%;
 padding: 5px 0;
 margin: 0px auto;
+max-height: 120px;
 }
 
 #ticket{
