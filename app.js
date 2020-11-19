@@ -3,7 +3,6 @@ var   express       = require('express'),
       bodyParser    = require('body-parser'),
       http          = require('http').Server(app),
       io            = require('socket.io')(http),
-      tambola       = require('tambola-generator'),
       mongoose      = require('mongoose'),
 /*    Razorpay      = require('razorpay'),
       request       = require('request'), */   
@@ -295,7 +294,9 @@ function generateTicket() {
       }
    }
 
-   temp.sort();
+   temp.sort(function(a, b) {
+      return a - b;
+   });
    k = 0;
    for(let i = 0; i<6; i++){
       for (let j = 0; j < 3; j++) {
@@ -304,6 +305,25 @@ function generateTicket() {
    }
 
    return ticket;
+}
+
+function generateSequence(upperlimit){
+   let answer = [];
+   let init = [];
+   let h = upperlimit;
+   for(var i = 0; i< upperlimit; i++){
+      init.push(i);
+   }
+   for(var i=0; i < upperlimit; i++){
+      let index = randomNum(0, --h);
+      answer.push(init[index]);
+      init.splice(index, 1);
+   }
+   return answer
+}
+
+function randomNum(min, max) { // min and max included 
+   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 io.on('connection', function(socket) {
@@ -651,7 +671,7 @@ function initiationGame() {
 }
 
 function newGameStart() {
-   sequence          = tambola.getDrawSequence(),
+   sequence          = generateSequence(80),
    i                 = 0,
    usedSequence      = [],
    time              = 5,
