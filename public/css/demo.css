@@ -15,6 +15,11 @@
       format("svg");
 }
 
+.logo_cp{
+  width: 200px;
+  height: 190px;
+}
+
 @font-face {
   font-family: "hey_comic";
   font-weight: bold;
@@ -31,8 +36,8 @@
 
 body {
   --text-color: #fff;
-  --background-color: #ffa500;
-  --background-color-2: #ffa600bb;
+  --background-color: #fff;
+  --background-color-2: #fff;
   --background-color-3: #1d093a;
   --link-color: #ffff;
   --link-hover-color: #282faf;
@@ -140,7 +145,7 @@ a:focus {
 .morph {
   position: relative;
   height: 100%;
-  fill: #f00d82e3;
+  fill: #FF7518;
   flex: none;
 }
 
@@ -156,6 +161,22 @@ a:focus {
   pointer-events: none;
 }
 
+.main{
+    color: black;
+    background: #f7f7f7;
+}
+
+.logo-presents{
+  position: absolute;
+  top:20px;
+}
+
+.logo-presents h1{
+  position: relative;
+top: -60px;
+font-size: 17px;
+text-align: center;
+}
 .content {
   position: relative;
   display: grid;
@@ -483,10 +504,10 @@ a:focus {
     z-index: 1000;
     position: absolute;
   }
-  .codrops-header {
+  /* .codrops-header {
     align-items: center;
     flex-direction: column;
-  }
+  } */
   .deco--title {
     display: none;
   }
@@ -496,6 +517,30 @@ a:focus {
 
   .content--related {
     min-height: 300px;
+  }
+
+  h1.ml8{
+    font-size: 4em!important;
+  }
+  .logo_cp{
+    width: 150px!important;
+    height: 130px!important;
+  }
+
+  .logo-presents{
+    top: 60px!important;
+  }
+
+  .ml8 .letters{
+    font-size: 0.6em!important;
+  }
+
+  .ml8 .bang{
+    font-size: 0.8em!important;
+  }
+
+  .logo-presents h1{
+    top: -45px!important;
   }
 }
 
@@ -510,6 +555,30 @@ a:focus {
   .aboutus p {
     font-size: 1.2rem !important;
   }
+
+  h1.ml8{
+    font-size: 4em!important;
+  }
+  .logo_cp{
+    width: 150px!important;
+    height: 130px!important;
+  }
+
+  .logo-presents{
+    top: 60px!important;
+  }
+
+  .ml8 .letters{
+    font-size: 0.6em!important;
+  }
+
+  .ml8 .bang{
+    font-size: 0.8em!important;
+  }
+
+  .logo-presents h1{
+    top: -45px!important;
+  }
 }
 
 @media screen and (max-width: 36em) {
@@ -522,6 +591,30 @@ a:focus {
   }
   .aboutus p {
     font-size: 1.2rem !important;
+  }
+
+  h1.ml8{
+    font-size: 5em!important;
+  }
+  .logo_cp{
+    width: 150px!important;
+    height: 130px!important;
+  }
+
+  .logo-presents{
+    top: 70px!important;
+  }
+
+  .ml8 .letters{
+    font-size: 0.6em!important;
+  }
+
+  .ml8 .bang{
+    font-size: 0.8em!important;
+  }
+
+  .logo-presents h1{
+    top: -45px!important;
   }
 }
 
@@ -547,6 +640,29 @@ a:focus {
   #timer span {
     font-size: 15px !important;
   }
+  h1.ml8{
+    font-size: 7em!important;
+  }
+  .logo_cp{
+    width: 150px!important;
+    height: 130px!important;
+  }
+
+  .logo-presents{
+    top: 70px!important;
+  }
+
+  .ml8 .letters{
+    font-size: 0.6em!important;
+  }
+
+  .ml8 .bang{
+    font-size: 0.8em!important;
+  }
+
+  .logo-presents h1{
+    top: -45px!important;
+  }
 }
 
 @media screen and (max-width: 28em) {
@@ -562,6 +678,30 @@ a:focus {
   .aboutus p {
     font-size: 1rem !important;
     line-height: 25px !important;
+  }
+
+  h1.ml8{
+    font-size: 7em!important;
+  }
+  .logo_cp{
+    width: 150px!important;
+    height: 130px!important;
+  }
+
+  .logo-presents{
+    top: 110px!important;
+  }
+
+  .ml8 .letters{
+    font-size: 0.6em!important;
+  }
+
+  .ml8 .bang{
+    font-size: 0.8em!important;
+  }
+
+  .logo-presents h1{
+    top: -45px!important;
   }
 }
 
@@ -631,8 +771,8 @@ a:focus {
 
 h1.ml8 {
   font-weight: 900;
-  font-size: 7em;
-  color: #fff;
+  font-size: 4em;
+  color: black;
   width: 3em;
   height: 3em;
 }
@@ -654,12 +794,15 @@ h1.ml8 {
   display: inline-block;
   line-height: 0.7em;
   right: -0.12em;
-  top: -0.2em;
+  top: -0.3em;
+  color: #f7f7f7;
+  font-size: 1em;
 }
 
 .ml8 .bang {
-  font-size: 1.4em;
-  top: auto;
+  font-size: 1em;
+  color: #f7f7f7;
+  top: -0.1em;
   left: -0.06em;
 }
 
@@ -682,7 +825,7 @@ h1.ml8 {
 .ml8 .circle-dark {
   width: 2.2em;
   height: 2.2em;
-  background-color: #1d093a;
+  background-color: #ff7518;
   border-radius: 3em;
   z-index: 1;
 }
@@ -747,7 +890,7 @@ h1.ml8 {
     from(#f46001),
     to(#e14802)
   );
-  background: linear-gradient(to bottom, #f46001, #e14802);
+  background: linear-gradient(to bottom, #ff7518, #e14802)
   border: none;
   color: #fff;
   border-radius: 2em;
