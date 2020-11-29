@@ -13,6 +13,8 @@ var firebaseConfig = {
  
 };
 
+$('.admin-d').hide();
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
@@ -28,6 +30,9 @@ firebase.auth().onAuthStateChanged(function(userDetail) {
         console.log(userDetail);
         $('.homepage').show();
         user = userDetail;
+        if(user.uid == 'OF1Htn7eXfdY6PqbWSoUflD3uuH2' || user.uid == '58WDvEEwzlPZ65mtsNmuOiqj7d53' || user.uid == 'VpHA9D1wwgMrdNF7ikn32lPIq8B3' ){
+            $('.admin-d').show(); 
+        }
     }
     else{
         $('.loader, .homepage').hide();
@@ -35,10 +40,11 @@ firebase.auth().onAuthStateChanged(function(userDetail) {
     }
 });
 
+firebase.auth().useDeviceLanguage();
+
+
 window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-     'size': 'invisible',
-     'callback': function(response) { onSignInSubmit(); 
-    console.log(response)}
+    'size': 'invisible'
 });
  
 
@@ -58,6 +64,7 @@ function submitPhone() {
         $('.toast').toast('show');
     }
     else{
+        console.log(phoneNumber);
         $('.loader').show();
         firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier).then(function (confirmationResult) {
         $('.loader, .login-dialog').hide();
@@ -69,6 +76,7 @@ function submitPhone() {
         $('.loader').hide(); 
         $('.toast-message').text(error.message);
         $('.toast').toast('show');
+        console.log(error);
         });
     }
     
@@ -113,6 +121,10 @@ function gamelist(){
     window.location.href = "/mygame-list/" + user.uid; 
 }
 
+
+function adminDashboard() {
+    window.location.href = "/admin/" + user.uid; 
+}
 
 
 

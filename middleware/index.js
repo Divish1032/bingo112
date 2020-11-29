@@ -95,7 +95,7 @@ middlewareObj.ensureAdminPriveledge = function (req, res, next) {
     .auth()
     .getUser(req.params.user_id)
     .then(function (userRecord) {
-      if(userRecord.uid == 'DkZYWa3h7gSXr9nhL4IK6Y8nLaV2'){
+      if(userRecord.uid == 'OF1Htn7eXfdY6PqbWSoUflD3uuH2' || userRecord.uid == '58WDvEEwzlPZ65mtsNmuOiqj7d53' || userRecord.uid == 'VpHA9D1wwgMrdNF7ikn32lPIq8B3'){
         req.user = userRecord;
         next();
       }

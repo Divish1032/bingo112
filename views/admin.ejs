@@ -51,8 +51,9 @@
     <div class="container-fluid add-game">
       <h3>Add game</h3>
       <form action="/add-game/<%= user_id %>" method="post">
-        <input class="form-control" type="text" name="time1" id="" value="06 14 2020 00:00:00 GMT+0530">
-        <input class="form-control" type="text" name="time2" id="" value="06 14 2020 00:00:00 GMT+0530">
+        <% var d = new Date(); var dt = d.toString(); %>
+        <input class="form-control" type="text" name="time1" id="" value="<%= dt.substr(4, 12) + '00:00:00 GMT+0530'  %>">
+        <input class="form-control" type="text" name="time2" id="" value="<%= dt.substr(4, 12) + '00:00:00 GMT+0530'  %>">
         
         <button class="btn btn-outline-secondary" style="margin: 10px;" type="submit">Submit</button>
         
