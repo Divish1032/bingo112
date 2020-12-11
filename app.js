@@ -28,8 +28,17 @@ var   refreshIntervalId = null,
 }); */
 
 
-mongoose.connect(vault.mlab, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex : true }).then( response => {
-   console.log("MongoDB Connected");
+// mongoose.connect(vault.mlab, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex : true }).then( response => {
+//    console.log("MongoDB Connected");
+// });
+
+const MongoClient = require('mongodb').MongoClient;
+const uri = "mongodb+srv://divish:genius007@cluster0.jd1mt.mongodb.net/bingo?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true });
+client.connect(err => {
+  const collection = client.db("test").collection("devices");
+  // perform actions on the collection object
+  client.close();
 });
 
 /* Set the Public folder to server*/
